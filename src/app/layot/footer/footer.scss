@@ -1,0 +1,40 @@
+.footer {
+  position: sticky;
+  bottom: 0;
+  background: #ffffff;
+  border-top: 1px solid #e6e8ef;
+  padding: 12px 0;
+  z-index: 10;
+}
+
+.footer__inner {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  gap: 12px;
+}
+
+.btn {
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-weight: 700;
+  border: 1px solid transparent;
+  min-width: 110px;
+  cursor: pointer;
+
+  &--primary {
+    background: #f59e0b;
+    color: #111827;
+  }
+
+  &--secondary {
+    background: #ffffff;
+    color: #344054;
+    border-color: #e6e8ef;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

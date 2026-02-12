@@ -1,0 +1,19 @@
+:host {
+  display: block;
+}
+
+.app {
+  min-height: 100vh;
+  width: 430px;
+  margin: 0 auto;
+  background: var(--bg);
+  overflow-x: hidden;
+
+  /* nga dizajni: header i zë vendin lart, footer poshtë */
+  padding: 0;
+}
+
+.app__main {
+  padding: 12px 0 72px;
+  /* hapësirë poshtë për footer sticky */
+}
