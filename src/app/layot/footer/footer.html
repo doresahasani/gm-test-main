@@ -1,10 +1,11 @@
 <footer class="footer">
   <div class="page footer__inner">
-    <button class="btn btn--secondary" type="button" (click)="goBack()" [disabled]="!backUrl">
-      Zurück
-    </button>
-
-    <button class="btn btn--primary" type="button" (click)="goNext()">
+    <button
+      type="button"
+      class="btn btn--primary"
+      [disabled]="disableWeiter"
+      (click)="onWeiterClick()"
+    >
       Weiter
     </button>
   </div>

@@ -1,7 +1,7 @@
 <form class="card home" [formGroup]="form" (submit)="$event.preventDefault()">
   <!-- 1. Grösse und Gewicht -->
   <section class="home__section">
-    <h2 class="h2">1. Grosse und Gewicht</h2>
+    <h2 class="h2">1. Grösse und Gewicht</h2>
     <p class="p home__subtitle">Welches sind Ihre Körpermasse?</p>
 
     <div class="grid-2">
@@ -19,8 +19,8 @@
             formControlName="heightCm"
             placeholder="Grösse"
             min="0"
+            max="350"
             (focus)="setActive('heightCm')"
-            (blur)="form.controls.heightCm.markAsTouched()"
           />
           <span class="unit">(cm)</span>
         </div>
@@ -44,8 +44,8 @@
             formControlName="weightKg"
             placeholder="Gewicht"
             min="0"
+            max="600"
             (focus)="setActive('weightKg')"
-            (blur)="form.controls.weightKg.markAsTouched()"
           />
           <span class="unit">(kg)</span>
         </div>
@@ -96,10 +96,9 @@
 
     @if (showMedicationDetails()) {
       <p class="home__desc">
-        Nehmen Sie momentan Medikamente ein oder haben Sie in den letzten 2 Jahren
-        regelmässig oder wiederholt welche eingenommen (mit Ausnahme von Verhütungsmitteln)
-        oder haben Sie eine medizinische Verordnung für Hilfsmittel oder Geräte erhalten
-        (mit Ausnahme von Brillen und Kontaktlinsen)?
+        Nehmen Sie momentan Medikamente ein oder haben Sie in den letzten 2 Jahren regelmässig oder wiederholt
+        welche eingenommen (mit Ausnahme von Verhütungsmitteln) oder haben Sie eine medizinische Verordnung für
+        Hilfsmittel oder Geräte erhalten (mit Ausnahme von Brillen und Kontaktlinsen)?
       </p>
 
       <!-- "Wenn ja, welche?" / "Warum?" -->
@@ -122,7 +121,6 @@
               formControlName="medName"
               placeholder="Welche?"
               (focus)="setActive('medName')"
-              (blur)="form.controls.medName.markAsTouched()"
             />
           </div>
           @if (isInvalid('medName')) {
@@ -142,7 +140,6 @@
               formControlName="medReason"
               placeholder="Warum?"
               (focus)="setActive('medReason')"
-              (blur)="form.controls.medReason.markAsTouched()"
             />
           </div>
           @if (isInvalid('medReason')) {
@@ -151,16 +148,15 @@
         </div>
       </div>
 
-      <!-- ILLNESSES -->
-      <div class="illness" formArrayName="illnesses">
-        @for (_ of illnesses.controls; track $index; let i = $index) {
+      <!-- ILLNESSES (Section 2 Array) -->
+      <div class="illness" formArrayName="illnessesMed">
+        @for (_ of illnessesMed.controls; track $index; let i = $index) {
           <div class="illness__card" [formGroupName]="i">
             <div class="illness__head">
-              <!-- ✅ numërimi dinamik -->
               <div class="illness__title">{{ i + 1 }}) Krankheit erfassen</div>
 
-              @if (canRemoveIllness()) {
-                <button type="button" class="illness__remove" (click)="removeIllness(i)">
+              @if (illnessesMed.length > 1) {
+                <button type="button" class="illness__remove" (click)="removeMedIllness(i)">
                   - Entfernen
                 </button>
               }
@@ -173,21 +169,20 @@
             <!-- DESC -->
             <div
               class="box box--textarea"
-              (click)="setActive(illnessActiveKey(i,'desc'))"
-              [class.is-active]="isIllnessActive(i,'desc')"
-              [class.is-invalid]="isInvalidCtrl(illnessCtrl(i,'desc'))"
+              (click)="setActive(medActiveKey(i,'desc'))"
+              [class.is-active]="isMedActive(i,'desc')"
+              [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'desc'))"
             >
               <textarea
-              formControlName="desc"
-              placeholder="Hier eingeben..."
-               (input)="autoResize($event)"
-               (focus)="setActive(illnessActiveKey(i,'desc'))"
-                 (blur)="illnessCtrl(i,'desc').markAsTouched(); clearActive(illnessActiveKey(i,'desc'))"
-               ></textarea>
+                formControlName="desc"
+                placeholder="Hier eingeben..."
+                (input)="autoResize($event)"
+                (focus)="setActive(medActiveKey(i,'desc'))"
+              ></textarea>
 
               <span class="icon-pencil" aria-hidden="true"></span>
             </div>
-            @if (isInvalidCtrl(illnessCtrl(i,'desc'))) {
+            @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'desc'))) {
               <p class="error">Bitte ausfüllen.</p>
             }
 
@@ -197,20 +192,14 @@
                 <label class="label">Begindatum</label>
                 <div
                   class="box"
-                  (click)="setActive(illnessActiveKey(i,'start'))"
-                  [class.is-active]="isIllnessActive(i,'start')"
-                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(i,'startDate'))"
+                  (click)="setActive(medActiveKey(i,'start'))"
+                  [class.is-active]="isMedActive(i,'start')"
+                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'startDate'))"
                 >
-                  <input
-                    type="date"
-                    formControlName="startDate"
-                    (focus)="setActive(illnessActiveKey(i,'start'))"
-                    (blur)="illnessCtrl(i,'startDate').markAsTouched()"
-                  />
+                  <input type="date" formControlName="startDate" (focus)="setActive(medActiveKey(i,'start'))" />
                   <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
-
                 </div>
-                @if (isInvalidCtrl(illnessCtrl(i,'startDate'))) {
+                @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'startDate'))) {
                   <p class="error">Bitte Datum wählen.</p>
                 }
               </div>
@@ -219,20 +208,14 @@
                 <label class="label">Enddatum</label>
                 <div
                   class="box"
-                  (click)="setActive(illnessActiveKey(i,'end'))"
-                  [class.is-active]="isIllnessActive(i,'end')"
-                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(i,'endDate'))"
+                  (click)="setActive(medActiveKey(i,'end'))"
+                  [class.is-active]="isMedActive(i,'end')"
+                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'endDate'))"
                 >
-                  <input
-                    type="date"
-                    formControlName="endDate"
-                    (focus)="setActive(illnessActiveKey(i,'end'))"
-                    (blur)="illnessCtrl(i,'endDate').markAsTouched()"
-                  />
-                 <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
-
+                  <input type="date" formControlName="endDate" (focus)="setActive(medActiveKey(i,'end'))" />
+                  <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
                 </div>
-                @if (isInvalidCtrl(illnessCtrl(i,'endDate'))) {
+                @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'endDate'))) {
                   <p class="error">Bitte Datum wählen.</p>
                 }
               </div>
@@ -243,29 +226,29 @@
               <label class="label">Operiert?</label>
               <div
                 class="seg"
-                (click)="setActive(illnessActiveKey(i,'operated'))"
-                [class.is-active]="isIllnessActive(i,'operated')"
-                [class.is-invalid]="isInvalidCtrl(illnessCtrl(i,'operated'))"
+                (click)="setActive(medActiveKey(i,'operated'))"
+                [class.is-active]="isMedActive(i,'operated')"
+                [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'operated'))"
               >
                 <button
                   type="button"
                   class="seg__btn"
-                  [class.is-selected]="illnessCtrl(i,'operated').value === false"
-                  (click)="$event.stopPropagation(); setIllnessBool(i,'operated',false)"
+                  [class.is-selected]="illnessCtrl(illnessesMed, i,'operated').value === false"
+                  (click)="$event.stopPropagation(); setMedBool(i,'operated',false)"
                 >
                   Nein
                 </button>
                 <button
                   type="button"
                   class="seg__btn"
-                  [class.is-selected]="illnessCtrl(i,'operated').value === true"
-                  (click)="$event.stopPropagation(); setIllnessBool(i,'operated',true)"
+                  [class.is-selected]="illnessCtrl(illnessesMed, i,'operated').value === true"
+                  (click)="$event.stopPropagation(); setMedBool(i,'operated',true)"
                 >
                   Ja
                 </button>
               </div>
 
-              @if (isInvalidCtrl(illnessCtrl(i,'operated'))) {
+              @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'operated'))) {
                 <p class="error">Bitte wählen.</p>
               }
             </div>
@@ -275,29 +258,29 @@
               <label class="label">Behandlung beendet, genesen ohne Folgen</label>
               <div
                 class="seg"
-                (click)="setActive(illnessActiveKey(i,'treatmentDone'))"
-                [class.is-active]="isIllnessActive(i,'treatmentDone')"
-                [class.is-invalid]="isInvalidCtrl(illnessCtrl(i,'treatmentDone'))"
+                (click)="setActive(medActiveKey(i,'treatmentDone'))"
+                [class.is-active]="isMedActive(i,'treatmentDone')"
+                [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'treatmentDone'))"
               >
                 <button
                   type="button"
                   class="seg__btn"
-                  [class.is-selected]="illnessCtrl(i,'treatmentDone').value === false"
-                  (click)="$event.stopPropagation(); setIllnessBool(i,'treatmentDone',false)"
+                  [class.is-selected]="illnessCtrl(illnessesMed, i,'treatmentDone').value === false"
+                  (click)="$event.stopPropagation(); setMedBool(i,'treatmentDone',false)"
                 >
                   Nein
                 </button>
                 <button
                   type="button"
                   class="seg__btn"
-                  [class.is-selected]="illnessCtrl(i,'treatmentDone').value === true"
-                  (click)="$event.stopPropagation(); setIllnessBool(i,'treatmentDone',true)"
+                  [class.is-selected]="illnessCtrl(illnessesMed, i,'treatmentDone').value === true"
+                  (click)="$event.stopPropagation(); setMedBool(i,'treatmentDone',true)"
                 >
                   Ja
                 </button>
               </div>
 
-              @if (isInvalidCtrl(illnessCtrl(i,'treatmentDone'))) {
+              @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'treatmentDone'))) {
                 <p class="error">Bitte wählen.</p>
               }
             </div>
@@ -312,19 +295,18 @@
                 <div class="field">
                   <div
                     class="box provider__box"
-                    (click)="setActive(illnessActiveKey(i,'docFirstName'))"
-                    [class.is-active]="isIllnessActive(i,'docFirstName')"
-                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(i,'docFirstName'))"
+                    (click)="setActive(medActiveKey(i,'docFirstName'))"
+                    [class.is-active]="isMedActive(i,'docFirstName')"
+                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docFirstName'))"
                   >
                     <input
                       type="text"
                       formControlName="docFirstName"
                       placeholder="Vorname"
-                      (focus)="setActive(illnessActiveKey(i,'docFirstName'))"
-                      (blur)="illnessCtrl(i,'docFirstName').markAsTouched()"
+                      (focus)="setActive(medActiveKey(i,'docFirstName'))"
                     />
                   </div>
-                  @if (isInvalidCtrl(illnessCtrl(i,'docFirstName'))) {
+                  @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'docFirstName'))) {
                     <p class="error">Bitte ausfüllen.</p>
                   }
                 </div>
@@ -332,19 +314,18 @@
                 <div class="field">
                   <div
                     class="box provider__box"
-                    (click)="setActive(illnessActiveKey(i,'docLastName'))"
-                    [class.is-active]="isIllnessActive(i,'docLastName')"
-                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(i,'docLastName'))"
+                    (click)="setActive(medActiveKey(i,'docLastName'))"
+                    [class.is-active]="isMedActive(i,'docLastName')"
+                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docLastName'))"
                   >
                     <input
                       type="text"
                       formControlName="docLastName"
                       placeholder="Nachname"
-                      (focus)="setActive(illnessActiveKey(i,'docLastName'))"
-                      (blur)="illnessCtrl(i,'docLastName').markAsTouched()"
+                      (focus)="setActive(medActiveKey(i,'docLastName'))"
                     />
                   </div>
-                  @if (isInvalidCtrl(illnessCtrl(i,'docLastName'))) {
+                  @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'docLastName'))) {
                     <p class="error">Bitte ausfüllen.</p>
                   }
                 </div>
@@ -354,19 +335,18 @@
                 <div class="field">
                   <div
                     class="box provider__box"
-                    (click)="setActive(illnessActiveKey(i,'docStreet'))"
-                    [class.is-active]="isIllnessActive(i,'docStreet')"
-                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(i,'docStreet'))"
+                    (click)="setActive(medActiveKey(i,'docStreet'))"
+                    [class.is-active]="isMedActive(i,'docStreet')"
+                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docStreet'))"
                   >
                     <input
                       type="text"
                       formControlName="docStreet"
                       placeholder="Strasse"
-                      (focus)="setActive(illnessActiveKey(i,'docStreet'))"
-                      (blur)="illnessCtrl(i,'docStreet').markAsTouched()"
+                      (focus)="setActive(medActiveKey(i,'docStreet'))"
                     />
                   </div>
-                  @if (isInvalidCtrl(illnessCtrl(i,'docStreet'))) {
+                  @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'docStreet'))) {
                     <p class="error">Bitte ausfüllen.</p>
                   }
                 </div>
@@ -374,19 +354,18 @@
                 <div class="field">
                   <div
                     class="box provider__box"
-                    (click)="setActive(illnessActiveKey(i,'docNr'))"
-                    [class.is-active]="isIllnessActive(i,'docNr')"
-                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(i,'docNr'))"
+                    (click)="setActive(medActiveKey(i,'docNr'))"
+                    [class.is-active]="isMedActive(i,'docNr')"
+                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docNr'))"
                   >
                     <input
                       type="text"
                       formControlName="docNr"
                       placeholder="Nr."
-                      (focus)="setActive(illnessActiveKey(i,'docNr'))"
-                      (blur)="illnessCtrl(i,'docNr').markAsTouched()"
+                      (focus)="setActive(medActiveKey(i,'docNr'))"
                     />
                   </div>
-                  @if (isInvalidCtrl(illnessCtrl(i,'docNr'))) {
+                  @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'docNr'))) {
                     <p class="error">Bitte ausfüllen.</p>
                   }
                 </div>
@@ -396,19 +375,18 @@
                 <div class="field">
                   <div
                     class="box provider__box"
-                    (click)="setActive(illnessActiveKey(i,'docZipCity'))"
-                    [class.is-active]="isIllnessActive(i,'docZipCity')"
-                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(i,'docZipCity'))"
+                    (click)="setActive(medActiveKey(i,'docZipCity'))"
+                    [class.is-active]="isMedActive(i,'docZipCity')"
+                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docZipCity'))"
                   >
                     <input
                       type="text"
                       formControlName="docZipCity"
                       placeholder="PLZ, Ort"
-                      (focus)="setActive(illnessActiveKey(i,'docZipCity'))"
-                      (blur)="illnessCtrl(i,'docZipCity').markAsTouched()"
+                      (focus)="setActive(medActiveKey(i,'docZipCity'))"
                     />
                   </div>
-                  @if (isInvalidCtrl(illnessCtrl(i,'docZipCity'))) {
+                  @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'docZipCity'))) {
                     <p class="error">Bitte ausfüllen.</p>
                   }
                 </div>
@@ -418,18 +396,863 @@
         }
       </div>
 
-      <!-- + Krankheit -->
+      <!-- + Krankheit (Section 2) -->
       <button
-  type="button"
-  class="btn-add btn-add--bottom"
-  (click)="addIllness()"
-  [class.is-disabled]="!canAddIllness()"
-  [attr.aria-disabled]="!canAddIllness()"
->
-  + Krankheit erfassen
-</button>
+        type="button"
+        class="btn-add btn-add--bottom"
+        (click)="addMedIllness()"
+        [class.is-disabled]="!canAddMedIllness()"
+        [attr.aria-disabled]="!canAddMedIllness()"
+         >
+         + Krankheit erfassen
+            </button>
+            }
+       </section>
+
+  <!-- 3. Krankheiten oder Beschwerden -->
+  <section class="home__section">
+    <h2 class="h2">3. Krankheiten oder Beschwerden</h2>
+
+    <div
+      class="seg"
+      (click)="setActive('illnessQ')"
+      [class.is-active]="isActive('illnessQ')"
+      [class.is-invalid]="isInvalid('illnessQ')"
+    >
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.illnessQ.value === false"
+        (click)="$event.stopPropagation(); setIllnessQ(false)"
+      >
+        Nein
+      </button>
+
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.illnessQ.value === true"
+        (click)="$event.stopPropagation(); setIllnessQ(true)"
+      >
+        Ja
+      </button>
+    </div>
+
+    @if (isInvalid('illnessQ')) {
+      <p class="error">Bitte wählen Sie eine Option.</p>
+    }
+
+    @if (showIllnessDetails()) {
+      <p class="home__desc">
+        Haben Sie in den vergangenen 5 Jahren an Krankheiten oder Beschwerden gelitten oder leiden Sie noch daran
+        (ausser saisonale Krankheiten und geheilte Covid-Erkrankung ohne Nebenwirkung oder Langzeitfolgen)?
+        Als Krankheiten oder Beschwerden gelten beispielsweise: Diabetes, Wirbelsäulenerkrankungen, Krebs oder
+        Tumore, Suchterkrankung (Drogen, Alkohol, Medikamente), HIV (AIDS), Long-Covid, Essstörungen etc.
+        Diese Aufzählung ist nicht abschliessend.
+      </p>
+
+      <div class="illness" formArrayName="illnessesIll">
+        @for (_ of illnessesIll.controls; track $index; let i = $index) {
+          <div class="illness__card" [formGroupName]="i">
+            <div class="illness__head">
+              <div class="illness__title">{{ i + 1 }}) Krankheit erfassen</div>
+
+              @if (illnessesIll.length > 1) {
+                <button type="button" class="illness__remove" (click)="removeIllIllness(i)">
+                  - Entfernen
+                </button>
+              }
+            </div>
+
+            <p class="illness__hint">
+              Krankheit, Leiden, Unfall, Behandlungsgrund, betroffene Stelle am Körper (links, rechts)
+            </p>
+
+            <div
+              class="box box--textarea"
+              (click)="setActive(illActiveKey(i,'desc'))"
+              [class.is-active]="isIllActive(i,'desc')"
+              [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'desc'))"
+            >
+              <textarea
+                formControlName="desc"
+                placeholder="Hier eingeben..."
+                (input)="autoResize($event)"
+                (focus)="setActive(illActiveKey(i,'desc'))"
+              ></textarea>
+
+              <span class="icon-pencil" aria-hidden="true"></span>
+            </div>
+            @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'desc'))) {
+              <p class="error">Bitte ausfüllen.</p>
+            }
+
+            <div class="grid-2 dates">
+              <div class="field">
+                <label class="label">Begindatum</label>
+                <div
+                  class="box"
+                  (click)="setActive(illActiveKey(i,'start'))"
+                  [class.is-active]="isIllActive(i,'start')"
+                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'startDate'))"
+                >
+                  <input type="date" formControlName="startDate" (focus)="setActive(illActiveKey(i,'start'))" />
+                  <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
+                </div>
+                @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'startDate'))) {
+                  <p class="error">Bitte Datum wählen.</p>
+                }
+              </div>
+
+              <div class="field">
+                <label class="label">Enddatum</label>
+                <div
+                  class="box"
+                  (click)="setActive(illActiveKey(i,'end'))"
+                  [class.is-active]="isIllActive(i,'end')"
+                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'endDate'))"
+                >
+                  <input type="date" formControlName="endDate" (focus)="setActive(illActiveKey(i,'end'))" />
+                  <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
+                </div>
+                @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'endDate'))) {
+                  <p class="error">Bitte Datum wählen.</p>
+                }
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label">Operiert?</label>
+              <div
+                class="seg"
+                (click)="setActive(illActiveKey(i,'operated'))"
+                [class.is-active]="isIllActive(i,'operated')"
+                [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'operated'))"
+              >
+                <button
+                  type="button"
+                  class="seg__btn"
+                  [class.is-selected]="illnessCtrl(illnessesIll, i,'operated').value === false"
+                  (click)="$event.stopPropagation(); setIllBool(i,'operated',false)"
+                >
+                  Nein
+                </button>
+                <button
+                  type="button"
+                  class="seg__btn"
+                  [class.is-selected]="illnessCtrl(illnessesIll, i,'operated').value === true"
+                  (click)="$event.stopPropagation(); setIllBool(i,'operated',true)"
+                >
+                  Ja
+                </button>
+              </div>
+
+              @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'operated'))) {
+                <p class="error">Bitte wählen.</p>
+              }
+            </div>
+
+            <div class="field">
+              <label class="label">Behandlung beendet, genesen ohne Folgen</label>
+              <div
+                class="seg"
+                (click)="setActive(illActiveKey(i,'treatmentDone'))"
+                [class.is-active]="isIllActive(i,'treatmentDone')"
+                [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'treatmentDone'))"
+              >
+                <button
+                  type="button"
+                  class="seg__btn"
+                  [class.is-selected]="illnessCtrl(illnessesIll, i,'treatmentDone').value === false"
+                  (click)="$event.stopPropagation(); setIllBool(i,'treatmentDone',false)"
+                >
+                  Nein
+                </button>
+                <button
+                  type="button"
+                  class="seg__btn"
+                  [class.is-selected]="illnessCtrl(illnessesIll, i,'treatmentDone').value === true"
+                  (click)="$event.stopPropagation(); setIllBool(i,'treatmentDone',true)"
+                >
+                  Ja
+                </button>
+              </div>
+
+              @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'treatmentDone'))) {
+                <p class="error">Bitte wählen.</p>
+              }
+            </div>
+
+            <!-- Provider (same structure) -->
+            <div class="provider">
+              <p class="provider__title">
+                Name und Adresse des Arztes, Spitals oder anderen Leistungserbringers
+              </p>
+
+              <div class="provider__grid provider__grid--name">
+                <div class="field">
+                  <div
+                    class="box provider__box"
+                    (click)="setActive(illActiveKey(i,'docFirstName'))"
+                    [class.is-active]="isIllActive(i,'docFirstName')"
+                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docFirstName'))"
+                  >
+                    <input
+                      type="text"
+                      formControlName="docFirstName"
+                      placeholder="Vorname"
+                      (focus)="setActive(illActiveKey(i,'docFirstName'))"
+                    />
+                  </div>
+                  @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'docFirstName'))) {
+                    <p class="error">Bitte ausfüllen.</p>
+                  }
+                </div>
+
+                <div class="field">
+                  <div
+                    class="box provider__box"
+                    (click)="setActive(illActiveKey(i,'docLastName'))"
+                    [class.is-active]="isIllActive(i,'docLastName')"
+                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docLastName'))"
+                  >
+                    <input
+                      type="text"
+                      formControlName="docLastName"
+                      placeholder="Nachname"
+                      (focus)="setActive(illActiveKey(i,'docLastName'))"
+                    />
+                  </div>
+                  @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'docLastName'))) {
+                    <p class="error">Bitte ausfüllen.</p>
+                  }
+                </div>
+              </div>
+
+              <div class="provider__grid provider__grid--street">
+                <div class="field">
+                  <div
+                    class="box provider__box"
+                    (click)="setActive(illActiveKey(i,'docStreet'))"
+                    [class.is-active]="isIllActive(i,'docStreet')"
+                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docStreet'))"
+                  >
+                    <input
+                      type="text"
+                      formControlName="docStreet"
+                      placeholder="Strasse"
+                      (focus)="setActive(illActiveKey(i,'docStreet'))"
+                    />
+                  </div>
+                  @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'docStreet'))) {
+                    <p class="error">Bitte ausfüllen.</p>
+                  }
+                </div>
+
+                <div class="field">
+                  <div
+                    class="box provider__box"
+                    (click)="setActive(illActiveKey(i,'docNr'))"
+                    [class.is-active]="isIllActive(i,'docNr')"
+                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docNr'))"
+                  >
+                    <input
+                      type="text"
+                      formControlName="docNr"
+                      placeholder="Nr."
+                      (focus)="setActive(illActiveKey(i,'docNr'))"
+                    />
+                  </div>
+                  @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'docNr'))) {
+                    <p class="error">Bitte ausfüllen.</p>
+                  }
+                </div>
+              </div>
+
+              <div class="provider__grid provider__grid--zip">
+                <div class="field">
+                  <div
+                    class="box provider__box"
+                    (click)="setActive(illActiveKey(i,'docZipCity'))"
+                    [class.is-active]="isIllActive(i,'docZipCity')"
+                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docZipCity'))"
+                  >
+                    <input
+                      type="text"
+                      formControlName="docZipCity"
+                      placeholder="PLZ, Ort"
+                      (focus)="setActive(illActiveKey(i,'docZipCity'))"
+                    />
+                  </div>
+                  @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'docZipCity'))) {
+                    <p class="error">Bitte ausfüllen.</p>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <button
+           type="button"
+            class="btn-add btn-add--bottom"
+          (click)="addIllIllness()"
+          [class.is-disabled]="!canAddIllIllness()"
+          [attr.aria-disabled]="!canAddIllIllness()"
+
+          >
+               + Krankheit erfassen
+      </button>
 
     }
   </section>
+
+  <!-- 4. Behandlungen -->
+  <section class="home__section">
+    <h2 class="h2">4. Behandlungen – durchgeführte oder geplante Spitalaufenthalte/Operationen</h2>
+
+    <div
+      class="seg"
+      (click)="setActive('opsQ')"
+      [class.is-active]="isActive('opsQ')"
+      [class.is-invalid]="isInvalid('opsQ')"
+    >
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.opsQ.value === false"
+        (click)="$event.stopPropagation(); setOpsQ(false)"
+      >
+        Nein
+      </button>
+
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.opsQ.value === true"
+        (click)="$event.stopPropagation(); setOpsQ(true)"
+      >
+        Ja
+      </button>
+    </div>
+
+    @if (isInvalid('opsQ')) {
+      <p class="error">Bitte wählen Sie eine Option.</p>
+    }
+
+    @if (showOpsDetails()) {
+      <p class="home__desc">
+        Haben Sie sich in den letzten fünf Jahren einer Operation unterzogen, fand ein Spitalaufenthalt statt oder
+        haben Sie sich einer (medizinischen oder therapeutischen) Behandlung unterzogen oder beabsichtigen Sie,
+        sich einer Konsultation, Behandlung oder Operation zu unterziehen?
+      </p>
+
+      <!-- a) -->
+      <div class="home__sub">
+        <h2 class="h2">a) In einem Spital, einer Kureinrichtung oder einer Entzugsklinik</h2>
+
+        <div
+          class="seg"
+          (click)="setActive('opsA')"
+          [class.is-active]="isActive('opsA')"
+          [class.is-invalid]="isInvalid('opsA')"
+        >
+          <button
+            type="button"
+            class="seg__btn"
+            [class.is-selected]="form.controls.opsA.value === false"
+            (click)="$event.stopPropagation(); setOpsA(false)"
+          >
+            Nein
+          </button>
+
+          <button
+            type="button"
+            class="seg__btn"
+            [class.is-selected]="form.controls.opsA.value === true"
+            (click)="$event.stopPropagation(); setOpsA(true)"
+          >
+            Ja
+          </button>
+        </div>
+
+        @if (isInvalid('opsA')) {
+          <p class="error">Bitte wählen.</p>
+        }
+      </div>
+
+      <!-- b) -->
+      <div class="home__sub">
+        <h2 class="h2">b) Bei einem Arzt</h2>
+
+        <div
+          class="seg"
+          (click)="setActive('opsB')"
+          [class.is-active]="isActive('opsB')"
+          [class.is-invalid]="isInvalid('opsB')"
+        >
+          <button
+            type="button"
+            class="seg__btn"
+            [class.is-selected]="form.controls.opsB.value === false"
+            (click)="$event.stopPropagation(); setOpsB(false)"
+          >
+            Nein
+          </button>
+
+          <button
+            type="button"
+            class="seg__btn"
+            [class.is-selected]="form.controls.opsB.value === true"
+            (click)="$event.stopPropagation(); setOpsB(true)"
+          >
+            Ja
+          </button>
+        </div>
+
+        @if (isInvalid('opsB')) {
+          <p class="error">Bitte wählen.</p>
+        }
+
+        @if (form.controls.opsB.value === true) {
+          <div class="illness" formArrayName="opsBItems">
+            @for (_ of opsBItems.controls; track $index; let i = $index) {
+              <div class="illness__card" [formGroupName]="i">
+                <div class="illness__head">
+                  <div class="illness__title">{{ i + 1 }}) Behandlung erfassen</div>
+
+                  @if (opsBItems.length > 1) {
+                    <button type="button" class="illness__remove" (click)="removeOpsBItem(i)">
+                      - Entfernen
+                    </button>
+                  }
+                </div>
+
+                <p class="illness__hint">
+                  Krankheit, Leiden, Unfall, Behandlungsgrund, betroffene Stelle am Körper (links, rechts)
+                </p>
+
+                <div
+                  class="box box--textarea"
+                  (click)="setActive(opsBActiveKey(i,'desc'))"
+                  [class.is-active]="isOpsBActive(i,'desc')"
+                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'desc'))"
+                >
+                  <textarea
+                    formControlName="desc"
+                    placeholder="Hier eingeben..."
+                    (input)="autoResize($event)"
+                    (focus)="setActive(opsBActiveKey(i,'desc'))"
+                  ></textarea>
+
+                  <span class="icon-pencil" aria-hidden="true"></span>
+                </div>
+                @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'desc'))) {
+                  <p class="error">Bitte ausfüllen.</p>
+                }
+
+                <div class="grid-2 dates">
+                  <div class="field">
+                    <label class="label">Begindatum</label>
+                    <div
+                      class="box"
+                      (click)="setActive(opsBActiveKey(i,'start'))"
+                      [class.is-active]="isOpsBActive(i,'start')"
+                      [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'startDate'))"
+                    >
+                      <input type="date" formControlName="startDate" (focus)="setActive(opsBActiveKey(i,'start'))" />
+                      <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
+                    </div>
+                    @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'startDate'))) {
+                      <p class="error">Bitte Datum wählen.</p>
+                    }
+                  </div>
+
+                  <div class="field">
+                    <label class="label">Enddatum</label>
+                    <div
+                      class="box"
+                      (click)="setActive(opsBActiveKey(i,'end'))"
+                      [class.is-active]="isOpsBActive(i,'end')"
+                      [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'endDate'))"
+                    >
+                      <input type="date" formControlName="endDate" (focus)="setActive(opsBActiveKey(i,'end'))" />
+                      <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
+                    </div>
+                    @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'endDate'))) {
+                      <p class="error">Bitte Datum wählen.</p>
+                    }
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="label">Operiert?</label>
+                  <div
+                    class="seg"
+                    (click)="setActive(opsBActiveKey(i,'operated'))"
+                    [class.is-active]="isOpsBActive(i,'operated')"
+                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'operated'))"
+                  >
+                    <button
+                      type="button"
+                      class="seg__btn"
+                      [class.is-selected]="illnessCtrl(opsBItems, i,'operated').value === false"
+                      (click)="$event.stopPropagation(); setOpsBBool(i,'operated',false)"
+                    >
+                      Nein
+                    </button>
+                    <button
+                      type="button"
+                      class="seg__btn"
+                      [class.is-selected]="illnessCtrl(opsBItems, i,'operated').value === true"
+                      (click)="$event.stopPropagation(); setOpsBBool(i,'operated',true)"
+                    >
+                      Ja
+                    </button>
+                  </div>
+
+                  @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'operated'))) {
+                    <p class="error">Bitte wählen.</p>
+                  }
+                </div>
+
+                <div class="field">
+                  <label class="label">Behandlung beendet, genesen ohne Folgen</label>
+                  <div
+                    class="seg"
+                    (click)="setActive(opsBActiveKey(i,'treatmentDone'))"
+                    [class.is-active]="isOpsBActive(i,'treatmentDone')"
+                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'treatmentDone'))"
+                  >
+                    <button
+                      type="button"
+                      class="seg__btn"
+                      [class.is-selected]="illnessCtrl(opsBItems, i,'treatmentDone').value === false"
+                      (click)="$event.stopPropagation(); setOpsBBool(i,'treatmentDone',false)"
+                    >
+                      Nein
+                    </button>
+                    <button
+                      type="button"
+                      class="seg__btn"
+                      [class.is-selected]="illnessCtrl(opsBItems, i,'treatmentDone').value === true"
+                      (click)="$event.stopPropagation(); setOpsBBool(i,'treatmentDone',true)"
+                    >
+                      Ja
+                    </button>
+                  </div>
+
+                  @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'treatmentDone'))) {
+                    <p class="error">Bitte wählen.</p>
+                  }
+                </div>
+
+                <!-- Provider (same pattern, pa blur) -->
+                <div class="provider">
+                  <p class="provider__title">
+                    Name und Adresse des Arztes, Spitals oder anderen Leistungserbringers
+                  </p>
+
+                  <div class="provider__grid provider__grid--name">
+                    <div class="field">
+                      <div
+                        class="box provider__box"
+                        (click)="setActive(opsBActiveKey(i,'docFirstName'))"
+                        [class.is-active]="isOpsBActive(i,'docFirstName')"
+                        [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'docFirstName'))"
+                      >
+                        <input
+                          type="text"
+                          formControlName="docFirstName"
+                          placeholder="Vorname"
+                          (focus)="setActive(opsBActiveKey(i,'docFirstName'))"
+                        />
+                      </div>
+                      @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'docFirstName'))) {
+                        <p class="error">Bitte ausfüllen.</p>
+                      }
+                    </div>
+
+                    <div class="field">
+                      <div
+                        class="box provider__box"
+                        (click)="setActive(opsBActiveKey(i,'docLastName'))"
+                        [class.is-active]="isOpsBActive(i,'docLastName')"
+                        [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'docLastName'))"
+                      >
+                        <input
+                          type="text"
+                          formControlName="docLastName"
+                          placeholder="Nachname"
+                          (focus)="setActive(opsBActiveKey(i,'docLastName'))"
+                        />
+                      </div>
+                      @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'docLastName'))) {
+                        <p class="error">Bitte ausfüllen.</p>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="provider__grid provider__grid--street">
+                    <div class="field">
+                      <div
+                        class="box provider__box"
+                        (click)="setActive(opsBActiveKey(i,'docStreet'))"
+                        [class.is-active]="isOpsBActive(i,'docStreet')"
+                        [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'docStreet'))"
+                      >
+                        <input
+                          type="text"
+                          formControlName="docStreet"
+                          placeholder="Strasse"
+                          (focus)="setActive(opsBActiveKey(i,'docStreet'))"
+                        />
+                      </div>
+                      @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'docStreet'))) {
+                        <p class="error">Bitte ausfüllen.</p>
+                      }
+                    </div>
+
+                    <div class="field">
+                      <div
+                        class="box provider__box"
+                        (click)="setActive(opsBActiveKey(i,'docNr'))"
+                        [class.is-active]="isOpsBActive(i,'docNr')"
+                        [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'docNr'))"
+                      >
+                        <input
+                          type="text"
+                          formControlName="docNr"
+                          placeholder="Nr."
+                          (focus)="setActive(opsBActiveKey(i,'docNr'))"
+                        />
+                      </div>
+                      @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'docNr'))) {
+                        <p class="error">Bitte ausfüllen.</p>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="provider__grid provider__grid--zip">
+                    <div class="field">
+                      <div
+                        class="box provider__box"
+                        (click)="setActive(opsBActiveKey(i,'docZipCity'))"
+                        [class.is-active]="isOpsBActive(i,'docZipCity')"
+                        [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'docZipCity'))"
+                      >
+                        <input
+                          type="text"
+                          formControlName="docZipCity"
+                          placeholder="PLZ, Ort"
+                          (focus)="setActive(opsBActiveKey(i,'docZipCity'))"
+                        />
+                      </div>
+                      @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'docZipCity'))) {
+                        <p class="error">Bitte ausfüllen.</p>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+
+             <button
+           type="button"
+           class="btn-add btn-add--bottom"
+           (click)="addOpsBItem()"
+              [class.is-disabled]="!canAddOpsBItem()"
+              [attr.aria-disabled]="!canAddOpsBItem()"
+                 >
+                 + Krankheit erfassen
+            </button>
+        }
+      </div>
+
+      <!-- c) -->
+      <div class="home__sub">
+        <h2 class="h2">c) Bei einem Psychiater, Psychologen oder Psychotherapeuten</h2>
+
+        <div
+          class="seg"
+          (click)="setActive('opsC')"
+          [class.is-active]="isActive('opsC')"
+          [class.is-invalid]="isInvalid('opsC')"
+        >
+          <button
+            type="button"
+            class="seg__btn"
+            [class.is-selected]="form.controls.opsC.value === false"
+            (click)="$event.stopPropagation(); setOpsC(false)"
+          >
+            Nein
+          </button>
+
+          <button
+            type="button"
+            class="seg__btn"
+            [class.is-selected]="form.controls.opsC.value === true"
+            (click)="$event.stopPropagation(); setOpsC(true)"
+          >
+            Ja
+          </button>
+        </div>
+
+        @if (isInvalid('opsC')) {
+          <p class="error">Bitte wählen.</p>
+        }
+      </div>
+
+      <!-- d) -->
+      <div class="home__sub">
+        <h2 class="h2">
+          d) Bei einem Naturheilpraktiker, einem nichtmedizinischen Therapeuten,
+          einem Therapeuten für Naturheilkunde oder einem Osteopathen
+        </h2>
+
+        <div
+          class="seg"
+          (click)="setActive('opsD')"
+          [class.is-active]="isActive('opsD')"
+          [class.is-invalid]="isInvalid('opsD')"
+        >
+          <button
+            type="button"
+            class="seg__btn"
+            [class.is-selected]="form.controls.opsD.value === false"
+            (click)="$event.stopPropagation(); setOpsD(false)"
+          >
+            Nein
+          </button>
+
+          <button
+            type="button"
+            class="seg__btn"
+            [class.is-selected]="form.controls.opsD.value === true"
+            (click)="$event.stopPropagation(); setOpsD(true)"
+          >
+            Ja
+          </button>
+        </div>
+
+        @if (isInvalid('opsD')) {
+          <p class="error">Bitte wählen.</p>
+        }
+      </div>
+    }
+  </section>
+
+  <!-- 5. Arzt -->
+  <section class="home__section">
+    <h2 class="h2">5. Arzt</h2>
+    <p class="p home__subtitle">Name und Adresse des Arztes, den Sie gewöhnlich aufsuchen:</p>
+
+    <div class="grid-2">
+      <div class="field">
+        <div
+          class="box"
+          (click)="setActive('doctorFirstName')"
+          [class.is-active]="isActive('doctorFirstName')"
+          [class.is-invalid]="isInvalid('doctorFirstName')"
+        >
+          <input
+            type="text"
+            formControlName="doctorFirstName"
+            placeholder="Vorname"
+            (focus)="setActive('doctorFirstName')"
+          />
+        </div>
+
+        @if (isInvalid('doctorFirstName')) {
+          <p class="error">Vorname ist erforderlich.</p>
+        }
+      </div>
+
+      <div class="field">
+        <div
+          class="box"
+          (click)="setActive('doctorLastName')"
+          [class.is-active]="isActive('doctorLastName')"
+          [class.is-invalid]="isInvalid('doctorLastName')"
+        >
+          <input
+            type="text"
+            formControlName="doctorLastName"
+            placeholder="Nachname"
+            (focus)="setActive('doctorLastName')"
+          />
+        </div>
+
+        @if (isInvalid('doctorLastName')) {
+          <p class="error">Nachname ist erforderlich.</p>
+        }
+      </div>
+    </div>
+
+    <div class="grid-street">
+      <div class="field">
+        <div
+          class="box"
+          (click)="setActive('doctorStreet')"
+          [class.is-active]="isActive('doctorStreet')"
+          [class.is-invalid]="isInvalid('doctorStreet')"
+        >
+          <input
+            type="text"
+            formControlName="doctorStreet"
+            placeholder="Strasse"
+            (focus)="setActive('doctorStreet')"
+          />
+        </div>
+
+        @if (isInvalid('doctorStreet')) {
+          <p class="error">Strasse ist erforderlich.</p>
+        }
+      </div>
+
+      <div class="field">
+        <div
+          class="box"
+          (click)="setActive('doctorNumber')"
+          [class.is-active]="isActive('doctorNumber')"
+          [class.is-invalid]="isInvalid('doctorNumber')"
+        >
+          <input
+            type="text"
+            formControlName="doctorNumber"
+            placeholder="Nr."
+            (focus)="setActive('doctorNumber')"
+          />
+        </div>
+
+        @if (isInvalid('doctorNumber')) {
+          <p class="error">Nummer ist erforderlich.</p>
+        }
+      </div>
+    </div>
+
+    <div class="field">
+      <div
+        class="box"
+        (click)="setActive('doctorCity')"
+        [class.is-active]="isActive('doctorCity')"
+        [class.is-invalid]="isInvalid('doctorCity')"
+      >
+        <input
+          type="text"
+          formControlName="doctorCity"
+          placeholder="PLZ, Ort"
+          (focus)="setActive('doctorCity')"
+        />
+      </div>
+
+      @if (isInvalid('doctorCity')) {
+        <p class="error">PLZ und Ort sind erforderlich.</p>
+      }
+    </div>
+  </section>
 </form>
 
+<app-footer (weiter)="onWeiter()"></app-footer>

@@ -16,9 +16,8 @@
 }
 
 .card.home {
-  background: var(--bg);
-  border: 1px solid rgba(17, 24, 39, 0.06);
-  border-radius: var(--radius);
+  background-color: #FBFBFB;
+  border-radius: 20px;
   padding: 18px 16px;
 }
 
@@ -111,10 +110,8 @@
 .box.is-invalid,
 .seg.is-invalid {
   border-color: #ef4444;
-  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.25);
 }
 
-/*  remove inner border inside inputs (no border inside box) */
 .box input {
   width: 100%;
   border: 0;              
@@ -166,7 +163,6 @@
   background: #ffffff;
   color: #000;
   font-weight: 400;
-  box-shadow: 0 0 0 1px #f68229 inset;
 }
 
 /* ===== + Krankheit ===== */
@@ -177,7 +173,7 @@
   border: 0;
   background: #f68229;
   color: #fff;
-  font-weight: 600;
+  font-weight: 400;
   font-size: 14px;
   cursor: pointer;
   margin: 14px 0 12px 0;
@@ -198,7 +194,6 @@
   margin: 14px 0 0 0;
 }
 
-/* ===== Illness ===== */
 .illness {
   margin-top: 10px;
 }
@@ -272,7 +267,7 @@
   pointer-events: none;
 }
 
-/* date icon */
+
 .icon-cal {
   position: absolute;
   right: 12px;
@@ -283,7 +278,6 @@
   pointer-events: none;
 }
 
-/* ===== Provider / Address (si ne foto) ===== */
 .provider {
   margin-top: 12px;
 }
@@ -316,7 +310,7 @@
 }
 
 .provider__box {
-   height: 40px;
+  height: 40px;
   padding: 0 12px;
   border-radius: var(--radius-input);
   background: #fff;
@@ -324,7 +318,6 @@
   align-items: center;
 }
 
-/* ✅ inputs inside provider are already no-border */
 .provider__box input {
   width: 100%;
   border: 0;
@@ -338,7 +331,7 @@
   margin: 0;
 }
 
-/* keep layout safe */
+
 form.card.home {
   display: block;
   height: auto !important;
@@ -362,3 +355,4 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   height: 100%;
   cursor: pointer;
 }
+.grid-street { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; }
