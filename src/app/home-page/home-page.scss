@@ -69,7 +69,7 @@
 
 .field {
   display: grid;
-  gap: 6px;
+  gap: 8px;
   margin-bottom: 12px;
 }
 
@@ -86,8 +86,6 @@
   font-size: 12px;
   line-height: 14px;
 }
-
-/* ===== Boxes ===== */
 .box {
   height: 44px;
   border-radius: var(--radius-input);
@@ -132,39 +130,72 @@
   color: #6f6f6f;
   white-space: nowrap;
 }
-
 /* ===== Seg (Nein / Ja) ===== */
 .seg {
+  position: relative;
   display: flex;
-  width: 100%;
-  height: 36px;
-  padding: 4px;
-  border-radius: 12px;
+  height: 38px;
+  padding: 0 4px;
+  border-radius: 8px;
   border: 1px solid #e6e8ef;
-  gap: 4px;
   background: #ffffff;
-  transition: all 0.2s ease;
+  gap: 0;
+
+  transition: border-color 0.08s ease, background 0.08s ease;
+  display: flex;
+  align-items: center;
 }
 
 .seg__btn {
   flex: 1;
   border: 0;
-  border-radius: 10px;
   background: transparent;
   font-family: var(--font);
   font-size: 14px;
   font-weight: 400;
   color: #7a7a7a;
   cursor: pointer;
-  transition: all 0.2s ease;
-}
 
+  transition: background 0.08s ease, color 0.08s ease, box-shadow 0.08s ease;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &:first-child { border-radius: 10px 0 0 10px; }
+  &:last-child  { border-radius: 0 10px 10px 0; }
+}
+.seg__btn + .seg__btn {
+  position: relative;
+}
+.seg__btn + .seg__btn::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;      
+  bottom: 6px;  
+  width: 1px;
+  background: #e6e8ef;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.12s ease;
+}
+.seg:has(.seg__btn.is-selected) .seg__btn + .seg__btn::before {
+  opacity: 0;
+}
 .seg__btn.is-selected {
-  background: #ffffff;
-  color: #000;
+  background: #FFFFFF;           
+  color: #111827;
   font-weight: 400;
+  border-radius: 4px;
+   outline: 1px solid rgba(246, 130, 41, 0.35);
+
+  position: relative;
+  z-index: 2; 
 }
 
+.seg__btn:active {
+  transform: translateY(1px);
+}
 /* ===== + Krankheit ===== */
 .btn-add {
   width: 100%;
@@ -236,37 +267,33 @@
 
 .box--textarea {
   height: auto;
-  min-height: 44px;   
-  padding: 8px 12px;
+  min-height: 38px;
+  padding: 6px 10px;
   align-items: stretch;
 }
 
 .box--textarea textarea {
-  min-height: 28px;   
-  height: 28px;
-  resize: none;       
+  width: 100%;
   border: 0;
   outline: 0;
   background: transparent;
-  width: 100%;
   font: inherit;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 18px;
-  overflow: hidden;  
+  resize: vertical;
+  overflow: auto;
+  min-height: 22px;
+  padding: 0;
 }
-
 
 .box--textarea textarea::placeholder {
   color: var(--muted);
+  font-weight: 400;
 }
 
 .box--textarea .icon-pencil {
-  position: absolute;
-  right: 10px;
-  bottom: 8px;
-  pointer-events: none;
+  display: none;
 }
-
 
 .icon-cal {
   position: absolute;
@@ -331,7 +358,6 @@
   margin: 0;
 }
 
-
 form.card.home {
   display: block;
   height: auto !important;
@@ -356,3 +382,144 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
 }
 .grid-street { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; }
+
+/* ===================== 6. UPLOAD ===================== */
+.upload {
+  width: 366px;        
+  height: 66px;        
+
+  margin: 12px auto 0 auto;  
+
+  border: 1px dashed #f68229;
+  border-radius: 10px;
+  background: #fff7ed;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+
+.upload--dragover {
+  background: #fff2e2;
+}
+
+.upload.is-invalid {
+  border-color: #ef4444;
+  background: #fff5f5;
+}
+
+.upload__inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.upload__icon {
+  width: 22px;
+  height: 22px;
+  color: #F68229;
+}
+
+.upload__name {
+  font-family: var(--font, 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif);
+  font-size: 14px;
+  font-weight: 500;
+  color: #f68229;
+}
+
+.upload__input {
+  display: none !important;
+}
+
+.error {
+  margin: 6px 0 0 0;
+  font-family: var(--font, 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif);
+  font-size: 12px;
+  line-height: 14px;
+  color: #ef4444;
+}
+
+.pill-btn {
+  margin-top: 14px;
+  height: 34px;
+  padding: 0 16px;
+
+  border: none;
+  border-radius: 999px;
+
+  background: #f68229;
+  color: #ffffff;
+
+  font-family: var(--font, 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif);
+  font-size: 13px;
+  font-weight: 500;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pill-btn:hover {
+  filter: brightness(0.97);
+}
+
+.pill-btn:active {
+  transform: translateY(0.5px);
+}
+
+.dental-help {
+  margin: 10px 0 8px 0;
+  font-family: var(--font);
+  font-size: 12px;
+  line-height: 14px;
+  font-weight: 500;
+  color: #8a8a8a;
+}
+
+
+/* ===================== DENTAL (7-15) – EXACT WIDTH/HEIGHT ===================== */
+
+.seg--dental.seg--dental-active {
+  border-color: #F68229;
+  background: #F682290D;
+}
+
+.box--dental-note {
+  min-height: 38px;      
+  height: auto;
+  padding: 10px 12px;
+  border: 1px solid #F68229;
+  border-radius: 12px;
+  background: transparent;  
+  display: flex;
+  align-items: stretch;
+  overflow: auto;
+}
+
+.box--dental-note textarea {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  line-height: 18px;
+  color: #111827;
+  resize: vertical;
+  padding: 0;
+  min-height: 18px;
+}
+
+
+.box--dental-note textarea::placeholder {
+  color: #111827;
+  font-weight: 400;
+}
+
+.box--dental-note.is-invalid {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.06);
+}

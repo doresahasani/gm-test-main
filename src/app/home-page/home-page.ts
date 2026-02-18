@@ -76,6 +76,27 @@ type ActiveKey =
   | 'doctorStreet'
   | 'doctorNumber'
   | 'doctorCity'
+  // section 6
+  | 'reportFile'
+  // section 7-8
+  | 'teethCondition'
+  | 'teethConditionNote'
+  | 'hygiene'
+  | 'hygieneNote'
+    // section 7-12
+  | 'occlusion'
+  | 'crownsCondition'
+  | 'crownsNote'
+  | 'bridgesCondition'
+  | 'bridgesNote'
+  | 'partialDenturesCondition'
+  | 'partialDenturesNote'
+  | 'dentition'
+  | 'dentitionNote'
+  | 'jaw'
+  | 'jawNote'
+  | 'futureTeethDisease'
+  | 'futureTeethDiseaseNote'
   | null;
 
 @Component({
@@ -89,12 +110,15 @@ export class HomeComponent {
   private fb = inject(FormBuilder);
 
   activeKey = signal<ActiveKey>(null);
-
   submitted = signal(false);
 
   addAttemptMed = signal(false);
   addAttemptIll = signal(false);
   addAttemptOpsB = signal(false);
+
+  // ========================= SECTION 6: UPLOAD (PDF) =========================
+  selectedReportName = signal<string>('');
+  isReportDragOver = signal(false);
 
   // ========================= FORM =========================
   form = this.fb.group({
@@ -134,6 +158,51 @@ export class HomeComponent {
     doctorStreet: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
     doctorNumber: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
     doctorCity: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
+
+    // ===== Section 6 (Berichte Upload) =====
+    reportFile: this.fb.control<File | null>(null, [Validators.required]),
+
+    // ===== Section 7-8 (Dental) =====
+    teethCondition: this.fb.control<'gut' | 'mangelhaft' | 'schlecht' | null>(null, [
+      Validators.required,
+    ]),
+    teethConditionNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
+
+    hygiene: this.fb.control<'gut' | 'mangelhaft' | 'schlecht' | null>(null, [Validators.required]),
+    hygieneNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
+
+        // ===== Section 9-10 (Dental) =====
+    occlusion: this.fb.control<'klasse1' | 'klasse2' | 'klasse3' | null>(null, [Validators.required]),
+
+    crownsCondition: this.fb.control<'keine' | 'gut' | 'mangelhaft' | 'schlecht' | null>(null, [
+      Validators.required,
+    ]),
+    crownsNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
+
+    // ===== Section 11 (Brücken) =====
+bridgesCondition: this.fb.control<'keine' | 'gut' | 'mangelhaft' | 'schlecht' | null>(null, [
+  Validators.required,
+]),
+bridgesNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
+
+// ===== Section 12 (Teilprothesen) =====
+partialDenturesCondition: this.fb.control<'keine' | 'gut' | 'mangelhaft' | 'schlecht' | null>(null, [
+  Validators.required,
+]),
+partialDenturesNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
+
+// ===== Section 13 =====
+dentition: this.fb.control<boolean | null>(null, [Validators.required]),
+dentitionNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
+
+// ===== Section 14 =====
+jaw: this.fb.control<boolean | null>(null, [Validators.required]),
+jawNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
+
+// ===== Section 15 =====
+futureTeethDisease: this.fb.control<boolean | null>(null, [Validators.required]),
+futureTeethDiseaseNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
+
   });
 
   constructor() {
@@ -141,6 +210,16 @@ export class HomeComponent {
     this.disableIllnessDetails();
     this.disableOpsDetails();
     this.disableOpsBItems();
+
+    // start state: notes disabled
+    this.form.controls.teethConditionNote.disable({ emitEvent: false });
+    this.form.controls.hygieneNote.disable({ emitEvent: false });
+    this.form.controls.crownsNote.disable({ emitEvent: false });
+    this.form.controls.bridgesNote.disable({ emitEvent: false });
+    this.form.controls.partialDenturesNote.disable({ emitEvent: false });
+    this.form.controls.dentitionNote.disable({ emitEvent: false });
+    this.form.controls.jawNote.disable({ emitEvent: false });
+    this.form.controls.futureTeethDiseaseNote.disable({ emitEvent: false });
   }
 
   // ========================= GETTERS =========================
@@ -161,9 +240,6 @@ export class HomeComponent {
   isActive(key: Exclude<ActiveKey, null>) {
     return this.activeKey() === key;
   }
-  clearActive(key: ActiveKey) {
-    if (this.activeKey() === key) this.activeKey.set(null);
-  }
 
   // ========================= UX HELPERS =========================
   autoResize(event: Event) {
@@ -177,10 +253,7 @@ export class HomeComponent {
     return !!ctrl && ctrl.enabled && ctrl.invalid && (ctrl.touched || this.submitted() || attempt);
   }
 
-  isInvalidCtrl(
-    ctrl: AbstractControl | null | undefined,
-    attempt: boolean = false
-  ) {
+  isInvalidCtrl(ctrl: AbstractControl | null | undefined, attempt: boolean = false) {
     return this.showInvalid(ctrl, attempt);
   }
 
@@ -202,6 +275,25 @@ export class HomeComponent {
       | 'doctorStreet'
       | 'doctorNumber'
       | 'doctorCity'
+      | 'reportFile'
+      | 'teethCondition'
+      | 'teethConditionNote'
+      | 'hygiene'
+      | 'hygieneNote'
+      | 'occlusion'
+      | 'crownsCondition'
+      | 'crownsNote'
+      | 'bridgesCondition'
+      | 'bridgesNote'
+      | 'partialDenturesCondition'
+      | 'partialDenturesNote'
+      | 'dentition'
+      | 'dentitionNote'
+      | 'jaw'
+      | 'jawNote'
+      | 'futureTeethDisease'
+      | 'futureTeethDiseaseNote'
+
   ) {
     const c = (this.form.controls as any)[name] as AbstractControl;
     return this.showInvalid(c);
@@ -280,11 +372,7 @@ export class HomeComponent {
     return arr.at(i);
   }
 
-  illnessCtrl<K extends keyof IllnessForm['controls']>(
-    arr: FormArray<IllnessForm>,
-    i: number,
-    key: K
-  ) {
+  illnessCtrl<K extends keyof IllnessForm['controls']>(arr: FormArray<IllnessForm>, i: number, key: K) {
     return this.illnessAt(arr, i).controls[key];
   }
 
@@ -417,6 +505,165 @@ export class HomeComponent {
     arr.updateValueAndValidity({ emitEvent: false });
   }
 
+  // ========================= SECTION 7-8: DENTAL =========================
+  setTeethCondition(value: 'gut' | 'mangelhaft' | 'schlecht') {
+    this.form.controls.teethCondition.setValue(value);
+    this.setActive('teethCondition');
+
+    const note = this.form.controls.teethConditionNote;
+
+    if (value === 'mangelhaft') {
+      note.enable({ emitEvent: false });
+      note.setValidators([Validators.required]);
+      // mos shfaq error menjëherë
+      note.markAsPristine();
+      note.markAsUntouched();
+    } else {
+      note.reset('', { emitEvent: false });
+      note.clearValidators();
+      note.disable({ emitEvent: false });
+    }
+
+    note.updateValueAndValidity({ emitEvent: false });
+  }
+  setHygiene(value: 'gut' | 'mangelhaft' | 'schlecht') {
+    this.form.controls.hygiene.setValue(value);
+    this.setActive('hygiene');
+
+    const note = this.form.controls.hygieneNote;
+    note.reset('', { emitEvent: false });
+    note.clearValidators();
+    note.disable({ emitEvent: false });
+    note.updateValueAndValidity({ emitEvent: false });
+  }
+  // ========================= SECTION 9-10: DENTAL =========================
+setOcclusion(value: 'klasse1' | 'klasse2' | 'klasse3') {
+  this.form.controls.occlusion.setValue(value);
+  this.setActive('occlusion');
+}
+
+setCrownsCondition(value: 'keine' | 'gut' | 'mangelhaft' | 'schlecht') {
+  this.form.controls.crownsCondition.setValue(value);
+  this.setActive('crownsCondition');
+
+  const note = this.form.controls.crownsNote;
+  if (value === 'mangelhaft') {
+    note.enable({ emitEvent: false });
+    note.setValidators([Validators.required]);
+    note.markAsPristine();
+    note.markAsUntouched();
+  } else {
+    note.reset('', { emitEvent: false });
+    note.clearValidators();
+    note.disable({ emitEvent: false });
+  }
+
+  note.updateValueAndValidity({ emitEvent: false });
+}
+// ========================= SECTION 11 =========================
+setBridgesCondition(value: 'keine' | 'gut' | 'mangelhaft' | 'schlecht') {
+  this.form.controls.bridgesCondition.setValue(value);
+  this.setActive('bridgesCondition');
+
+  const note = this.form.controls.bridgesNote;
+
+  if (value === 'mangelhaft') {
+    note.enable({ emitEvent: false });
+    note.setValidators([Validators.required]);
+    note.markAsPristine();
+    note.markAsUntouched();
+  } else {
+    note.reset('', { emitEvent: false });
+    note.clearValidators();
+    note.disable({ emitEvent: false });
+  }
+
+  note.updateValueAndValidity({ emitEvent: false });
+}
+
+// ========================= SECTION 12 =========================
+setPartialDenturesCondition(value: 'keine' | 'gut' | 'mangelhaft' | 'schlecht') {
+  this.form.controls.partialDenturesCondition.setValue(value);
+  this.setActive('partialDenturesCondition');
+
+  const note = this.form.controls.partialDenturesNote;
+
+  if (value === 'mangelhaft') {
+    note.enable({ emitEvent: false });
+    note.setValidators([Validators.required]);
+    note.markAsPristine();
+    note.markAsUntouched();
+  } else {
+    note.reset('', { emitEvent: false });
+    note.clearValidators();
+    note.disable({ emitEvent: false });
+  }
+
+  note.updateValueAndValidity({ emitEvent: false });
+}
+// ========================= SECTION 13: DENTITION =========================
+setDentition(value: boolean) {
+  this.form.controls.dentition.setValue(value);
+  this.setActive('dentition');
+
+  const note = this.form.controls.dentitionNote;
+
+  if (value === true) {
+    note.enable({ emitEvent: false });
+    note.setValidators([Validators.required]);
+    note.markAsPristine();
+    note.markAsUntouched();
+  } else {
+    note.reset('', { emitEvent: false });
+    note.clearValidators();
+    note.disable({ emitEvent: false });
+  }
+
+  note.updateValueAndValidity({ emitEvent: false });
+}
+
+// ========================= SECTION 14: KIEFER =========================
+setJaw(value: boolean) {
+  this.form.controls.jaw.setValue(value);
+  this.setActive('jaw');
+
+  const note = this.form.controls.jawNote;
+
+  if (value === true) {
+    note.enable({ emitEvent: false });
+    note.setValidators([Validators.required]);
+    note.markAsPristine();
+    note.markAsUntouched();
+  } else {
+    note.reset('', { emitEvent: false });
+    note.clearValidators();
+    note.disable({ emitEvent: false });
+  }
+
+  note.updateValueAndValidity({ emitEvent: false });
+}
+// ========================= SECTION 15 =========================
+setFutureTeethDisease(value: boolean) {
+  this.form.controls.futureTeethDisease.setValue(value);
+  this.setActive('futureTeethDisease');
+
+  const note = this.form.controls.futureTeethDiseaseNote;
+
+  if (value === true) {
+    note.enable({ emitEvent: false });
+    note.setValidators([Validators.required]);
+    note.markAsPristine();
+    note.markAsUntouched();
+  } else {
+    note.reset('', { emitEvent: false });
+    note.clearValidators();
+    note.disable({ emitEvent: false });
+  }
+
+  note.updateValueAndValidity({ emitEvent: false });
+}
+
+
   // ========================= SECTION 2: MEDIKAMENTE =========================
   showMedicationDetails(): boolean {
     return this.form.controls.medication.value === true;
@@ -481,7 +728,7 @@ export class HomeComponent {
 
   addMedIllness() {
     if (this.illnessesMed.disabled) return;
-    this.addAttemptMed.set(true); 
+    this.addAttemptMed.set(true);
     this.addIllnessGeneric(this.illnessesMed, 'med');
   }
 
@@ -492,8 +739,12 @@ export class HomeComponent {
 
   setMedBool(i: number, key: 'operated' | 'treatmentDone', val: boolean) {
     if (this.illnessesMed.disabled) return;
+
+    this.setActive(this.medActiveKey(i, key));
+
     const c = this.illnessCtrl(this.illnessesMed, i, key);
     c.setValue(val);
+    c.markAsDirty();
     c.updateValueAndValidity({ emitEvent: false });
   }
 
@@ -537,7 +788,7 @@ export class HomeComponent {
 
   addIllIllness() {
     if (this.illnessesIll.disabled) return;
-    this.addAttemptIll.set(true); 
+    this.addAttemptIll.set(true);
     this.addIllnessGeneric(this.illnessesIll, 'ill');
   }
 
@@ -548,8 +799,12 @@ export class HomeComponent {
 
   setIllBool(i: number, key: 'operated' | 'treatmentDone', val: boolean) {
     if (this.illnessesIll.disabled) return;
+
+    this.setActive(this.illActiveKey(i, key));
+
     const c = this.illnessCtrl(this.illnessesIll, i, key);
     c.setValue(val);
+    c.markAsDirty();
     c.updateValueAndValidity({ emitEvent: false });
   }
 
@@ -652,7 +907,7 @@ export class HomeComponent {
 
   addOpsBItem() {
     if (this.opsBItems.disabled) return;
-    this.addAttemptOpsB.set(true); 
+    this.addAttemptOpsB.set(true);
     this.addOpsBGeneric();
   }
 
@@ -663,8 +918,12 @@ export class HomeComponent {
 
   setOpsBBool(i: number, key: 'operated' | 'treatmentDone', val: boolean) {
     if (this.opsBItems.disabled) return;
+
+    this.setActive(this.opsBActiveKey(i, key));
+
     const c = this.illnessCtrl(this.opsBItems, i, key);
     c.setValue(val);
+    c.markAsDirty();
     c.updateValueAndValidity({ emitEvent: false });
   }
 
@@ -716,17 +975,102 @@ export class HomeComponent {
     requestAnimationFrame(() => this.setActive(this.opsBActiveKey(i, 'desc')));
   }
 
-  // ========================= SUBMIT / WEITER =========================
-  onWeiter() {
-    this.submitted.set(true);
-
-    this.markEnabledAsTouched(this.form);
-    this.form.updateValueAndValidity({ emitEvent: false });
-
-    if (this.form.invalid) return;
-
-    console.log('FORM VALUE:', this.form.getRawValue());
+  // ========================= SECTION 6: UPLOAD HANDLERS =========================
+  private isPdfFile(file: File) {
+    return file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
   }
+
+  onReportPicked(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+
+    if (!file) return;
+
+    if (!this.isPdfFile(file)) {
+      input.value = '';
+      this.form.controls.reportFile.setValue(null);
+      this.selectedReportName.set('');
+      return;
+    }
+
+    this.form.controls.reportFile.setValue(file);
+    this.selectedReportName.set(file.name);
+
+    this.form.controls.reportFile.markAsPristine();
+    this.form.controls.reportFile.markAsUntouched();
+  }
+
+  onReportDragOver(e: DragEvent) {
+    e.preventDefault();
+    this.isReportDragOver.set(true);
+  }
+
+  onReportDragLeave(e: DragEvent) {
+    e.preventDefault();
+    this.isReportDragOver.set(false);
+  }
+
+  onReportDrop(e: DragEvent) {
+    e.preventDefault();
+    this.isReportDragOver.set(false);
+
+    const file = e.dataTransfer?.files?.[0] ?? null;
+    if (!file) return;
+    if (!this.isPdfFile(file)) return;
+
+    this.form.controls.reportFile.setValue(file);
+    this.selectedReportName.set(file.name);
+
+    this.form.controls.reportFile.markAsPristine();
+    this.form.controls.reportFile.markAsUntouched();
+  }
+
+ // ========================= SUBMIT / WEITER =========================
+onWeiter() {
+  this.submitted.set(true);
+
+  this.markEnabledAsTouched(this.form);
+  this.form.updateValueAndValidity({ emitEvent: false });
+
+  if (this.form.controls.reportFile.invalid) {
+    this.setActive('reportFile');
+  }
+
+  if (this.form.invalid) return;
+
+  const raw = this.form.getRawValue();
+
+  const payload = {
+    ...raw,
+    reportFile: raw.reportFile ? raw.reportFile.name : null,
+  };
+
+  console.log('FORM VALUE:\n' + JSON.stringify(payload, null, 2));
+
+  const dentalSummary = {
+    teethCondition: payload.teethCondition,
+    teethConditionNote: payload.teethConditionNote,
+    hygiene: payload.hygiene,
+    hygieneNote: payload.hygieneNote,
+    occlusion: payload.occlusion,
+    crownsCondition: payload.crownsCondition,
+    crownsNote: payload.crownsNote,
+    bridgesCondition: payload.bridgesCondition,
+    bridgesNote: payload.bridgesNote,
+    partialDenturesCondition: payload.partialDenturesCondition,
+    partialDenturesNote: payload.partialDenturesNote,
+    dentition: payload.dentition,
+    dentitionNote: payload.dentitionNote,
+    jaw: payload.jaw,
+    jawNote: payload.jawNote,
+    futureTeethDisease: payload.futureTeethDisease,
+    futureTeethDiseaseNote: payload.futureTeethDiseaseNote,
+
+
+  };
+
+  console.log('WEITER SUMMARY (7-14):\n' + JSON.stringify(dentalSummary, null, 2));
+}
 
   // ========================= TEMPLATE HELPERS for attempts =========================
   attemptMed() {

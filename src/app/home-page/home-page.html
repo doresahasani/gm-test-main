@@ -1252,6 +1252,540 @@
         <p class="error">PLZ und Ort sind erforderlich.</p>
       }
     </div>
+    <!-- ===================== 6. BERICHTE UPLOAD ===================== -->
+<section class="home__section">
+  <h2 class="h2">
+    6. Lade bitte deine vorhandenen Berichte wie
+    Operationsbericht, Austrittsbericht oder Arztbericht hoch.
+  </h2>
+
+  <div
+    class="upload"
+    [class.upload--dragover]="isReportDragOver()"
+    [class.is-invalid]="isInvalid('reportFile')"
+    (dragover)="onReportDragOver($event)"
+    (dragleave)="onReportDragLeave($event)"
+    (drop)="onReportDrop($event)"
+    (click)="reportInput.click()"
+    role="button"
+    tabindex="0"
+    (keydown.enter)="reportInput.click()"
+    (keydown.space)="$event.preventDefault(); reportInput.click()"
+    aria-label="Bericht hochladen"
+  >
+    <div class="upload__inner">
+
+      <img
+        src="cloud-upload-24px.svg.svg"
+        alt=""
+        class="upload__icon"
+      />
+
+      <div class="upload__name">
+        {{ selectedReportName() || 'Test.pdf' }}
+      </div>
+    </div>
+
+    <input
+      #reportInput
+      type="file"
+      class="upload__input"
+      accept="application/pdf,.pdf"
+      (change)="onReportPicked($event)"
+    />
+  </div>
+
+  @if (isInvalid('reportFile')) {
+    <p class="error">
+      Bitte lade eine PDF-Datei hoch.
+    </p>
+  }
+
+  <button type="button" class="pill-btn">
+    Dental Fragen
+  </button>
+ </section>
+
+   <!-- 7. Zustand des Zahnbetts -->
+<section class="home__section">
+  <h2 class="h2">7. Zustand des Zahnbetts:</h2>
+
+  <div
+    class="seg seg--dental seg--triple"
+    [class.seg--dental-active]="form.controls.teethCondition.value !== null"
+    [class.is-invalid]="isInvalid('teethCondition')"
+  >
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.teethCondition.value === 'gut'"
+      (click)="$event.stopPropagation(); setTeethCondition('gut')"
+    >
+      Gut
+    </button>
+
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.teethCondition.value === 'mangelhaft'"
+      (click)="$event.stopPropagation(); setTeethCondition('mangelhaft')"
+    >
+      Mangelhaft
+    </button>
+
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.teethCondition.value === 'schlecht'"
+      (click)="$event.stopPropagation(); setTeethCondition('schlecht')"
+    >
+      Schlecht
+    </button>
+  </div>
+
+  @if (isInvalid('teethCondition')) {
+    <p class="error">Bitte wählen.</p>
+  }
+
+  @if (form.controls.teethCondition.value === 'mangelhaft' || form.controls.teethCondition.value === 'schlecht') {
+    <p class="dental-help">Falls mangelhaft oder schlecht, bitte Stelle präzisieren:</p>
+
+    <div
+      class="box box--textarea box--dental-note"
+      (click)="setActive('teethConditionNote')"
+      [class.is-active]="isActive('teethConditionNote')"
+      [class.is-invalid]="isInvalid('teethConditionNote')"
+    >
+      <textarea
+        formControlName="teethConditionNote"
+        class="dental-note__textarea"
+        placeholder="Hier eingeben..."
+        (input)="autoResize($event)"
+        (focus)="setActive('teethConditionNote')"
+      ></textarea>
+    </div>
+
+    @if (isInvalid('teethConditionNote')) {
+      <p class="error">Bitte ausfüllen.</p>
+    }
+  }
+</section>
+
+<!-- 8. Hygiene -->
+<section class="home__section">
+  <h2 class="h2">8. Hygiene:</h2>
+
+  <div
+    class="seg seg--dental seg--triple"
+    [class.seg--dental-active]="form.controls.hygiene.value !== null"
+    [class.is-invalid]="isInvalid('hygiene')"
+  >
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.hygiene.value === 'gut'"
+      (click)="$event.stopPropagation(); setHygiene('gut')"
+    >
+      Gut
+    </button>
+
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.hygiene.value === 'mangelhaft'"
+      (click)="$event.stopPropagation(); setHygiene('mangelhaft')"
+    >
+      Mangelhaft
+    </button>
+
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.hygiene.value === 'schlecht'"
+      (click)="$event.stopPropagation(); setHygiene('schlecht')"
+    >
+      Schlecht
+    </button>
+  </div>
+
+  @if (isInvalid('hygiene')) {
+    <p class="error">Bitte wählen.</p>
+  }
+</section>
+<!-- 9. Okklusion -->
+<section class="home__section">
+  <h2 class="h2">9. Okklusion:</h2>
+
+  <div
+    class="seg seg--dental seg--triple"
+    [class.seg--dental-active]="form.controls.occlusion.value !== null"
+  >
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.occlusion.value === 'klasse1'"
+      (click)="setOcclusion('klasse1')"
+    >
+      Klasse I
+    </button>
+
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.occlusion.value === 'klasse2'"
+      (click)="setOcclusion('klasse2')"
+    >
+      Klasse II
+    </button>
+
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.occlusion.value === 'klasse3'"
+      (click)="setOcclusion('klasse3')"
+    >
+      Klasse III
+    </button>
+  </div>
+
+  @if (isInvalid('occlusion')) {
+    <p class="error">Bitte wählen Sie eine Option.</p>
+  }
+</section>
+  <!-- 10. Zustand der Kronen -->
+<section class="home__section">
+  <h2 class="h2">10. Zustand der Kronen:</h2>
+
+  <div
+    class="seg seg--dental seg--quad"
+    [class.seg--dental-active]="form.controls.crownsCondition.value !== null"
+  >
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.crownsCondition.value === 'keine'"
+      (click)="setCrownsCondition('keine')"
+    >
+      Keine
+    </button>
+
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.crownsCondition.value === 'gut'"
+      (click)="setCrownsCondition('gut')"
+    >
+      Gut
+    </button>
+
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.crownsCondition.value === 'mangelhaft'"
+      (click)="setCrownsCondition('mangelhaft')"
+    >
+      Mangelhaft
+    </button>
+
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.crownsCondition.value === 'schlecht'"
+      (click)="setCrownsCondition('schlecht')"
+    >
+      Schlecht
+    </button>
+  </div>
+
+  @if (isInvalid('crownsCondition')) {
+    <p class="error">Bitte wählen Sie eine Option.</p>
+  }
+
+  @if (form.controls.crownsCondition.value === 'mangelhaft') {
+    <p class="dental-help">Art und Stelle:</p>
+
+    <div
+      class="box box--textarea box--dental-note"
+      (click)="setActive('crownsNote')"
+      [class.is-active]="isActive('crownsNote')"
+      [class.is-invalid]="isInvalid('crownsNote')"
+    >
+      <textarea
+        formControlName="crownsNote"
+        placeholder="Hier eingeben..."
+        (input)="autoResize($event)"
+        (focus)="setActive('crownsNote')"
+      ></textarea>
+    </div>
+
+    @if (isInvalid('crownsNote')) {
+      <p class="error">Bitte ausfüllen.</p>
+    }
+  }
+</section>
+<!-- 11. Zustand der Kronen -->
+ <section class="home__section">
+  <h2 class="h2">11. Zustand der Brücken:</h2>
+
+  <div
+    class="seg seg--dental seg--quad"
+    [class.seg--dental-active]="form.controls.bridgesCondition.value !== null"
+  >
+    <button type="button" class="seg__btn"
+      [class.is-selected]="form.controls.bridgesCondition.value === 'keine'"
+      (click)="setBridgesCondition('keine')">
+      Keine
+    </button>
+
+    <button type="button" class="seg__btn"
+      [class.is-selected]="form.controls.bridgesCondition.value === 'gut'"
+      (click)="setBridgesCondition('gut')">
+      Gut
+    </button>
+
+    <button type="button" class="seg__btn"
+      [class.is-selected]="form.controls.bridgesCondition.value === 'mangelhaft'"
+      (click)="setBridgesCondition('mangelhaft')">
+      Mangelhaft
+    </button>
+
+    <button type="button" class="seg__btn"
+      [class.is-selected]="form.controls.bridgesCondition.value === 'schlecht'"
+      (click)="setBridgesCondition('schlecht')">
+      Schlecht
+    </button>
+  </div>
+
+  @if (isInvalid('bridgesCondition')) {
+    <p class="error">Bitte wählen Sie eine Option.</p>
+  }
+
+  @if (form.controls.bridgesCondition.value === 'mangelhaft') {
+    <p class="dental-help">Art und Stelle:</p>
+
+    <div class="box box--textarea box--dental-note">
+      <textarea
+        formControlName="bridgesNote"
+        placeholder="Hier eingeben..."
+        (input)="autoResize($event)"
+      ></textarea>
+    </div>
+
+    @if (isInvalid('bridgesNote')) {
+      <p class="error">Bitte ausfüllen.</p>
+    }
+  }
+</section>
+
+
+ <!-- 12. Zustand der Kronen -->
+  <section class="home__section">
+  <h2 class="h2">12. Zustand der Teilprothesen:</h2>
+
+  <div
+    class="seg seg--dental seg--quad"
+    [class.seg--dental-active]="form.controls.partialDenturesCondition.value !== null"
+  >
+    <button type="button" class="seg__btn"
+      [class.is-selected]="form.controls.partialDenturesCondition.value === 'keine'"
+      (click)="setPartialDenturesCondition('keine')">
+      Keine
+    </button>
+
+    <button type="button" class="seg__btn"
+      [class.is-selected]="form.controls.partialDenturesCondition.value === 'gut'"
+      (click)="setPartialDenturesCondition('gut')">
+      Gut
+    </button>
+
+    <button type="button" class="seg__btn"
+      [class.is-selected]="form.controls.partialDenturesCondition.value === 'mangelhaft'"
+      (click)="setPartialDenturesCondition('mangelhaft')">
+      Mangelhaft
+    </button>
+
+    <button type="button" class="seg__btn"
+      [class.is-selected]="form.controls.partialDenturesCondition.value === 'schlecht'"
+      (click)="setPartialDenturesCondition('schlecht')">
+      Schlecht
+    </button>
+  </div>
+
+  @if (isInvalid('partialDenturesCondition')) {
+    <p class="error">Bitte wählen Sie eine Option.</p>
+  }
+
+  @if (form.controls.partialDenturesCondition.value === 'mangelhaft') {
+    <p class="dental-help">Art und Stelle:</p>
+
+    <div class="box box--textarea box--dental-note">
+      <textarea
+        formControlName="partialDenturesNote"
+        placeholder="Hier eingeben..."
+        (input)="autoResize($event)"
+      ></textarea>
+    </div>
+
+    @if (isInvalid('partialDenturesNote')) {
+      <p class="error">Bitte ausfüllen.</p>
+    }
+  }
+</section>
+ <!-- 13. Zustand der Kronen -->
+  <section class="home__section">
+  <h2 class="h2">
+    13. Dentition: Hat der Versicherte eine Fehl- oder Missbildung oder einen Stellungsfehler der Zähne?
+  </h2>
+
+  <div
+    class="seg seg--dental seg--binary"
+    (click)="setActive('dentition')"
+    [class.seg--dental-active]="form.controls.dentition.value !== null"
+    [class.is-invalid]="isInvalid('dentition')"
+  >
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.dentition.value === false"
+      (click)="$event.stopPropagation(); setDentition(false)"
+    >
+      Nein
+    </button>
+
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.dentition.value === true"
+      (click)="$event.stopPropagation(); setDentition(true)"
+    >
+      Ja
+    </button>
+  </div>
+
+  @if (isInvalid('dentition')) {
+    <p class="error">Bitte wählen Sie eine Option.</p>
+  }
+
+  @if (form.controls.dentition.value === true) {
+    <p class="dental-help">Wenn ja, welche?</p>
+
+    <div class="box box--textarea box--dental-note">
+      <textarea
+        formControlName="dentitionNote"
+        placeholder="Hier eingeben..."
+        (input)="autoResize($event)"
+      ></textarea>
+    </div>
+
+    @if (isInvalid('dentitionNote')) {
+      <p class="error">Bitte ausfüllen.</p>
+    }
+  }
+</section>
+
+   <!-- 14. Zustand der Kronen -->
+    <section class="home__section">
+  <h2 class="h2">
+    14. Kiefer: Hat der Versicherte eine Fehl- oder Missbildung oder einen Stellungsfehler des Kiefers?
+  </h2>
+
+  <div
+    class="seg seg--dental seg--binary"
+    (click)="setActive('jaw')"
+    [class.seg--dental-active]="form.controls.jaw.value !== null"
+    [class.is-invalid]="isInvalid('jaw')"
+  >
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.jaw.value === false"
+      (click)="$event.stopPropagation(); setJaw(false)"
+    >
+      Nein
+    </button>
+
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.jaw.value === true"
+      (click)="$event.stopPropagation(); setJaw(true)"
+    >
+      Ja
+    </button>
+  </div>
+
+  @if (isInvalid('jaw')) {
+    <p class="error">Bitte wählen Sie eine Option.</p>
+  }
+
+  @if (form.controls.jaw.value === true) {
+    <p class="dental-help">Wenn ja, welche?</p>
+
+    <div class="box box--textarea box--dental-note">
+      <textarea
+        formControlName="jawNote"
+        placeholder="Hier eingeben..."
+        (input)="autoResize($event)"
+      ></textarea>
+    </div>
+
+    @if (isInvalid('jawNote')) {
+      <p class="error">Bitte ausfüllen.</p>
+    }
+  }
+</section>
+   <!-- 15. Zustand der Kronen -->
+    <section class="home__section">
+  <h2 class="h2">
+    15. Leidet der Versicherte an einer Krankheit, die den Zustand der Zähne in Zukunft beeinflussen könnte?
+  </h2>
+
+  <div
+    class="seg seg--dental seg--binary"
+    (click)="setActive('futureTeethDisease')"
+    [class.seg--dental-active]="form.controls.futureTeethDisease.value !== null"
+    [class.is-invalid]="isInvalid('futureTeethDisease')"
+  >
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.futureTeethDisease.value === false"
+      (click)="$event.stopPropagation(); setFutureTeethDisease(false)"
+    >
+      Nein
+    </button>
+
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.futureTeethDisease.value === true"
+      (click)="$event.stopPropagation(); setFutureTeethDisease(true)"
+    >
+      Ja
+    </button>
+  </div>
+
+  @if (isInvalid('futureTeethDisease')) {
+    <p class="error">Bitte wählen Sie eine Option.</p>
+  }
+
+  @if (form.controls.futureTeethDisease.value === true) {
+    <p class="dental-help">Wenn ja, welche?</p>
+
+    <div class="box box--textarea box--dental-note">
+      <textarea
+        formControlName="futureTeethDiseaseNote"
+        placeholder="Hier eingeben..."
+        (input)="autoResize($event)"
+      ></textarea>
+    </div>
+
+    @if (isInvalid('futureTeethDiseaseNote')) {
+      <p class="error">Bitte ausfüllen.</p>
+    }
+  }
+</section>
+
   </section>
 </form>
 
