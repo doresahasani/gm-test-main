@@ -10,8 +10,8 @@
         <div
           class="box box--unit"
           (click)="setActive('heightCm')"
-          [class.is-active]="isActive('heightCm')"
-          [class.is-invalid]="isInvalid('heightCm')"
+          [class.is-active]="isActive('heightCm')|| form.controls.heightCm.value !== null"
+          [class.is-invalid]="isInvalid('heightCm')|| form.controls.heightCm.value !== null"
         >
           <input
             type="number"
@@ -35,8 +35,8 @@
         <div
           class="box box--unit"
           (click)="setActive('weightKg')"
-          [class.is-active]="isActive('weightKg')"
-          [class.is-invalid]="isInvalid('weightKg')"
+          [class.is-active]="isActive('weightKg')|| form.controls.heightCm.value !== null"
+          [class.is-invalid]="isInvalid('weightKg')|| form.controls.heightCm.value !== null"
         >
           <input
             type="number"
@@ -68,8 +68,8 @@
     <div
       class="seg"
       (click)="setActive('medication')"
-      [class.is-active]="isActive('medication')"
-      [class.is-invalid]="isInvalid('medication')"
+      [class.is-active]="isActive('medication')|| form.controls.medication.value !== null"
+      [class.is-invalid]="isInvalid('medication')|| form.controls.medication.value !== null"
     >
       <button
         type="button"
@@ -784,7 +784,7 @@
 
       <!-- b) -->
       <div class="home__sub">
-        <h2 class="h2">b) Bei einem Arzt</h2>
+        <h2 class="h2">b) Bei einem Arzt, Physiotherapeuten oder Chiropraktiker</h2>
 
         <div
           class="seg"
@@ -820,7 +820,7 @@
             @for (_ of opsBItems.controls; track $index; let i = $index) {
               <div class="illness__card" [formGroupName]="i">
                 <div class="illness__head">
-                  <div class="illness__title">{{ i + 1 }}) Behandlung erfassen</div>
+                  <div class="illness__title">{{ i + 1 }}. Krankheit erfassen</div>
 
                   @if (opsBItems.length > 1) {
                     <button type="button" class="illness__remove" (click)="removeOpsBItem(i)">
@@ -1785,6 +1785,870 @@
     }
   }
 </section>
+
+<!-- 16. Fehlende, nicht ersetzte Zähne -->
+<section class="home__section teeth16">
+  <h2 class="h2">16. Fehlende, nicht ersetzte Zähne:</h2>
+
+  <div
+    class="seg"
+    (click)="setActive('missingTeethQ')"
+    [class.is-active]="isActive('missingTeethQ')"
+    [class.is-invalid]="isInvalid('missingTeethQ')"
+  >
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.missingTeethQ.value === false"
+      (click)="$event.stopPropagation(); setMissingTeethQ(false)"
+    >
+      Nein
+    </button>
+
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.missingTeethQ.value === true"
+      (click)="$event.stopPropagation(); setMissingTeethQ(true)"
+    >
+      Ja
+    </button>
+  </div>
+
+  @if (isInvalid('missingTeethQ')) {
+    <p class="error">Bitte wählen Sie einen Option.</p>
+  }
+
+  @if (form.controls.missingTeethQ.value === true) {
+    <div class="teeth">
+
+      <div class="teeth__nums teeth__nums--top">
+        @for (t of teethTop; track t) {
+          <div class="teeth__num" [class.is-hot]="isToothSelected(t)">{{ t }}</div>
+        }
+      </div>
+
+      <div class="teethbar">
+        @for (t of teethTop; track t) {
+          <button
+            type="button"
+            class="toothcell"
+            [class.is-selected]="isToothSelected(t)"
+            (click)="toggleTooth(t)"
+            aria-label="Tooth {{ t }}"
+          >
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M20 6L9 17l-5-5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+          </button>
+        }
+      </div>
+
+      <div class="teethbar teethbar--bottom">
+        @for (t of teethBottom; track t) {
+          <button
+            type="button"
+            class="toothcell"
+            [class.is-selected]="isToothSelected(t)"
+            (click)="toggleTooth(t)"
+            aria-label="Tooth {{ t }}"
+          >
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M20 6L9 17l-5-5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+          </button>
+        }
+      </div>
+
+      <div class="teeth__nums teeth__nums--bottom">
+        @for (t of teethBottom; track t) {
+          <div class="teeth__num" [class.is-hot]="isToothSelected(t)">{{ t }}</div>
+        }
+      </div>
+      <div class="teethperm">
+        <div class="teethperm__nums teethperm__nums--top">
+          @for (t of permTop; track t) {
+            <div class="teethperm__num" [class.is-hot]="isPermSelected(t)">{{ t }}</div>
+          }
+        </div>
+
+        <div class="teethperm__wrap">
+          <div class="teethperm__half teethperm__half--left">
+            @for (t of permTop.slice(0, 8); track t) {
+              <button
+                type="button"
+                class="teethperm__cell"
+                [class.is-selected]="isPermSelected(t)"
+                (click)="togglePerm(t)"
+                aria-label="Tooth {{ t }}"
+              >
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M20 6L9 17l-5-5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+              </button>
+            }
+          </div>
+
+          <div class="teethperm__half teethperm__half--right">
+            @for (t of permTop.slice(8, 16); track t) {
+              <button
+                type="button"
+                class="teethperm__cell"
+                [class.is-selected]="isPermSelected(t)"
+                (click)="togglePerm(t)"
+                aria-label="Tooth {{ t }}"
+              >
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M20 6L9 17l-5-5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+              </button>
+            }
+          </div>
+
+          <span class="teethperm__mid" aria-hidden="true"></span>
+        </div>
+
+        <div class="teethperm__wrap teethperm__wrap--bottom">
+          <div class="teethperm__half teethperm__half--left">
+            @for (t of permBottom.slice(0, 8); track t) {
+              <button
+                type="button"
+                class="teethperm__cell"
+                [class.is-selected]="isPermSelected(t)"
+                (click)="togglePerm(t)"
+                aria-label="Tooth {{ t }}"
+              >
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M20 6L9 17l-5-5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+              </button>
+            }
+          </div>
+
+          <div class="teethperm__half teethperm__half--right">
+            @for (t of permBottom.slice(8, 16); track t) {
+              <button
+                type="button"
+                class="teethperm__cell"
+                [class.is-selected]="isPermSelected(t)"
+                (click)="togglePerm(t)"
+                aria-label="Tooth {{ t }}"
+              >
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M20 6L9 17l-5-5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+              </button>
+            }
+          </div>
+
+          <span class="teethperm__mid" aria-hidden="true"></span>
+        </div>
+
+        <div class="teethperm__nums teethperm__nums--bottom">
+          @for (t of permBottom; track t) {
+            <div class="teethperm__num" [class.is-hot]="isPermSelected(t)">{{ t }}</div>
+          }
+        </div>
+      </div>
+
+      <div class="teeth__nums teeth__nums--top">
+        @for (t of milkTop; track t) {
+          <div class="teeth__num" [class.is-hot]="isToothSelected(t)">{{ t }}</div>
+        }
+      </div>
+
+      <div class="teethbar">
+        @for (t of milkTop; track t) {
+          <button
+            type="button"
+            class="toothcell"
+            [class.is-selected]="isToothSelected(t)"
+            (click)="toggleTooth(t)"
+            aria-label="Tooth {{ t }}"
+          >
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M20 6L9 17l-5-5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+          </button>
+        }
+      </div>
+
+      <div class="teethbar teethbar--bottom">
+        @for (t of milkBottom; track t) {
+          <button
+            type="button"
+            class="toothcell"
+            [class.is-selected]="isToothSelected(t)"
+            (click)="toggleTooth(t)"
+            aria-label="Tooth {{ t }}"
+          >
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M20 6L9 17l-5-5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+          </button>
+        }
+      </div>
+
+      <div class="teeth__nums teeth__nums--bottom">
+        @for (t of milkBottom; track t) {
+          <div class="teeth__num" [class.is-hot]="isToothSelected(t)">{{ t }}</div>
+        }
+      </div>
+
+    </div>
+  }
+</section>
+<!-- 17. Schadhafte Zahnfüllungen -->
+<section class="home__section teeth17">
+  <h2 class="h2">17. Schadhafte Zahnfüllungen:</h2>
+
+  <div
+    class="seg"
+    (click)="setActive('fillingsQ')"
+    [class.is-active]="isActive('fillingsQ')"
+    [class.is-invalid]="isInvalid('fillingsQ')"
+  >
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.fillingsQ.value === false"
+      (click)="$event.stopPropagation(); setFillingsQ(false)"
+    >
+      Nein
+    </button>
+
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.fillingsQ.value === true"
+      (click)="$event.stopPropagation(); setFillingsQ(true)"
+    >
+      Ja
+    </button>
+  </div>
+
+  @if (isInvalid('fillingsQ')) {
+    <p class="error">Bitte wählen Sie eine Option.</p>
+  }
+
+  @if (form.controls.fillingsQ.value === true) {
+    <div class="teeth">
+
+      <!-- ===== 55–51 ===== -->
+      <div class="teeth__nums teeth__nums--top">
+        @for (t of teethTop; track t) {
+          <div class="teeth__num" [class.is-hot]="isFillingSelected(t)">{{ t }}</div>
+        }
+      </div>
+
+      <div class="teethbar">
+        @for (t of teethTop; track t) {
+          <button
+            type="button"
+            class="toothcell"
+            [class.is-selected]="isFillingSelected(t)"
+            (click)="toggleFilling(t)"
+            aria-label="Tooth {{ t }}"
+          >
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M20 6L9 17l-5-5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+          </button>
+        }
+      </div>
+
+      <!-- ===== 85–81 ===== -->
+      <div class="teethbar teethbar--bottom">
+        @for (t of teethBottom; track t) {
+          <button
+            type="button"
+            class="toothcell"
+            [class.is-selected]="isFillingSelected(t)"
+            (click)="toggleFilling(t)"
+            aria-label="Tooth {{ t }}"
+          >
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M20 6L9 17l-5-5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+          </button>
+        }
+      </div>
+
+      <div class="teeth__nums teeth__nums--bottom">
+        @for (t of teethBottom; track t) {
+          <div class="teeth__num" [class.is-hot]="isFillingSelected(t)">{{ t }}</div>
+        }
+      </div>
+
+      <!-- ===== PERMANENT 18–28 / 48–38 ===== -->
+      <div class="teethperm">
+        <div class="teethperm__nums teethperm__nums--top">
+          @for (t of permTop; track t) {
+            <div class="teethperm__num" [class.is-hot]="isFillingPermSelected(t)">{{ t }}</div>
+          }
+        </div>
+
+        <div class="teethperm__wrap">
+          <div class="teethperm__half teethperm__half--left">
+            @for (t of permTop.slice(0, 8); track t) {
+              <button
+                type="button"
+                class="teethperm__cell"
+                [class.is-selected]="isFillingPermSelected(t)"
+                (click)="toggleFillingPerm(t)"
+                aria-label="Tooth {{ t }}"
+              >
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M20 6L9 17l-5-5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+              </button>
+            }
+          </div>
+
+          <div class="teethperm__half teethperm__half--right">
+            @for (t of permTop.slice(8, 16); track t) {
+              <button
+                type="button"
+                class="teethperm__cell"
+                [class.is-selected]="isFillingPermSelected(t)"
+                (click)="toggleFillingPerm(t)"
+                aria-label="Tooth {{ t }}"
+              >
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M20 6L9 17l-5-5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+              </button>
+            }
+          </div>
+
+          <span class="teethperm__mid" aria-hidden="true"></span>
+        </div>
+
+        <div class="teethperm__wrap teethperm__wrap--bottom">
+          <div class="teethperm__half teethperm__half--left">
+            @for (t of permBottom.slice(0, 8); track t) {
+              <button
+                type="button"
+                class="teethperm__cell"
+                [class.is-selected]="isFillingPermSelected(t)"
+                (click)="toggleFillingPerm(t)"
+                aria-label="Tooth {{ t }}"
+              >
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M20 6L9 17l-5-5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+              </button>
+            }
+          </div>
+
+          <div class="teethperm__half teethperm__half--right">
+            @for (t of permBottom.slice(8, 16); track t) {
+              <button
+                type="button"
+                class="teethperm__cell"
+                [class.is-selected]="isFillingPermSelected(t)"
+                (click)="toggleFillingPerm(t)"
+                aria-label="Tooth {{ t }}"
+              >
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M20 6L9 17l-5-5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+              </button>
+            }
+          </div>
+
+          <span class="teethperm__mid" aria-hidden="true"></span>
+        </div>
+
+        <div class="teethperm__nums teethperm__nums--bottom">
+          @for (t of permBottom; track t) {
+            <div class="teethperm__num" [class.is-hot]="isFillingPermSelected(t)">{{ t }}</div>
+          }
+        </div>
+      </div>
+
+      <!-- ===== 61–65 ===== -->
+      <div class="teeth__nums teeth__nums--top">
+        @for (t of milkTop; track t) {
+          <div class="teeth__num" [class.is-hot]="isFillingSelected(t)">{{ t }}</div>
+        }
+      </div>
+
+      <div class="teethbar">
+        @for (t of milkTop; track t) {
+          <button
+            type="button"
+            class="toothcell"
+            [class.is-selected]="isFillingSelected(t)"
+            (click)="toggleFilling(t)"
+            aria-label="Tooth {{ t }}"
+          >
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M20 6L9 17l-5-5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+          </button>
+        }
+      </div>
+
+      <!-- ===== 71–75 ===== -->
+      <div class="teethbar teethbar--bottom">
+        @for (t of milkBottom; track t) {
+          <button
+            type="button"
+            class="toothcell"
+            [class.is-selected]="isFillingSelected(t)"
+            (click)="toggleFilling(t)"
+            aria-label="Tooth {{ t }}"
+          >
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M20 6L9 17l-5-5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+          </button>
+        }
+      </div>
+
+      <div class="teeth__nums teeth__nums--bottom">
+        @for (t of milkBottom; track t) {
+          <div class="teeth__num" [class.is-hot]="isFillingSelected(t)">{{ t }}</div>
+        }
+      </div>
+
+    </div>
+  }
+</section>
+   <!-- 18. Kariöse Zähne -->
+<section class="home__section teeth18">
+  <h2 class="h2">18. Kariöse Zähne:</h2>
+
+  <div
+    class="seg"
+    (click)="setActive('cariesQ')"
+    [class.is-active]="isActive('cariesQ')"
+    [class.is-invalid]="isInvalid('cariesQ')"
+  >
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.cariesQ.value === false"
+      (click)="$event.stopPropagation(); setCariesQ(false)"
+    >
+      Nein
+    </button>
+
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.cariesQ.value === true"
+      (click)="$event.stopPropagation(); setCariesQ(true)"
+    >
+      Ja
+    </button>
+  </div>
+
+  @if (isInvalid('cariesQ')) {
+    <p class="error">Bitte wählen Sie eine Option.</p>
+  }
+
+  @if (form.controls.cariesQ.value === true) {
+    <div class="teeth">
+      <!-- ===== 55–51 ===== -->
+      <div class="teeth__nums teeth__nums--top">
+        @for (t of teethTop; track t) {
+          <div class="teeth__num" [class.is-hot]="isCariesSelected(t)">{{ t }}</div>
+        }
+      </div>
+
+      <div class="teethbar">
+        @for (t of teethTop; track t) {
+          <button
+            type="button"
+            class="toothcell"
+            [class.is-selected]="isCariesSelected(t)"
+            (click)="toggleCaries(t)"
+            aria-label="Tooth {{ t }}"
+          >
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M20 6L9 17l-5-5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+          </button>
+        }
+      </div>
+
+      <!-- ===== 85–81 ===== -->
+      <div class="teethbar teethbar--bottom">
+        @for (t of teethBottom; track t) {
+          <button
+            type="button"
+            class="toothcell"
+            [class.is-selected]="isCariesSelected(t)"
+            (click)="toggleCaries(t)"
+            aria-label="Tooth {{ t }}"
+          >
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M20 6L9 17l-5-5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+          </button>
+        }
+      </div>
+
+      <div class="teeth__nums teeth__nums--bottom">
+        @for (t of teethBottom; track t) {
+          <div class="teeth__num" [class.is-hot]="isCariesSelected(t)">{{ t }}</div>
+        }
+      </div>
+
+      <!-- ===== PERMANENT 18–28 / 48–38 ===== -->
+      <div class="teethperm">
+        <div class="teethperm__nums teethperm__nums--top">
+          @for (t of permTop; track t) {
+            <div class="teethperm__num" [class.is-hot]="isCariesPermSelected(t)">{{ t }}</div>
+          }
+        </div>
+
+        <div class="teethperm__wrap">
+          <div class="teethperm__half teethperm__half--left">
+            @for (t of permTop.slice(0, 8); track t) {
+              <button
+                type="button"
+                class="teethperm__cell"
+                [class.is-selected]="isCariesPermSelected(t)"
+                (click)="toggleCariesPerm(t)"
+                aria-label="Tooth {{ t }}"
+              >
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M20 6L9 17l-5-5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+              </button>
+            }
+          </div>
+
+          <div class="teethperm__half teethperm__half--right">
+            @for (t of permTop.slice(8, 16); track t) {
+              <button
+                type="button"
+                class="teethperm__cell"
+                [class.is-selected]="isCariesPermSelected(t)"
+                (click)="toggleCariesPerm(t)"
+                aria-label="Tooth {{ t }}"
+              >
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M20 6L9 17l-5-5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+              </button>
+            }
+          </div>
+
+          <span class="teethperm__mid" aria-hidden="true"></span>
+        </div>
+
+        <div class="teethperm__wrap teethperm__wrap--bottom">
+          <div class="teethperm__half teethperm__half--left">
+            @for (t of permBottom.slice(0, 8); track t) {
+              <button
+                type="button"
+                class="teethperm__cell"
+                [class.is-selected]="isCariesPermSelected(t)"
+                (click)="toggleCariesPerm(t)"
+                aria-label="Tooth {{ t }}"
+              >
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M20 6L9 17l-5-5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+              </button>
+            }
+          </div>
+
+          <div class="teethperm__half teethperm__half--right">
+            @for (t of permBottom.slice(8, 16); track t) {
+              <button
+                type="button"
+                class="teethperm__cell"
+                [class.is-selected]="isCariesPermSelected(t)"
+                (click)="toggleCariesPerm(t)"
+                aria-label="Tooth {{ t }}"
+              >
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M20 6L9 17l-5-5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+              </button>
+            }
+          </div>
+
+          <span class="teethperm__mid" aria-hidden="true"></span>
+        </div>
+
+        <div class="teethperm__nums teethperm__nums--bottom">
+          @for (t of permBottom; track t) {
+            <div class="teethperm__num" [class.is-hot]="isCariesPermSelected(t)">{{ t }}</div>
+          }
+        </div>
+      </div>
+
+      <!-- ===== 61–65 ===== -->
+      <div class="teeth__nums teeth__nums--top">
+        @for (t of milkTop; track t) {
+          <div class="teeth__num" [class.is-hot]="isCariesSelected(t)">{{ t }}</div>
+        }
+      </div>
+
+      <div class="teethbar">
+        @for (t of milkTop; track t) {
+          <button
+            type="button"
+            class="toothcell"
+            [class.is-selected]="isCariesSelected(t)"
+            (click)="toggleCaries(t)"
+            aria-label="Tooth {{ t }}"
+          >
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M20 6L9 17l-5-5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+          </button>
+        }
+      </div>
+
+      <!-- ===== 71–75 ===== -->
+      <div class="teethbar teethbar--bottom">
+        @for (t of milkBottom; track t) {
+          <button
+            type="button"
+            class="toothcell"
+            [class.is-selected]="isCariesSelected(t)"
+            (click)="toggleCaries(t)"
+            aria-label="Tooth {{ t }}"
+          >
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M20 6L9 17l-5-5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+          </button>
+        }
+      </div>
+
+      <div class="teeth__nums teeth__nums--bottom">
+        @for (t of milkBottom; track t) {
+          <div class="teeth__num" [class.is-hot]="isCariesSelected(t)">{{ t }}</div>
+        }
+      </div>
+    </div>
+  }
+</section>
+
 
   </section>
 </form>

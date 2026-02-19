@@ -523,3 +523,214 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   border-color: #ef4444;
   background: rgba(239, 68, 68, 0.06);
 }
+
+/* ===================================================== */
+/* SECTION 16 – PRIMARY (55–51 / 85–81) */
+/* ===================================================== */
+
+.teeth {
+  margin-top: 10px;
+}
+
+/* numbers */
+.teeth__nums {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  padding: 0 2px;
+
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 14px;
+  color: #8a8a8a;
+}
+
+.teeth__nums--top { margin: 8px 0 6px; }
+.teeth__nums--bottom { margin-top: 8px; }
+
+.teeth__num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.teeth__num.is-hot {
+  color: var(--accent);
+}
+
+/* bar */
+.teethbar {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  height: 44px;
+
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  background: rgba(246, 130, 41, 0.08);
+  overflow: hidden;
+}
+
+.teethbar + .teethbar {
+  margin-top: 10px;
+}
+
+.toothcell {
+  position: relative;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+.toothcell:not(:first-child) {
+  border-left: 1px solid rgba(246, 130, 41, 0.35);
+}
+
+/* badge */
+.toothcell__badge {
+  position: absolute;
+  inset: 4px;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 0;
+  pointer-events: none;
+}
+
+.toothcell__badge svg {
+  width: 18px;
+  height: 18px;
+}
+
+.toothcell.is-selected .toothcell__badge {
+  opacity: 1;
+}
+
+
+/* ===================================================== */
+/* PERMANENT (18–28 / 48–38) – DY KORNIZA 8+8 */
+/* ===================================================== */
+
+.teethperm {
+  margin-top: 14px;
+}
+.teethperm__nums {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  padding: 0 2px;
+
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 14px;
+  color: #8a8a8a;
+}
+
+.teethperm__nums--top { margin: 6px 0; }
+.teethperm__nums--bottom { margin-top: 8px; }
+
+.teethperm__num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.teethperm__num.is-hot {
+  color: var(--accent);
+}
+.teethperm__wrap {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 44px;
+}
+
+.teethperm__wrap--bottom {
+  margin-top: 10px;
+}
+.teethperm__half {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  height: 44px;
+
+  border: 1px solid var(--accent);
+  background: rgba(246, 130, 41, 0.08);
+  overflow: visible;
+}
+.teethperm__half--left {
+  border-right: 0;
+  border-radius: 10px 0 0 10px;
+}
+
+.teethperm__half--right {
+  border-left: 0;
+  border-radius: 0 10px 10px 0;
+}
+
+.teethperm__cell {
+  position: relative;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+.teethperm__cell:not(:first-child) {
+  border-left: 1px solid rgba(246, 130, 41, 0.35);
+}
+
+.teethperm__badge {
+  position: absolute;
+  inset: 4px;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 0;
+  pointer-events: none;
+}
+
+.teethperm__badge svg {
+  width: 18px;
+  height: 18px;
+}
+
+.teethperm__cell.is-selected .teethperm__badge {
+  opacity: 1;
+}
+
+.teethperm__mid {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  transform: translateX(-1px);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.teethperm__mid::before {
+  content: "";
+  position: absolute;
+  top: -18px;
+  height: 36px;
+  border-left: 2px dashed rgba(246, 130, 41, 0.65);
+}
+
+.teethperm__mid::after {
+  content: "";
+  position: absolute;
+  bottom: -18px;
+  height: 36px;
+  border-left: 2px dashed rgba(246, 130, 41, 0.65);
+}
