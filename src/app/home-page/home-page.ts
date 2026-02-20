@@ -1,3 +1,4 @@
+// home-page.ts
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import {
@@ -100,14 +101,25 @@ type ActiveKey =
   | 'missingTeethQ'
   | 'missingTeeth'
   | 'missingPermanent'
-    // section 17
+  // section 17
   | 'fillingsQ'
   | 'fillingsTeeth'
   | 'fillingsPermanent'
-    // section 18
+  // section 18
   | 'cariesQ'
   | 'cariesTeeth'
   | 'cariesPermanent'
+  // section 19
+  | 'rootCanalQ'
+  | 'rootCanalTeeth'
+  | 'rootCanalPermanent'
+  // section 20
+  | 'dentalTreatQ'
+  | 'dentalTreatWhich'
+  // section 21
+  | 'lastRadiographyDate'
+  // section 22
+  | 'remarks'
   | null;
 
 @Component({
@@ -150,11 +162,6 @@ export class HomeComponent {
     medName: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
     medReason: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
     illnessesMed: this.fb.array<IllnessForm>([this.createIllnessGroup()]),
-    // ===== Section 18 (Kariöse Zähne) =====
-  cariesQ: this.fb.control<boolean | null>(null, [Validators.required]),
-  cariesTeeth: this.fb.array<FormControl<string>>([]),
-  cariesPermanent: this.fb.array<FormControl<string>>([]),
-
 
     // ===== Section 3 (Krankheiten) =====
     illnessQ: this.fb.control<boolean | null>(null, [Validators.required]),
@@ -214,22 +221,42 @@ export class HomeComponent {
     futureTeethDisease: this.fb.control<boolean | null>(null, [Validators.required]),
     futureTeethDiseaseNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
 
+    // ===== Section 21 (Letzte Röntgenaufnahme) =====
+    lastRadiographyDate: this.fb.control<string>('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+
     // ===== Section 16 (Missing teeth) =====
     missingTeethQ: this.fb.control<boolean | null>(null, [Validators.required]),
     missingTeeth: this.fb.array<FormControl<string>>([]),
-
-    // Permanent teeth selection
     missingPermanent: this.fb.array<FormControl<string>>([]),
 
-        // ===== Section 17 (Schadhafte Zahnfüllungen) =====
+    // ===== Section 17 (Schadhafte Zahnfüllungen) =====
     fillingsQ: this.fb.control<boolean | null>(null, [Validators.required]),
-    fillingsTeeth: this.fb.array<FormControl<string>>([]),        
-    fillingsPermanent: this.fb.array<FormControl<string>>([]),    
+    fillingsTeeth: this.fb.array<FormControl<string>>([]),
+    fillingsPermanent: this.fb.array<FormControl<string>>([]),
 
-    
+    // ===== Section 18 (Kariöse Zähne) =====
+    cariesQ: this.fb.control<boolean | null>(null, [Validators.required]),
+    cariesTeeth: this.fb.array<FormControl<string>>([]),
+    cariesPermanent: this.fb.array<FormControl<string>>([]),
+
+    // ===== Section 19 (Wurzelbehandelte Zähne) =====
+    rootCanalQ: this.fb.control<boolean | null>(null, [Validators.required]),
+    rootCanalTeeth: this.fb.array<FormControl<string>>([]),
+    rootCanalPermanent: this.fb.array<FormControl<string>>([]),
+
+    // ===== Section 20 (Behandlung Zahnarzt/KFO) =====
+    dentalTreatQ: this.fb.control<boolean | null>(null, [Validators.required]),
+    dentalTreatWhich: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
+
+    // ===== Section 22 =====
+    remarks: this.fb.control<string>('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
   });
-    
-
 
   constructor() {
     this.disableMedicationDetails();
@@ -246,6 +273,22 @@ export class HomeComponent {
     this.form.controls.dentitionNote.disable({ emitEvent: false });
     this.form.controls.jawNote.disable({ emitEvent: false });
     this.form.controls.futureTeethDiseaseNote.disable({ emitEvent: false });
+
+    // section 20 start disabled + no validators
+    this.form.controls.dentalTreatWhich.disable({ emitEvent: false });
+    this.form.controls.dentalTreatWhich.clearValidators();
+    this.form.controls.dentalTreatWhich.updateValueAndValidity({ emitEvent: false });
+  }
+
+  // ========================= DATE PICKER (Section 21) =========================
+  openDatePicker(input: HTMLInputElement) {
+    if (!input) return;
+    const anyInput = input as any;
+    if (typeof anyInput.showPicker === 'function') anyInput.showPicker();
+    else {
+      input.focus();
+      input.click();
+    }
   }
 
   // ========================= GETTERS =========================
@@ -266,7 +309,17 @@ export class HomeComponent {
   isActive(key: Exclude<ActiveKey, null>) {
     return this.activeKey() === key;
   }
+ // Helpers (needed by template)
+hasValue(ctrl: { value: any } | null | undefined): boolean {
+  const v = ctrl?.value;
+  return v !== null && v !== undefined;
+}
 
+hasText(ctrl: { value: any } | null | undefined): boolean {
+  const v = ctrl?.value;
+  if (v === null || v === undefined) return false;
+  return String(v).trim().length > 0;
+}
   // ========================= UX HELPERS =========================
   autoResize(event: Event) {
     const textarea = event.target as HTMLTextAreaElement;
@@ -321,14 +374,20 @@ export class HomeComponent {
       | 'futureTeethDiseaseNote'
       | 'missingTeethQ'
       | 'missingTeeth'
+      | 'missingPermanent'
       | 'fillingsQ'
       | 'fillingsTeeth'
       | 'fillingsPermanent'
       | 'cariesQ'
       | 'cariesTeeth'
       | 'cariesPermanent'
-
-
+      | 'rootCanalQ'
+      | 'rootCanalTeeth'
+      | 'rootCanalPermanent'
+      | 'dentalTreatQ'
+      | 'dentalTreatWhich'
+      | 'lastRadiographyDate'
+      | 'remarks'
   ) {
     const c = (this.form.controls as any)[name] as AbstractControl;
     return this.showInvalid(c);
@@ -540,14 +599,14 @@ export class HomeComponent {
     arr.updateValueAndValidity({ emitEvent: false });
   }
 
-  // ========================= SECTION 7-8: DENTAL =========================
+  // ========================= SECTION 7-15: DENTAL NOTES =========================
   setTeethCondition(value: 'gut' | 'mangelhaft' | 'schlecht') {
     this.form.controls.teethCondition.setValue(value);
     this.setActive('teethCondition');
 
     const note = this.form.controls.teethConditionNote;
 
-    if (value === 'mangelhaft') {
+    if (value === 'mangelhaft' || value === 'schlecht') {
       note.enable({ emitEvent: false });
       note.setValidators([Validators.required]);
       note.markAsPristine();
@@ -572,7 +631,6 @@ export class HomeComponent {
     note.updateValueAndValidity({ emitEvent: false });
   }
 
-  // ========================= SECTION 9-10: DENTAL =========================
   setOcclusion(value: 'klasse1' | 'klasse2' | 'klasse3') {
     this.form.controls.occlusion.setValue(value);
     this.setActive('occlusion');
@@ -597,7 +655,6 @@ export class HomeComponent {
     note.updateValueAndValidity({ emitEvent: false });
   }
 
-  // ========================= SECTION 11 =========================
   setBridgesCondition(value: 'keine' | 'gut' | 'mangelhaft' | 'schlecht') {
     this.form.controls.bridgesCondition.setValue(value);
     this.setActive('bridgesCondition');
@@ -618,7 +675,6 @@ export class HomeComponent {
     note.updateValueAndValidity({ emitEvent: false });
   }
 
-  // ========================= SECTION 12 =========================
   setPartialDenturesCondition(value: 'keine' | 'gut' | 'mangelhaft' | 'schlecht') {
     this.form.controls.partialDenturesCondition.setValue(value);
     this.setActive('partialDenturesCondition');
@@ -639,7 +695,6 @@ export class HomeComponent {
     note.updateValueAndValidity({ emitEvent: false });
   }
 
-  // ========================= SECTION 13: DENTITION =========================
   setDentition(value: boolean) {
     this.form.controls.dentition.setValue(value);
     this.setActive('dentition');
@@ -660,7 +715,6 @@ export class HomeComponent {
     note.updateValueAndValidity({ emitEvent: false });
   }
 
-  // ========================= SECTION 14: KIEFER =========================
   setJaw(value: boolean) {
     this.form.controls.jaw.setValue(value);
     this.setActive('jaw');
@@ -681,7 +735,6 @@ export class HomeComponent {
     note.updateValueAndValidity({ emitEvent: false });
   }
 
-  // ========================= SECTION 15 =========================
   setFutureTeethDisease(value: boolean) {
     this.form.controls.futureTeethDisease.setValue(value);
     this.setActive('futureTeethDisease');
@@ -709,8 +762,18 @@ export class HomeComponent {
   readonly milkTop = ['61', '62', '63', '64', '65'] as const;
   readonly milkBottom = ['71', '72', '73', '74', '75'] as const;
 
+  readonly permTop = [
+    '18', '17', '16', '15', '14', '13', '12', '11', '21', '22', '23', '24', '25', '26', '27', '28',
+  ] as const;
+  readonly permBottom = [
+    '48', '47', '46', '45', '44', '43', '42', '41', '31', '32', '33', '34', '35', '36', '37', '38',
+  ] as const;
+
   get missingTeethArr(): FormArray<FormControl<string>> {
     return this.form.controls.missingTeeth;
+  }
+  get missingPermanentArr(): FormArray<FormControl<string>> {
+    return this.form.controls.missingPermanent;
   }
 
   setMissingTeethQ(val: boolean) {
@@ -737,11 +800,26 @@ export class HomeComponent {
     this.missingTeethArr.markAsDirty();
     this.missingTeethArr.updateValueAndValidity({ emitEvent: false });
   }
-    // ========================= SECTION 17: DAMAGED FILLINGS =========================
+
+  isPermSelected(code: string): boolean {
+    return this.missingPermanentArr.controls.some((c) => c.value === code);
+  }
+
+  togglePerm(code: string) {
+    this.setActive('missingPermanent');
+
+    const idx = this.missingPermanentArr.controls.findIndex((c) => c.value === code);
+    if (idx >= 0) this.missingPermanentArr.removeAt(idx);
+    else this.missingPermanentArr.push(new FormControl(code, { nonNullable: true }));
+
+    this.missingPermanentArr.markAsDirty();
+    this.missingPermanentArr.updateValueAndValidity({ emitEvent: false });
+  }
+
+  // ========================= SECTION 17: FILLINGS =========================
   get fillingsTeethArr(): FormArray<FormControl<string>> {
     return this.form.controls.fillingsTeeth;
   }
-
   get fillingsPermanentArr(): FormArray<FormControl<string>> {
     return this.form.controls.fillingsPermanent;
   }
@@ -755,54 +833,6 @@ export class HomeComponent {
       while (this.fillingsPermanentArr.length) this.fillingsPermanentArr.removeAt(0);
     }
   }
-// ========================= SECTION 18: CARIES =========================
-get cariesTeethArr(): FormArray<FormControl<string>> {
-  return (this.form.controls as any).cariesTeeth as FormArray<FormControl<string>>;
-}
-
-get cariesPermanentArr(): FormArray<FormControl<string>> {
-  return (this.form.controls as any).cariesPermanent as FormArray<FormControl<string>>;
-}
-
-setCariesQ(val: boolean) {
-  (this.form.controls as any).cariesQ.setValue(val);
-  this.setActive('cariesQ');
-
-  if (val === false) {
-    while (this.cariesTeethArr.length) this.cariesTeethArr.removeAt(0);
-    while (this.cariesPermanentArr.length) this.cariesPermanentArr.removeAt(0);
-  }
-}
-
-isCariesSelected(code: string): boolean {
-  return this.cariesTeethArr.controls.some((c) => c.value === code);
-}
-
-toggleCaries(code: string) {
-  this.setActive('cariesTeeth');
-
-  const idx = this.cariesTeethArr.controls.findIndex((c) => c.value === code);
-  if (idx >= 0) this.cariesTeethArr.removeAt(idx);
-  else this.cariesTeethArr.push(new FormControl(code, { nonNullable: true }));
-
-  this.cariesTeethArr.markAsDirty();
-  this.cariesTeethArr.updateValueAndValidity({ emitEvent: false });
-}
-
-isCariesPermSelected(code: string): boolean {
-  return this.cariesPermanentArr.controls.some((c) => c.value === code);
-}
-
-toggleCariesPerm(code: string) {
-  this.setActive('cariesPermanent');
-
-  const idx = this.cariesPermanentArr.controls.findIndex((c) => c.value === code);
-  if (idx >= 0) this.cariesPermanentArr.removeAt(idx);
-  else this.cariesPermanentArr.push(new FormControl(code, { nonNullable: true }));
-
-  this.cariesPermanentArr.markAsDirty();
-  this.cariesPermanentArr.updateValueAndValidity({ emitEvent: false });
-}
 
   isFillingSelected(code: string): boolean {
     return this.fillingsTeethArr.controls.some((c) => c.value === code);
@@ -834,63 +864,123 @@ toggleCariesPerm(code: string) {
     this.fillingsPermanentArr.updateValueAndValidity({ emitEvent: false });
   }
 
-
-  // ========================= PERMANENT TEETH GRID (18–28 / 48–38) =========================
-  readonly permTop = [
-    '18',
-    '17',
-    '16',
-    '15',
-    '14',
-    '13',
-    '12',
-    '11',
-    '21',
-    '22',
-    '23',
-    '24',
-    '25',
-    '26',
-    '27',
-    '28',
-  ] as const;
-
-  readonly permBottom = [
-    '48',
-    '47',
-    '46',
-    '45',
-    '44',
-    '43',
-    '42',
-    '41',
-    '31',
-    '32',
-    '33',
-    '34',
-    '35',
-    '36',
-    '37',
-    '38',
-  ] as const;
-
-  get missingPermanentArr(): FormArray<FormControl<string>> {
-    return this.form.controls.missingPermanent;
+  // ========================= SECTION 18: CARIES =========================
+  get cariesTeethArr(): FormArray<FormControl<string>> {
+    return this.form.controls.cariesTeeth;
+  }
+  get cariesPermanentArr(): FormArray<FormControl<string>> {
+    return this.form.controls.cariesPermanent;
   }
 
-  isPermSelected(code: string): boolean {
-    return this.missingPermanentArr.controls.some((c) => c.value === code);
+  setCariesQ(val: boolean) {
+    this.form.controls.cariesQ.setValue(val);
+    this.setActive('cariesQ');
+
+    if (val === false) {
+      while (this.cariesTeethArr.length) this.cariesTeethArr.removeAt(0);
+      while (this.cariesPermanentArr.length) this.cariesPermanentArr.removeAt(0);
+    }
   }
 
-  togglePerm(code: string) {
-    this.setActive('missingPermanent');
+  isCariesSelected(code: string): boolean {
+    return this.cariesTeethArr.controls.some((c) => c.value === code);
+  }
 
-    const idx = this.missingPermanentArr.controls.findIndex((c) => c.value === code);
-    if (idx >= 0) this.missingPermanentArr.removeAt(idx);
-    else this.missingPermanentArr.push(new FormControl(code, { nonNullable: true }));
+  toggleCaries(code: string) {
+    this.setActive('cariesTeeth');
 
-    this.missingPermanentArr.markAsDirty();
-    this.missingPermanentArr.updateValueAndValidity({ emitEvent: false });
+    const idx = this.cariesTeethArr.controls.findIndex((c) => c.value === code);
+    if (idx >= 0) this.cariesTeethArr.removeAt(idx);
+    else this.cariesTeethArr.push(new FormControl(code, { nonNullable: true }));
+
+    this.cariesTeethArr.markAsDirty();
+    this.cariesTeethArr.updateValueAndValidity({ emitEvent: false });
+  }
+
+  isCariesPermSelected(code: string): boolean {
+    return this.cariesPermanentArr.controls.some((c) => c.value === code);
+  }
+
+  toggleCariesPerm(code: string) {
+    this.setActive('cariesPermanent');
+
+    const idx = this.cariesPermanentArr.controls.findIndex((c) => c.value === code);
+    if (idx >= 0) this.cariesPermanentArr.removeAt(idx);
+    else this.cariesPermanentArr.push(new FormControl(code, { nonNullable: true }));
+
+    this.cariesPermanentArr.markAsDirty();
+    this.cariesPermanentArr.updateValueAndValidity({ emitEvent: false });
+  }
+
+  // ========================= SECTION 19: ROOT CANAL =========================
+  get rootTeethArr(): FormArray<FormControl<string>> {
+    return this.form.controls.rootCanalTeeth;
+  }
+  get rootPermanentArr(): FormArray<FormControl<string>> {
+    return this.form.controls.rootCanalPermanent;
+  }
+
+  setRootCanalQ(val: boolean) {
+    this.form.controls.rootCanalQ.setValue(val);
+    this.setActive('rootCanalQ');
+
+    if (val === false) {
+      while (this.rootTeethArr.length) this.rootTeethArr.removeAt(0);
+      while (this.rootPermanentArr.length) this.rootPermanentArr.removeAt(0);
+    }
+  }
+
+  isRootSelected(code: string): boolean {
+    return this.rootTeethArr.controls.some((c) => c.value === code);
+  }
+
+  toggleRoot(code: string) {
+    this.setActive('rootCanalTeeth');
+
+    const idx = this.rootTeethArr.controls.findIndex((c) => c.value === code);
+    if (idx >= 0) this.rootTeethArr.removeAt(idx);
+    else this.rootTeethArr.push(new FormControl(code, { nonNullable: true }));
+
+    this.rootTeethArr.markAsDirty();
+    this.rootTeethArr.updateValueAndValidity({ emitEvent: false });
+  }
+
+  isRootPermSelected(code: string): boolean {
+    return this.rootPermanentArr.controls.some((c) => c.value === code);
+  }
+
+  toggleRootPerm(code: string) {
+    this.setActive('rootCanalPermanent');
+
+    const idx = this.rootPermanentArr.controls.findIndex((c) => c.value === code);
+    if (idx >= 0) this.rootPermanentArr.removeAt(idx);
+    else this.rootPermanentArr.push(new FormControl(code, { nonNullable: true }));
+
+    this.rootPermanentArr.markAsDirty();
+    this.rootPermanentArr.updateValueAndValidity({ emitEvent: false });
+  }
+
+  // ========================= SECTION 20: TREATMENT =========================
+  setDentalTreatQ(val: boolean) {
+    this.form.controls.dentalTreatQ.setValue(val);
+    this.setActive('dentalTreatQ');
+
+    const which = this.form.controls.dentalTreatWhich;
+
+    if (val === true) {
+      which.enable({ emitEvent: false });
+      which.setValidators([Validators.required]);
+      which.markAsPristine();
+      which.markAsUntouched();
+    } else {
+      which.reset('', { emitEvent: false });
+      which.clearValidators();
+      which.disable({ emitEvent: false });
+      which.markAsPristine();
+      which.markAsUntouched();
+    }
+
+    which.updateValueAndValidity({ emitEvent: false });
   }
 
   // ========================= SECTION 2: MEDIKAMENTE =========================
@@ -1254,54 +1344,115 @@ toggleCariesPerm(code: string) {
     this.form.controls.reportFile.markAsUntouched();
   }
 
-  // ========================= SUBMIT / WEITER =========================
-  onWeiter() {
-    this.submitted.set(true);
+  // ========================= ✅ CONSOLE FORMAT FOR BACKEND (ARRAY OF {code,value}) =========================
+  private buildAnswersArray(raw: any): Array<{ code: string; value: any }> {
+    const answers: Array<{ code: string; value: any }> = [];
 
-    this.markEnabledAsTouched(this.form);
-    this.form.updateValueAndValidity({ emitEvent: false });
-
-    if (this.form.controls.reportFile.invalid) {
-      this.setActive('reportFile');
-    }
-
-    if (this.form.invalid) return;
-
-    const raw = this.form.getRawValue();
-
-    const payload = {
-      ...raw,
-      reportFile: raw.reportFile ? raw.reportFile.name : null,
+    const push = (code: string, value: any) => {
+      if (value instanceof File) {
+        answers.push({ code, value: value.name });
+        return;
+      }
+      answers.push({ code, value });
     };
 
-    console.log('FORM VALUE:\n' + JSON.stringify(payload, null, 2));
+    const simpleKeys: string[] = [
+      'heightCm',
+      'weightKg',
+      'medication',
+      'medName',
+      'medReason',
+      'illnessQ',
+      'opsQ',
+      'opsA',
+      'opsB',
+      'opsC',
+      'opsD',
+      'doctorFirstName',
+      'doctorLastName',
+      'doctorStreet',
+      'doctorNumber',
+      'doctorCity',
+      'reportFile',
+      'teethCondition',
+      'teethConditionNote',
+      'hygiene',
+      'hygieneNote',
+      'occlusion',
+      'crownsCondition',
+      'crownsNote',
+      'bridgesCondition',
+      'bridgesNote',
+      'partialDenturesCondition',
+      'partialDenturesNote',
+      'dentition',
+      'dentitionNote',
+      'jaw',
+      'jawNote',
+      'futureTeethDisease',
+      'futureTeethDiseaseNote',
+      'missingTeethQ',
+      'fillingsQ',
+      'cariesQ',
+      'rootCanalQ',
+      'dentalTreatQ',
+      'dentalTreatWhich',
+      'lastRadiographyDate',
+      'remarks',
+    ];
 
-    const dentalSummary = {
-      teethCondition: payload.teethCondition,
-      teethConditionNote: payload.teethConditionNote,
-      hygiene: payload.hygiene,
-      hygieneNote: payload.hygieneNote,
-      occlusion: payload.occlusion,
-      crownsCondition: payload.crownsCondition,
-      crownsNote: payload.crownsNote,
-      bridgesCondition: payload.bridgesCondition,
-      bridgesNote: payload.bridgesNote,
-      partialDenturesCondition: payload.partialDenturesCondition,
-      partialDenturesNote: payload.partialDenturesNote,
-      dentition: payload.dentition,
-      dentitionNote: payload.dentitionNote,
-      jaw: payload.jaw,
-      jawNote: payload.jawNote,
-      futureTeethDisease: payload.futureTeethDisease,
-      futureTeethDiseaseNote: payload.futureTeethDiseaseNote,
-      missingTeethQ: payload.missingTeethQ,
-      missingTeeth: payload.missingTeeth,
-      missingPermanent: payload.missingPermanent,
-    };
+    for (const k of simpleKeys) push(k, raw?.[k]);
 
-    console.log('WEITER SUMMARY (7-16):\n' + JSON.stringify(dentalSummary, null, 2));
-    
+    // arrays (teeth selections)
+    push('missingTeeth', raw?.missingTeeth ?? []);
+    push('missingPermanent', raw?.missingPermanent ?? []);
+    push('fillingsTeeth', raw?.fillingsTeeth ?? []);
+    push('fillingsPermanent', raw?.fillingsPermanent ?? []);
+    push('cariesTeeth', raw?.cariesTeeth ?? []);
+    push('cariesPermanent', raw?.cariesPermanent ?? []);
+    push('rootCanalTeeth', raw?.rootCanalTeeth ?? []);
+    push('rootCanalPermanent', raw?.rootCanalPermanent ?? []);
+
+    // form arrays with objects
+    push('illnessesMed', raw?.illnessesMed ?? []);
+    push('illnessesIll', raw?.illnessesIll ?? []);
+    push('opsBItems', raw?.opsBItems ?? []);
+
+    return answers;
   }
+
+  private logAnswersAsSingleArray(answers: Array<{ code: string; value: any }>) {
+    console.log('items in warehouse:', answers);
+    console.table(
+      answers.map((a) => ({
+        code: a.code,
+        value: Array.isArray(a.value) ? JSON.stringify(a.value) : a.value,
+      }))
+    );
+  }
+
+
+ // ========================= SUBMIT / WEITER =========================
+onWeiter() {
+  this.submitted.set(true);
+
+  this.markEnabledAsTouched(this.form);
+  this.form.updateValueAndValidity({ emitEvent: false });
+
+  if (this.form.controls.reportFile.invalid) this.setActive('reportFile');
+  if (this.form.invalid) return;
+
+  const raw = this.form.getRawValue();
+
+  const normalized = {
+    ...raw,
+    reportFile: raw.reportFile ? raw.reportFile.name : null,
+  };
+
+  const answers = this.buildAnswersArray(normalized);
+
+  console.log('items in warehouse:', answers);
+}
 
   // ========================= TEMPLATE HELPERS for attempts =========================
   attemptMed() {

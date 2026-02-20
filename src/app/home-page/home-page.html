@@ -10,8 +10,8 @@
         <div
           class="box box--unit"
           (click)="setActive('heightCm')"
-          [class.is-active]="isActive('heightCm')|| form.controls.heightCm.value !== null"
-          [class.is-invalid]="isInvalid('heightCm')|| form.controls.heightCm.value !== null"
+          [class.is-active]="isActive('heightCm') || hasValue(form.controls.heightCm)"
+          [class.is-invalid]="isInvalid('heightCm')"
         >
           <input
             type="number"
@@ -35,8 +35,8 @@
         <div
           class="box box--unit"
           (click)="setActive('weightKg')"
-          [class.is-active]="isActive('weightKg')|| form.controls.heightCm.value !== null"
-          [class.is-invalid]="isInvalid('weightKg')|| form.controls.heightCm.value !== null"
+          [class.is-active]="isActive('weightKg') || hasValue(form.controls.weightKg)"
+          [class.is-invalid]="isInvalid('weightKg')"
         >
           <input
             type="number"
@@ -68,8 +68,8 @@
     <div
       class="seg"
       (click)="setActive('medication')"
-      [class.is-active]="isActive('medication')|| form.controls.medication.value !== null"
-      [class.is-invalid]="isInvalid('medication')|| form.controls.medication.value !== null"
+      [class.is-active]="isActive('medication') || hasValue(form.controls.medication)"
+      [class.is-invalid]="isInvalid('medication')"
     >
       <button
         type="button"
@@ -113,7 +113,7 @@
           <div
             class="box"
             (click)="setActive('medName')"
-            [class.is-active]="isActive('medName')"
+            [class.is-active]="isActive('medName') || hasText(form.controls.medName)"
             [class.is-invalid]="isInvalid('medName')"
           >
             <input
@@ -132,7 +132,7 @@
           <div
             class="box"
             (click)="setActive('medReason')"
-            [class.is-active]="isActive('medReason')"
+            [class.is-active]="isActive('medReason') || hasText(form.controls.medReason)"
             [class.is-invalid]="isInvalid('medReason')"
           >
             <input
@@ -170,7 +170,7 @@
             <div
               class="box box--textarea"
               (click)="setActive(medActiveKey(i,'desc'))"
-              [class.is-active]="isMedActive(i,'desc')"
+              [class.is-active]="isMedActive(i,'desc') || hasText(illnessCtrl(illnessesMed, i,'desc'))"
               [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'desc'))"
             >
               <textarea
@@ -193,10 +193,14 @@
                 <div
                   class="box"
                   (click)="setActive(medActiveKey(i,'start'))"
-                  [class.is-active]="isMedActive(i,'start')"
+                  [class.is-active]="isMedActive(i,'start') || hasText(illnessCtrl(illnessesMed, i,'startDate'))"
                   [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'startDate'))"
                 >
-                  <input type="date" formControlName="startDate" (focus)="setActive(medActiveKey(i,'start'))" />
+                  <input
+                    type="date"
+                    formControlName="startDate"
+                    (focus)="setActive(medActiveKey(i,'start'))"
+                  />
                   <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
                 </div>
                 @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'startDate'))) {
@@ -209,10 +213,14 @@
                 <div
                   class="box"
                   (click)="setActive(medActiveKey(i,'end'))"
-                  [class.is-active]="isMedActive(i,'end')"
+                  [class.is-active]="isMedActive(i,'end') || hasText(illnessCtrl(illnessesMed, i,'endDate'))"
                   [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'endDate'))"
                 >
-                  <input type="date" formControlName="endDate" (focus)="setActive(medActiveKey(i,'end'))" />
+                  <input
+                    type="date"
+                    formControlName="endDate"
+                    (focus)="setActive(medActiveKey(i,'end'))"
+                  />
                   <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
                 </div>
                 @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'endDate'))) {
@@ -227,7 +235,7 @@
               <div
                 class="seg"
                 (click)="setActive(medActiveKey(i,'operated'))"
-                [class.is-active]="isMedActive(i,'operated')"
+                [class.is-active]="isMedActive(i,'operated') || hasValue(illnessCtrl(illnessesMed, i,'operated'))"
                 [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'operated'))"
               >
                 <button
@@ -259,7 +267,7 @@
               <div
                 class="seg"
                 (click)="setActive(medActiveKey(i,'treatmentDone'))"
-                [class.is-active]="isMedActive(i,'treatmentDone')"
+                [class.is-active]="isMedActive(i,'treatmentDone') || hasValue(illnessCtrl(illnessesMed, i,'treatmentDone'))"
                 [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'treatmentDone'))"
               >
                 <button
@@ -296,7 +304,7 @@
                   <div
                     class="box provider__box"
                     (click)="setActive(medActiveKey(i,'docFirstName'))"
-                    [class.is-active]="isMedActive(i,'docFirstName')"
+                    [class.is-active]="isMedActive(i,'docFirstName') || hasText(illnessCtrl(illnessesMed, i,'docFirstName'))"
                     [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docFirstName'))"
                   >
                     <input
@@ -315,7 +323,7 @@
                   <div
                     class="box provider__box"
                     (click)="setActive(medActiveKey(i,'docLastName'))"
-                    [class.is-active]="isMedActive(i,'docLastName')"
+                    [class.is-active]="isMedActive(i,'docLastName') || hasText(illnessCtrl(illnessesMed, i,'docLastName'))"
                     [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docLastName'))"
                   >
                     <input
@@ -336,7 +344,7 @@
                   <div
                     class="box provider__box"
                     (click)="setActive(medActiveKey(i,'docStreet'))"
-                    [class.is-active]="isMedActive(i,'docStreet')"
+                    [class.is-active]="isMedActive(i,'docStreet') || hasText(illnessCtrl(illnessesMed, i,'docStreet'))"
                     [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docStreet'))"
                   >
                     <input
@@ -355,7 +363,7 @@
                   <div
                     class="box provider__box"
                     (click)="setActive(medActiveKey(i,'docNr'))"
-                    [class.is-active]="isMedActive(i,'docNr')"
+                    [class.is-active]="isMedActive(i,'docNr') || hasText(illnessCtrl(illnessesMed, i,'docNr'))"
                     [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docNr'))"
                   >
                     <input
@@ -376,7 +384,7 @@
                   <div
                     class="box provider__box"
                     (click)="setActive(medActiveKey(i,'docZipCity'))"
-                    [class.is-active]="isMedActive(i,'docZipCity')"
+                    [class.is-active]="isMedActive(i,'docZipCity') || hasText(illnessCtrl(illnessesMed, i,'docZipCity'))"
                     [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docZipCity'))"
                   >
                     <input
@@ -403,11 +411,11 @@
         (click)="addMedIllness()"
         [class.is-disabled]="!canAddMedIllness()"
         [attr.aria-disabled]="!canAddMedIllness()"
-         >
-         + Krankheit erfassen
-            </button>
-            }
-       </section>
+      >
+        + Krankheit erfassen
+      </button>
+    }
+  </section>
 
   <!-- 3. Krankheiten oder Beschwerden -->
   <section class="home__section">
@@ -416,7 +424,7 @@
     <div
       class="seg"
       (click)="setActive('illnessQ')"
-      [class.is-active]="isActive('illnessQ')"
+      [class.is-active]="isActive('illnessQ') || hasValue(form.controls.illnessQ)"
       [class.is-invalid]="isInvalid('illnessQ')"
     >
       <button
@@ -471,7 +479,7 @@
             <div
               class="box box--textarea"
               (click)="setActive(illActiveKey(i,'desc'))"
-              [class.is-active]="isIllActive(i,'desc')"
+              [class.is-active]="isIllActive(i,'desc') || hasText(illnessCtrl(illnessesIll, i,'desc'))"
               [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'desc'))"
             >
               <textarea
@@ -493,7 +501,7 @@
                 <div
                   class="box"
                   (click)="setActive(illActiveKey(i,'start'))"
-                  [class.is-active]="isIllActive(i,'start')"
+                  [class.is-active]="isIllActive(i,'start') || hasText(illnessCtrl(illnessesIll, i,'startDate'))"
                   [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'startDate'))"
                 >
                   <input type="date" formControlName="startDate" (focus)="setActive(illActiveKey(i,'start'))" />
@@ -509,7 +517,7 @@
                 <div
                   class="box"
                   (click)="setActive(illActiveKey(i,'end'))"
-                  [class.is-active]="isIllActive(i,'end')"
+                  [class.is-active]="isIllActive(i,'end') || hasText(illnessCtrl(illnessesIll, i,'endDate'))"
                   [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'endDate'))"
                 >
                   <input type="date" formControlName="endDate" (focus)="setActive(illActiveKey(i,'end'))" />
@@ -526,7 +534,7 @@
               <div
                 class="seg"
                 (click)="setActive(illActiveKey(i,'operated'))"
-                [class.is-active]="isIllActive(i,'operated')"
+                [class.is-active]="isIllActive(i,'operated') || hasValue(illnessCtrl(illnessesIll, i,'operated'))"
                 [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'operated'))"
               >
                 <button
@@ -557,7 +565,7 @@
               <div
                 class="seg"
                 (click)="setActive(illActiveKey(i,'treatmentDone'))"
-                [class.is-active]="isIllActive(i,'treatmentDone')"
+                [class.is-active]="isIllActive(i,'treatmentDone') || hasValue(illnessCtrl(illnessesIll, i,'treatmentDone'))"
                 [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'treatmentDone'))"
               >
                 <button
@@ -594,7 +602,7 @@
                   <div
                     class="box provider__box"
                     (click)="setActive(illActiveKey(i,'docFirstName'))"
-                    [class.is-active]="isIllActive(i,'docFirstName')"
+                    [class.is-active]="isIllActive(i,'docFirstName') || hasText(illnessCtrl(illnessesIll, i,'docFirstName'))"
                     [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docFirstName'))"
                   >
                     <input
@@ -613,7 +621,7 @@
                   <div
                     class="box provider__box"
                     (click)="setActive(illActiveKey(i,'docLastName'))"
-                    [class.is-active]="isIllActive(i,'docLastName')"
+                    [class.is-active]="isIllActive(i,'docLastName') || hasText(illnessCtrl(illnessesIll, i,'docLastName'))"
                     [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docLastName'))"
                   >
                     <input
@@ -634,7 +642,7 @@
                   <div
                     class="box provider__box"
                     (click)="setActive(illActiveKey(i,'docStreet'))"
-                    [class.is-active]="isIllActive(i,'docStreet')"
+                    [class.is-active]="isIllActive(i,'docStreet') || hasText(illnessCtrl(illnessesIll, i,'docStreet'))"
                     [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docStreet'))"
                   >
                     <input
@@ -653,7 +661,7 @@
                   <div
                     class="box provider__box"
                     (click)="setActive(illActiveKey(i,'docNr'))"
-                    [class.is-active]="isIllActive(i,'docNr')"
+                    [class.is-active]="isIllActive(i,'docNr') || hasText(illnessCtrl(illnessesIll, i,'docNr'))"
                     [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docNr'))"
                   >
                     <input
@@ -674,7 +682,7 @@
                   <div
                     class="box provider__box"
                     (click)="setActive(illActiveKey(i,'docZipCity'))"
-                    [class.is-active]="isIllActive(i,'docZipCity')"
+                    [class.is-active]="isIllActive(i,'docZipCity') || hasText(illnessCtrl(illnessesIll, i,'docZipCity'))"
                     [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docZipCity'))"
                   >
                     <input
@@ -695,16 +703,14 @@
       </div>
 
       <button
-           type="button"
-            class="btn-add btn-add--bottom"
-          (click)="addIllIllness()"
-          [class.is-disabled]="!canAddIllIllness()"
-          [attr.aria-disabled]="!canAddIllIllness()"
-
-          >
-               + Krankheit erfassen
+        type="button"
+        class="btn-add btn-add--bottom"
+        (click)="addIllIllness()"
+        [class.is-disabled]="!canAddIllIllness()"
+        [attr.aria-disabled]="!canAddIllIllness()"
+      >
+        + Krankheit erfassen
       </button>
-
     }
   </section>
 
@@ -715,7 +721,7 @@
     <div
       class="seg"
       (click)="setActive('opsQ')"
-      [class.is-active]="isActive('opsQ')"
+      [class.is-active]="isActive('opsQ') || hasValue(form.controls.opsQ)"
       [class.is-invalid]="isInvalid('opsQ')"
     >
       <button
@@ -755,7 +761,7 @@
         <div
           class="seg"
           (click)="setActive('opsA')"
-          [class.is-active]="isActive('opsA')"
+          [class.is-active]="isActive('opsA') || hasValue(form.controls.opsA)"
           [class.is-invalid]="isInvalid('opsA')"
         >
           <button
@@ -789,7 +795,7 @@
         <div
           class="seg"
           (click)="setActive('opsB')"
-          [class.is-active]="isActive('opsB')"
+          [class.is-active]="isActive('opsB') || hasValue(form.controls.opsB)"
           [class.is-invalid]="isInvalid('opsB')"
         >
           <button
@@ -836,7 +842,7 @@
                 <div
                   class="box box--textarea"
                   (click)="setActive(opsBActiveKey(i,'desc'))"
-                  [class.is-active]="isOpsBActive(i,'desc')"
+                  [class.is-active]="isOpsBActive(i,'desc') || hasText(illnessCtrl(opsBItems, i,'desc'))"
                   [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'desc'))"
                 >
                   <textarea
@@ -858,7 +864,7 @@
                     <div
                       class="box"
                       (click)="setActive(opsBActiveKey(i,'start'))"
-                      [class.is-active]="isOpsBActive(i,'start')"
+                      [class.is-active]="isOpsBActive(i,'start') || hasText(illnessCtrl(opsBItems, i,'startDate'))"
                       [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'startDate'))"
                     >
                       <input type="date" formControlName="startDate" (focus)="setActive(opsBActiveKey(i,'start'))" />
@@ -874,7 +880,7 @@
                     <div
                       class="box"
                       (click)="setActive(opsBActiveKey(i,'end'))"
-                      [class.is-active]="isOpsBActive(i,'end')"
+                      [class.is-active]="isOpsBActive(i,'end') || hasText(illnessCtrl(opsBItems, i,'endDate'))"
                       [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'endDate'))"
                     >
                       <input type="date" formControlName="endDate" (focus)="setActive(opsBActiveKey(i,'end'))" />
@@ -891,7 +897,7 @@
                   <div
                     class="seg"
                     (click)="setActive(opsBActiveKey(i,'operated'))"
-                    [class.is-active]="isOpsBActive(i,'operated')"
+                    [class.is-active]="isOpsBActive(i,'operated') || hasValue(illnessCtrl(opsBItems, i,'operated'))"
                     [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'operated'))"
                   >
                     <button
@@ -922,7 +928,7 @@
                   <div
                     class="seg"
                     (click)="setActive(opsBActiveKey(i,'treatmentDone'))"
-                    [class.is-active]="isOpsBActive(i,'treatmentDone')"
+                    [class.is-active]="isOpsBActive(i,'treatmentDone') || hasValue(illnessCtrl(opsBItems, i,'treatmentDone'))"
                     [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'treatmentDone'))"
                   >
                     <button
@@ -948,7 +954,7 @@
                   }
                 </div>
 
-                <!-- Provider (same pattern, pa blur) -->
+                <!-- Provider (same pattern) -->
                 <div class="provider">
                   <p class="provider__title">
                     Name und Adresse des Arztes, Spitals oder anderen Leistungserbringers
@@ -959,7 +965,7 @@
                       <div
                         class="box provider__box"
                         (click)="setActive(opsBActiveKey(i,'docFirstName'))"
-                        [class.is-active]="isOpsBActive(i,'docFirstName')"
+                        [class.is-active]="isOpsBActive(i,'docFirstName') || hasText(illnessCtrl(opsBItems, i,'docFirstName'))"
                         [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'docFirstName'))"
                       >
                         <input
@@ -978,7 +984,7 @@
                       <div
                         class="box provider__box"
                         (click)="setActive(opsBActiveKey(i,'docLastName'))"
-                        [class.is-active]="isOpsBActive(i,'docLastName')"
+                        [class.is-active]="isOpsBActive(i,'docLastName') || hasText(illnessCtrl(opsBItems, i,'docLastName'))"
                         [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'docLastName'))"
                       >
                         <input
@@ -999,7 +1005,7 @@
                       <div
                         class="box provider__box"
                         (click)="setActive(opsBActiveKey(i,'docStreet'))"
-                        [class.is-active]="isOpsBActive(i,'docStreet')"
+                        [class.is-active]="isOpsBActive(i,'docStreet') || hasText(illnessCtrl(opsBItems, i,'docStreet'))"
                         [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'docStreet'))"
                       >
                         <input
@@ -1018,7 +1024,7 @@
                       <div
                         class="box provider__box"
                         (click)="setActive(opsBActiveKey(i,'docNr'))"
-                        [class.is-active]="isOpsBActive(i,'docNr')"
+                        [class.is-active]="isOpsBActive(i,'docNr') || hasText(illnessCtrl(opsBItems, i,'docNr'))"
                         [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'docNr'))"
                       >
                         <input
@@ -1039,7 +1045,7 @@
                       <div
                         class="box provider__box"
                         (click)="setActive(opsBActiveKey(i,'docZipCity'))"
-                        [class.is-active]="isOpsBActive(i,'docZipCity')"
+                        [class.is-active]="isOpsBActive(i,'docZipCity') || hasText(illnessCtrl(opsBItems, i,'docZipCity'))"
                         [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'docZipCity'))"
                       >
                         <input
@@ -1059,15 +1065,15 @@
             }
           </div>
 
-             <button
-           type="button"
-           class="btn-add btn-add--bottom"
-           (click)="addOpsBItem()"
-              [class.is-disabled]="!canAddOpsBItem()"
-              [attr.aria-disabled]="!canAddOpsBItem()"
-                 >
-                 + Krankheit erfassen
-            </button>
+          <button
+            type="button"
+            class="btn-add btn-add--bottom"
+            (click)="addOpsBItem()"
+            [class.is-disabled]="!canAddOpsBItem()"
+            [attr.aria-disabled]="!canAddOpsBItem()"
+          >
+            + Krankheit erfassen
+          </button>
         }
       </div>
 
@@ -1078,7 +1084,7 @@
         <div
           class="seg"
           (click)="setActive('opsC')"
-          [class.is-active]="isActive('opsC')"
+          [class.is-active]="isActive('opsC') || hasValue(form.controls.opsC)"
           [class.is-invalid]="isInvalid('opsC')"
         >
           <button
@@ -1115,7 +1121,7 @@
         <div
           class="seg"
           (click)="setActive('opsD')"
-          [class.is-active]="isActive('opsD')"
+          [class.is-active]="isActive('opsD') || hasValue(form.controls.opsD)"
           [class.is-invalid]="isInvalid('opsD')"
         >
           <button
@@ -1154,7 +1160,7 @@
         <div
           class="box"
           (click)="setActive('doctorFirstName')"
-          [class.is-active]="isActive('doctorFirstName')"
+          [class.is-active]="isActive('doctorFirstName') || hasText(form.controls.doctorFirstName)"
           [class.is-invalid]="isInvalid('doctorFirstName')"
         >
           <input
@@ -1174,7 +1180,7 @@
         <div
           class="box"
           (click)="setActive('doctorLastName')"
-          [class.is-active]="isActive('doctorLastName')"
+          [class.is-active]="isActive('doctorLastName') || hasText(form.controls.doctorLastName)"
           [class.is-invalid]="isInvalid('doctorLastName')"
         >
           <input
@@ -1196,7 +1202,7 @@
         <div
           class="box"
           (click)="setActive('doctorStreet')"
-          [class.is-active]="isActive('doctorStreet')"
+          [class.is-active]="isActive('doctorStreet') || hasText(form.controls.doctorStreet)"
           [class.is-invalid]="isInvalid('doctorStreet')"
         >
           <input
@@ -1216,7 +1222,7 @@
         <div
           class="box"
           (click)="setActive('doctorNumber')"
-          [class.is-active]="isActive('doctorNumber')"
+          [class.is-active]="isActive('doctorNumber') || hasText(form.controls.doctorNumber)"
           [class.is-invalid]="isInvalid('doctorNumber')"
         >
           <input
@@ -1237,7 +1243,7 @@
       <div
         class="box"
         (click)="setActive('doctorCity')"
-        [class.is-active]="isActive('doctorCity')"
+        [class.is-active]="isActive('doctorCity') || hasText(form.controls.doctorCity)"
         [class.is-invalid]="isInvalid('doctorCity')"
       >
         <input
@@ -1252,541 +1258,583 @@
         <p class="error">PLZ und Ort sind erforderlich.</p>
       }
     </div>
-    <!-- ===================== 6. BERICHTE UPLOAD ===================== -->
-<section class="home__section">
-  <h2 class="h2">
-    6. Lade bitte deine vorhandenen Berichte wie
-    Operationsbericht, Austrittsbericht oder Arztbericht hoch.
-  </h2>
+  </section>
 
-  <div
-    class="upload"
-    [class.upload--dragover]="isReportDragOver()"
-    [class.is-invalid]="isInvalid('reportFile')"
-    (dragover)="onReportDragOver($event)"
-    (dragleave)="onReportDragLeave($event)"
-    (drop)="onReportDrop($event)"
-    (click)="reportInput.click()"
-    role="button"
-    tabindex="0"
-    (keydown.enter)="reportInput.click()"
-    (keydown.space)="$event.preventDefault(); reportInput.click()"
-    aria-label="Bericht hochladen"
-  >
-    <div class="upload__inner">
+  <!-- ===================== 6. BERICHTE UPLOAD ===================== -->
+  <section class="home__section">
+    <h2 class="h2">
+      6. Lade bitte deine vorhandenen Berichte wie
+      Operationsbericht, Austrittsbericht oder Arztbericht hoch.
+    </h2>
 
-      <img
-        src="cloud-upload-24px.svg.svg"
-        alt=""
-        class="upload__icon"
-      />
-
-      <div class="upload__name">
-        {{ selectedReportName() || 'Test.pdf' }}
+    <div
+      class="upload"
+      [class.upload--inactive]="!selectedReportName()"
+      [class.upload--active]="selectedReportName()"
+      [class.upload--dragover]="isReportDragOver()"
+      [class.is-invalid]="isInvalid('reportFile')"
+      (dragover)="onReportDragOver($event)"
+      (dragleave)="onReportDragLeave($event)"
+      (drop)="onReportDrop($event)"
+      (click)="reportInput.click()"
+      role="button"
+      tabindex="0"
+      (keydown.enter)="reportInput.click()"
+      (keydown.space)="$event.preventDefault(); reportInput.click()"
+    >
+      <div class="upload__inner">
+        <img src="cloud-upload-24px.svg.svg" alt="" class="upload__icon" />
+        <div class="upload__name">
+          {{ selectedReportName() || 'Upload' }}
+        </div>
       </div>
+
+      <input
+        #reportInput
+        type="file"
+        class="upload__input"
+        accept="application/pdf,.pdf"
+        (change)="onReportPicked($event)"
+      />
     </div>
 
-    <input
-      #reportInput
-      type="file"
-      class="upload__input"
-      accept="application/pdf,.pdf"
-      (change)="onReportPicked($event)"
-    />
-  </div>
+    @if (isInvalid('reportFile')) {
+      <p class="error">Bitte lade eine PDF-Datei hoch.</p>
+    }
 
-  @if (isInvalid('reportFile')) {
-    <p class="error">
-      Bitte lade eine PDF-Datei hoch.
-    </p>
-  }
+    <button type="button" class="pill-btn">Dental Fragen</button>
+  </section>
 
-  <button type="button" class="pill-btn">
-    Dental Fragen
-  </button>
- </section>
-
-   <!-- 7. Zustand des Zahnbetts -->
-<section class="home__section">
-  <h2 class="h2">7. Zustand des Zahnbetts:</h2>
-
-  <div
-    class="seg seg--dental seg--triple"
-    [class.seg--dental-active]="form.controls.teethCondition.value !== null"
-    [class.is-invalid]="isInvalid('teethCondition')"
-  >
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.teethCondition.value === 'gut'"
-      (click)="$event.stopPropagation(); setTeethCondition('gut')"
-    >
-      Gut
-    </button>
-
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.teethCondition.value === 'mangelhaft'"
-      (click)="$event.stopPropagation(); setTeethCondition('mangelhaft')"
-    >
-      Mangelhaft
-    </button>
-
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.teethCondition.value === 'schlecht'"
-      (click)="$event.stopPropagation(); setTeethCondition('schlecht')"
-    >
-      Schlecht
-    </button>
-  </div>
-
-  @if (isInvalid('teethCondition')) {
-    <p class="error">Bitte wählen.</p>
-  }
-
-  @if (form.controls.teethCondition.value === 'mangelhaft' || form.controls.teethCondition.value === 'schlecht') {
-    <p class="dental-help">Falls mangelhaft oder schlecht, bitte Stelle präzisieren:</p>
+  <!-- 7. Zustand des Zahnbetts -->
+  <section class="home__section">
+    <h2 class="h2">7. Zustand des Zahnbetts:</h2>
 
     <div
-      class="box box--textarea box--dental-note"
-      (click)="setActive('teethConditionNote')"
-      [class.is-active]="isActive('teethConditionNote')"
-      [class.is-invalid]="isInvalid('teethConditionNote')"
+      class="seg seg--dental seg--triple"
+      [class.seg--dental-active]="hasValue(form.controls.teethCondition)"
+      [class.is-invalid]="isInvalid('teethCondition')"
     >
-      <textarea
-        formControlName="teethConditionNote"
-        class="dental-note__textarea"
-        placeholder="Hier eingeben..."
-        (input)="autoResize($event)"
-        (focus)="setActive('teethConditionNote')"
-      ></textarea>
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.teethCondition.value === 'gut'"
+        (click)="$event.stopPropagation(); setTeethCondition('gut')"
+      >
+        Gut
+      </button>
+
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.teethCondition.value === 'mangelhaft'"
+        (click)="$event.stopPropagation(); setTeethCondition('mangelhaft')"
+      >
+        Mangelhaft
+      </button>
+
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.teethCondition.value === 'schlecht'"
+        (click)="$event.stopPropagation(); setTeethCondition('schlecht')"
+      >
+        Schlecht
+      </button>
     </div>
 
-    @if (isInvalid('teethConditionNote')) {
-      <p class="error">Bitte ausfüllen.</p>
+    @if (isInvalid('teethCondition')) {
+      <p class="error">Bitte wählen.</p>
     }
-  }
-</section>
 
-<!-- 8. Hygiene -->
-<section class="home__section">
-  <h2 class="h2">8. Hygiene:</h2>
+    @if (form.controls.teethCondition.value === 'mangelhaft' || form.controls.teethCondition.value === 'schlecht') {
+      <p class="dental-help">Falls mangelhaft oder schlecht, bitte Stelle präzisieren:</p>
 
-  <div
-    class="seg seg--dental seg--triple"
-    [class.seg--dental-active]="form.controls.hygiene.value !== null"
-    [class.is-invalid]="isInvalid('hygiene')"
-  >
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.hygiene.value === 'gut'"
-      (click)="$event.stopPropagation(); setHygiene('gut')"
+      <div
+        class="box box--textarea box--dental-note"
+        (click)="setActive('teethConditionNote')"
+        [class.is-active]="isActive('teethConditionNote') || hasText(form.controls.teethConditionNote)"
+        [class.is-invalid]="isInvalid('teethConditionNote')"
+      >
+        <textarea
+          formControlName="teethConditionNote"
+          class="dental-note__textarea"
+          placeholder="Hier eingeben..."
+          (input)="autoResize($event)"
+          (focus)="setActive('teethConditionNote')"
+        ></textarea>
+      </div>
+
+      @if (isInvalid('teethConditionNote')) {
+        <p class="error">Bitte ausfüllen.</p>
+      }
+    }
+  </section>
+
+  <!-- 8. Hygiene -->
+  <section class="home__section">
+    <h2 class="h2">8. Hygiene:</h2>
+
+    <div
+      class="seg seg--dental seg--triple"
+      [class.seg--dental-active]="hasValue(form.controls.hygiene)"
+      [class.is-invalid]="isInvalid('hygiene')"
     >
-      Gut
-    </button>
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.hygiene.value === 'gut'"
+        (click)="$event.stopPropagation(); setHygiene('gut')"
+      >
+        Gut
+      </button>
 
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.hygiene.value === 'mangelhaft'"
-      (click)="$event.stopPropagation(); setHygiene('mangelhaft')"
-    >
-      Mangelhaft
-    </button>
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.hygiene.value === 'mangelhaft'"
+        (click)="$event.stopPropagation(); setHygiene('mangelhaft')"
+      >
+        Mangelhaft
+      </button>
 
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.hygiene.value === 'schlecht'"
-      (click)="$event.stopPropagation(); setHygiene('schlecht')"
-    >
-      Schlecht
-    </button>
-  </div>
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.hygiene.value === 'schlecht'"
+        (click)="$event.stopPropagation(); setHygiene('schlecht')"
+      >
+        Schlecht
+      </button>
+    </div>
 
-  @if (isInvalid('hygiene')) {
-    <p class="error">Bitte wählen.</p>
-  }
-</section>
-<!-- 9. Okklusion -->
-<section class="home__section">
-  <h2 class="h2">9. Okklusion:</h2>
+    @if (isInvalid('hygiene')) {
+      <p class="error">Bitte wählen.</p>
+    }
+  </section>
 
-  <div
-    class="seg seg--dental seg--triple"
-    [class.seg--dental-active]="form.controls.occlusion.value !== null"
-  >
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.occlusion.value === 'klasse1'"
-      (click)="setOcclusion('klasse1')"
-    >
-      Klasse I
-    </button>
+  <!-- 9. Okklusion -->
+  <section class="home__section">
+    <h2 class="h2">9. Okklusion:</h2>
 
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.occlusion.value === 'klasse2'"
-      (click)="setOcclusion('klasse2')"
-    >
-      Klasse II
-    </button>
+    <div class="seg seg--dental seg--triple" [class.seg--dental-active]="hasValue(form.controls.occlusion)">
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.occlusion.value === 'klasse1'"
+        (click)="setOcclusion('klasse1')"
+      >
+        Klasse I
+      </button>
 
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.occlusion.value === 'klasse3'"
-      (click)="setOcclusion('klasse3')"
-    >
-      Klasse III
-    </button>
-  </div>
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.occlusion.value === 'klasse2'"
+        (click)="setOcclusion('klasse2')"
+      >
+        Klasse II
+      </button>
 
-  @if (isInvalid('occlusion')) {
-    <p class="error">Bitte wählen Sie eine Option.</p>
-  }
-</section>
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.occlusion.value === 'klasse3'"
+        (click)="setOcclusion('klasse3')"
+      >
+        Klasse III
+      </button>
+    </div>
+
+    @if (isInvalid('occlusion')) {
+      <p class="error">Bitte wählen Sie eine Option.</p>
+    }
+  </section>
+
   <!-- 10. Zustand der Kronen -->
-<section class="home__section">
-  <h2 class="h2">10. Zustand der Kronen:</h2>
+  <section class="home__section">
+    <h2 class="h2">10. Zustand der Kronen:</h2>
 
-  <div
-    class="seg seg--dental seg--quad"
-    [class.seg--dental-active]="form.controls.crownsCondition.value !== null"
-  >
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.crownsCondition.value === 'keine'"
-      (click)="setCrownsCondition('keine')"
-    >
-      Keine
-    </button>
+    <div class="seg seg--dental seg--quad" [class.seg--dental-active]="hasValue(form.controls.crownsCondition)">
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.crownsCondition.value === 'keine'"
+        (click)="setCrownsCondition('keine')"
+      >
+        Keine
+      </button>
 
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.crownsCondition.value === 'gut'"
-      (click)="setCrownsCondition('gut')"
-    >
-      Gut
-    </button>
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.crownsCondition.value === 'gut'"
+        (click)="setCrownsCondition('gut')"
+      >
+        Gut
+      </button>
 
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.crownsCondition.value === 'mangelhaft'"
-      (click)="setCrownsCondition('mangelhaft')"
-    >
-      Mangelhaft
-    </button>
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.crownsCondition.value === 'mangelhaft'"
+        (click)="setCrownsCondition('mangelhaft')"
+      >
+        Mangelhaft
+      </button>
 
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.crownsCondition.value === 'schlecht'"
-      (click)="setCrownsCondition('schlecht')"
-    >
-      Schlecht
-    </button>
-  </div>
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.crownsCondition.value === 'schlecht'"
+        (click)="setCrownsCondition('schlecht')"
+      >
+        Schlecht
+      </button>
+    </div>
 
-  @if (isInvalid('crownsCondition')) {
-    <p class="error">Bitte wählen Sie eine Option.</p>
-  }
+    @if (isInvalid('crownsCondition')) {
+      <p class="error">Bitte wählen Sie eine Option.</p>
+    }
 
-  @if (form.controls.crownsCondition.value === 'mangelhaft') {
-    <p class="dental-help">Art und Stelle:</p>
+    @if (form.controls.crownsCondition.value === 'mangelhaft') {
+      <p class="dental-help">Art und Stelle:</p>
+
+      <div
+        class="box box--textarea box--dental-note"
+        (click)="setActive('crownsNote')"
+        [class.is-active]="isActive('crownsNote') || hasText(form.controls.crownsNote)"
+        [class.is-invalid]="isInvalid('crownsNote')"
+      >
+        <textarea
+          formControlName="crownsNote"
+          placeholder="Hier eingeben..."
+          (input)="autoResize($event)"
+          (focus)="setActive('crownsNote')"
+        ></textarea>
+      </div>
+
+      @if (isInvalid('crownsNote')) {
+        <p class="error">Bitte ausfüllen.</p>
+      }
+    }
+  </section>
+
+  <!-- 11. Zustand der Brücken -->
+  <section class="home__section">
+    <h2 class="h2">11. Zustand der Brücken:</h2>
+
+    <div class="seg seg--dental seg--quad" [class.seg--dental-active]="hasValue(form.controls.bridgesCondition)">
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.bridgesCondition.value === 'keine'"
+        (click)="setBridgesCondition('keine')"
+      >
+        Keine
+      </button>
+
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.bridgesCondition.value === 'gut'"
+        (click)="setBridgesCondition('gut')"
+      >
+        Gut
+      </button>
+
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.bridgesCondition.value === 'mangelhaft'"
+        (click)="setBridgesCondition('mangelhaft')"
+      >
+        Mangelhaft
+      </button>
+
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.bridgesCondition.value === 'schlecht'"
+        (click)="setBridgesCondition('schlecht')"
+      >
+        Schlecht
+      </button>
+    </div>
+
+    @if (isInvalid('bridgesCondition')) {
+      <p class="error">Bitte wählen Sie eine Option.</p>
+    }
+
+    @if (form.controls.bridgesCondition.value === 'mangelhaft') {
+      <p class="dental-help">Art und Stelle:</p>
+
+      <div
+        class="box box--textarea box--dental-note"
+        (click)="setActive('bridgesNote')"
+        [class.is-active]="isActive('bridgesNote') || hasText(form.controls.bridgesNote)"
+        [class.is-invalid]="isInvalid('bridgesNote')"
+      >
+        <textarea
+          formControlName="bridgesNote"
+          placeholder="Hier eingeben..."
+          (input)="autoResize($event)"
+          (focus)="setActive('bridgesNote')"
+        ></textarea>
+      </div>
+
+      @if (isInvalid('bridgesNote')) {
+        <p class="error">Bitte ausfüllen.</p>
+      }
+    }
+  </section>
+
+  <!-- 12. Zustand der Teilprothesen -->
+  <section class="home__section">
+    <h2 class="h2">12. Zustand der Teilprothesen:</h2>
 
     <div
-      class="box box--textarea box--dental-note"
-      (click)="setActive('crownsNote')"
-      [class.is-active]="isActive('crownsNote')"
-      [class.is-invalid]="isInvalid('crownsNote')"
+      class="seg seg--dental seg--quad"
+      [class.seg--dental-active]="hasValue(form.controls.partialDenturesCondition)"
     >
-      <textarea
-        formControlName="crownsNote"
-        placeholder="Hier eingeben..."
-        (input)="autoResize($event)"
-        (focus)="setActive('crownsNote')"
-      ></textarea>
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.partialDenturesCondition.value === 'keine'"
+        (click)="setPartialDenturesCondition('keine')"
+      >
+        Keine
+      </button>
+
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.partialDenturesCondition.value === 'gut'"
+        (click)="setPartialDenturesCondition('gut')"
+      >
+        Gut
+      </button>
+
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.partialDenturesCondition.value === 'mangelhaft'"
+        (click)="setPartialDenturesCondition('mangelhaft')"
+      >
+        Mangelhaft
+      </button>
+
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.partialDenturesCondition.value === 'schlecht'"
+        (click)="setPartialDenturesCondition('schlecht')"
+      >
+        Schlecht
+      </button>
     </div>
 
-    @if (isInvalid('crownsNote')) {
-      <p class="error">Bitte ausfüllen.</p>
+    @if (isInvalid('partialDenturesCondition')) {
+      <p class="error">Bitte wählen Sie eine Option.</p>
     }
-  }
-</section>
-<!-- 11. Zustand der Kronen -->
- <section class="home__section">
-  <h2 class="h2">11. Zustand der Brücken:</h2>
 
-  <div
-    class="seg seg--dental seg--quad"
-    [class.seg--dental-active]="form.controls.bridgesCondition.value !== null"
-  >
-    <button type="button" class="seg__btn"
-      [class.is-selected]="form.controls.bridgesCondition.value === 'keine'"
-      (click)="setBridgesCondition('keine')">
-      Keine
-    </button>
+    @if (form.controls.partialDenturesCondition.value === 'mangelhaft') {
+      <p class="dental-help">Art und Stelle:</p>
 
-    <button type="button" class="seg__btn"
-      [class.is-selected]="form.controls.bridgesCondition.value === 'gut'"
-      (click)="setBridgesCondition('gut')">
-      Gut
-    </button>
+      <div
+        class="box box--textarea box--dental-note"
+        (click)="setActive('partialDenturesNote')"
+        [class.is-active]="isActive('partialDenturesNote') || hasText(form.controls.partialDenturesNote)"
+        [class.is-invalid]="isInvalid('partialDenturesNote')"
+      >
+        <textarea
+          formControlName="partialDenturesNote"
+          placeholder="Hier eingeben..."
+          (input)="autoResize($event)"
+          (focus)="setActive('partialDenturesNote')"
+        ></textarea>
+      </div>
 
-    <button type="button" class="seg__btn"
-      [class.is-selected]="form.controls.bridgesCondition.value === 'mangelhaft'"
-      (click)="setBridgesCondition('mangelhaft')">
-      Mangelhaft
-    </button>
-
-    <button type="button" class="seg__btn"
-      [class.is-selected]="form.controls.bridgesCondition.value === 'schlecht'"
-      (click)="setBridgesCondition('schlecht')">
-      Schlecht
-    </button>
-  </div>
-
-  @if (isInvalid('bridgesCondition')) {
-    <p class="error">Bitte wählen Sie eine Option.</p>
-  }
-
-  @if (form.controls.bridgesCondition.value === 'mangelhaft') {
-    <p class="dental-help">Art und Stelle:</p>
-
-    <div class="box box--textarea box--dental-note">
-      <textarea
-        formControlName="bridgesNote"
-        placeholder="Hier eingeben..."
-        (input)="autoResize($event)"
-      ></textarea>
-    </div>
-
-    @if (isInvalid('bridgesNote')) {
-      <p class="error">Bitte ausfüllen.</p>
+      @if (isInvalid('partialDenturesNote')) {
+        <p class="error">Bitte ausfüllen.</p>
+      }
     }
-  }
-</section>
+  </section>
 
-
- <!-- 12. Zustand der Kronen -->
+  <!-- 13. Dentition -->
   <section class="home__section">
-  <h2 class="h2">12. Zustand der Teilprothesen:</h2>
+    <h2 class="h2">
+      13. Dentition: Hat der Versicherte eine Fehl- oder Missbildung oder einen Stellungsfehler der Zähne?
+    </h2>
 
-  <div
-    class="seg seg--dental seg--quad"
-    [class.seg--dental-active]="form.controls.partialDenturesCondition.value !== null"
-  >
-    <button type="button" class="seg__btn"
-      [class.is-selected]="form.controls.partialDenturesCondition.value === 'keine'"
-      (click)="setPartialDenturesCondition('keine')">
-      Keine
-    </button>
+    <div
+      class="seg seg--dental seg--binary"
+      (click)="setActive('dentition')"
+      [class.seg--dental-active]="hasValue(form.controls.dentition)"
+      [class.is-invalid]="isInvalid('dentition')"
+    >
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.dentition.value === false"
+        (click)="$event.stopPropagation(); setDentition(false)"
+      >
+        Nein
+      </button>
 
-    <button type="button" class="seg__btn"
-      [class.is-selected]="form.controls.partialDenturesCondition.value === 'gut'"
-      (click)="setPartialDenturesCondition('gut')">
-      Gut
-    </button>
-
-    <button type="button" class="seg__btn"
-      [class.is-selected]="form.controls.partialDenturesCondition.value === 'mangelhaft'"
-      (click)="setPartialDenturesCondition('mangelhaft')">
-      Mangelhaft
-    </button>
-
-    <button type="button" class="seg__btn"
-      [class.is-selected]="form.controls.partialDenturesCondition.value === 'schlecht'"
-      (click)="setPartialDenturesCondition('schlecht')">
-      Schlecht
-    </button>
-  </div>
-
-  @if (isInvalid('partialDenturesCondition')) {
-    <p class="error">Bitte wählen Sie eine Option.</p>
-  }
-
-  @if (form.controls.partialDenturesCondition.value === 'mangelhaft') {
-    <p class="dental-help">Art und Stelle:</p>
-
-    <div class="box box--textarea box--dental-note">
-      <textarea
-        formControlName="partialDenturesNote"
-        placeholder="Hier eingeben..."
-        (input)="autoResize($event)"
-      ></textarea>
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.dentition.value === true"
+        (click)="$event.stopPropagation(); setDentition(true)"
+      >
+        Ja
+      </button>
     </div>
 
-    @if (isInvalid('partialDenturesNote')) {
-      <p class="error">Bitte ausfüllen.</p>
+    @if (isInvalid('dentition')) {
+      <p class="error">Bitte wählen Sie eine Option.</p>
     }
-  }
-</section>
- <!-- 13. Zustand der Kronen -->
+
+    @if (form.controls.dentition.value === true) {
+      <p class="dental-help">Wenn ja, welche?</p>
+
+      <div
+        class="box box--textarea box--dental-note"
+        (click)="setActive('dentitionNote')"
+        [class.is-active]="isActive('dentitionNote') || hasText(form.controls.dentitionNote)"
+        [class.is-invalid]="isInvalid('dentitionNote')"
+      >
+        <textarea
+          formControlName="dentitionNote"
+          placeholder="Hier eingeben..."
+          (input)="autoResize($event)"
+          (focus)="setActive('dentitionNote')"
+        ></textarea>
+      </div>
+
+      @if (isInvalid('dentitionNote')) {
+        <p class="error">Bitte ausfüllen.</p>
+      }
+    }
+  </section>
+
+  <!-- 14. Kiefer -->
   <section class="home__section">
-  <h2 class="h2">
-    13. Dentition: Hat der Versicherte eine Fehl- oder Missbildung oder einen Stellungsfehler der Zähne?
-  </h2>
+    <h2 class="h2">
+      14. Kiefer: Hat der Versicherte eine Fehl- oder Missbildung oder einen Stellungsfehler des Kiefers?
+    </h2>
 
-  <div
-    class="seg seg--dental seg--binary"
-    (click)="setActive('dentition')"
-    [class.seg--dental-active]="form.controls.dentition.value !== null"
-    [class.is-invalid]="isInvalid('dentition')"
-  >
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.dentition.value === false"
-      (click)="$event.stopPropagation(); setDentition(false)"
+    <div
+      class="seg seg--dental seg--binary"
+      (click)="setActive('jaw')"
+      [class.seg--dental-active]="hasValue(form.controls.jaw)"
+      [class.is-invalid]="isInvalid('jaw')"
     >
-      Nein
-    </button>
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.jaw.value === false"
+        (click)="$event.stopPropagation(); setJaw(false)"
+      >
+        Nein
+      </button>
 
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.dentition.value === true"
-      (click)="$event.stopPropagation(); setDentition(true)"
-    >
-      Ja
-    </button>
-  </div>
-
-  @if (isInvalid('dentition')) {
-    <p class="error">Bitte wählen Sie eine Option.</p>
-  }
-
-  @if (form.controls.dentition.value === true) {
-    <p class="dental-help">Wenn ja, welche?</p>
-
-    <div class="box box--textarea box--dental-note">
-      <textarea
-        formControlName="dentitionNote"
-        placeholder="Hier eingeben..."
-        (input)="autoResize($event)"
-      ></textarea>
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.jaw.value === true"
+        (click)="$event.stopPropagation(); setJaw(true)"
+      >
+        Ja
+      </button>
     </div>
 
-    @if (isInvalid('dentitionNote')) {
-      <p class="error">Bitte ausfüllen.</p>
+    @if (isInvalid('jaw')) {
+      <p class="error">Bitte wählen Sie eine Option.</p>
     }
-  }
-</section>
 
-   <!-- 14. Zustand der Kronen -->
-    <section class="home__section">
-  <h2 class="h2">
-    14. Kiefer: Hat der Versicherte eine Fehl- oder Missbildung oder einen Stellungsfehler des Kiefers?
-  </h2>
+    @if (form.controls.jaw.value === true) {
+      <p class="dental-help">Wenn ja, welche?</p>
 
-  <div
-    class="seg seg--dental seg--binary"
-    (click)="setActive('jaw')"
-    [class.seg--dental-active]="form.controls.jaw.value !== null"
-    [class.is-invalid]="isInvalid('jaw')"
-  >
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.jaw.value === false"
-      (click)="$event.stopPropagation(); setJaw(false)"
+      <div
+        class="box box--textarea box--dental-note"
+        (click)="setActive('jawNote')"
+        [class.is-active]="isActive('jawNote') || hasText(form.controls.jawNote)"
+        [class.is-invalid]="isInvalid('jawNote')"
+      >
+        <textarea
+          formControlName="jawNote"
+          placeholder="Hier eingeben..."
+          (input)="autoResize($event)"
+          (focus)="setActive('jawNote')"
+        ></textarea>
+      </div>
+
+      @if (isInvalid('jawNote')) {
+        <p class="error">Bitte ausfüllen.</p>
+      }
+    }
+  </section>
+
+  <!-- 15. Zukunft -->
+  <section class="home__section">
+    <h2 class="h2">
+      15. Leidet der Versicherte an einer Krankheit, die den Zustand der Zähne in Zukunft beeinflussen könnte?
+    </h2>
+
+    <div
+      class="seg seg--dental seg--binary"
+      (click)="setActive('futureTeethDisease')"
+      [class.seg--dental-active]="hasValue(form.controls.futureTeethDisease)"
+      [class.is-invalid]="isInvalid('futureTeethDisease')"
     >
-      Nein
-    </button>
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.futureTeethDisease.value === false"
+        (click)="$event.stopPropagation(); setFutureTeethDisease(false)"
+      >
+        Nein
+      </button>
 
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.jaw.value === true"
-      (click)="$event.stopPropagation(); setJaw(true)"
-    >
-      Ja
-    </button>
-  </div>
-
-  @if (isInvalid('jaw')) {
-    <p class="error">Bitte wählen Sie eine Option.</p>
-  }
-
-  @if (form.controls.jaw.value === true) {
-    <p class="dental-help">Wenn ja, welche?</p>
-
-    <div class="box box--textarea box--dental-note">
-      <textarea
-        formControlName="jawNote"
-        placeholder="Hier eingeben..."
-        (input)="autoResize($event)"
-      ></textarea>
+      <button
+        type="button"
+        class="seg__btn"
+        [class.is-selected]="form.controls.futureTeethDisease.value === true"
+        (click)="$event.stopPropagation(); setFutureTeethDisease(true)"
+      >
+        Ja
+      </button>
     </div>
 
-    @if (isInvalid('jawNote')) {
-      <p class="error">Bitte ausfüllen.</p>
+    @if (isInvalid('futureTeethDisease')) {
+      <p class="error">Bitte wählen Sie eine Option.</p>
     }
-  }
-</section>
-   <!-- 15. Zustand der Kronen -->
-    <section class="home__section">
-  <h2 class="h2">
-    15. Leidet der Versicherte an einer Krankheit, die den Zustand der Zähne in Zukunft beeinflussen könnte?
-  </h2>
 
-  <div
-    class="seg seg--dental seg--binary"
-    (click)="setActive('futureTeethDisease')"
-    [class.seg--dental-active]="form.controls.futureTeethDisease.value !== null"
-    [class.is-invalid]="isInvalid('futureTeethDisease')"
-  >
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.futureTeethDisease.value === false"
-      (click)="$event.stopPropagation(); setFutureTeethDisease(false)"
-    >
-      Nein
-    </button>
+    @if (form.controls.futureTeethDisease.value === true) {
+      <p class="dental-help">Wenn ja, welche?</p>
 
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.futureTeethDisease.value === true"
-      (click)="$event.stopPropagation(); setFutureTeethDisease(true)"
-    >
-      Ja
-    </button>
-  </div>
+      <div
+        class="box box--textarea box--dental-note"
+        (click)="setActive('futureTeethDiseaseNote')"
+        [class.is-active]="isActive('futureTeethDiseaseNote') || hasText(form.controls.futureTeethDiseaseNote)"
+        [class.is-invalid]="isInvalid('futureTeethDiseaseNote')"
+      >
+        <textarea
+          formControlName="futureTeethDiseaseNote"
+          placeholder="Hier eingeben..."
+          (input)="autoResize($event)"
+          (focus)="setActive('futureTeethDiseaseNote')"
+        ></textarea>
+      </div>
 
-  @if (isInvalid('futureTeethDisease')) {
-    <p class="error">Bitte wählen Sie eine Option.</p>
-  }
-
-  @if (form.controls.futureTeethDisease.value === true) {
-    <p class="dental-help">Wenn ja, welche?</p>
-
-    <div class="box box--textarea box--dental-note">
-      <textarea
-        formControlName="futureTeethDiseaseNote"
-        placeholder="Hier eingeben..."
-        (input)="autoResize($event)"
-      ></textarea>
-    </div>
-
-    @if (isInvalid('futureTeethDiseaseNote')) {
-      <p class="error">Bitte ausfüllen.</p>
+      @if (isInvalid('futureTeethDiseaseNote')) {
+        <p class="error">Bitte ausfüllen.</p>
+      }
     }
-  }
-</section>
+  </section>
 
-<!-- 16. Fehlende, nicht ersetzte Zähne -->
+  <!-- 16. Fehlende, nicht ersetzte Zähne -->
 <section class="home__section teeth16">
   <h2 class="h2">16. Fehlende, nicht ersetzte Zähne:</h2>
 
@@ -2648,8 +2696,348 @@
     </div>
   }
 </section>
+        <!-- 19. Wurzelbehandelte Zähne -->
+<section class="home__section teeth19">
+  <h2 class="h2">19. Wurzelbehandelte Zähne:</h2>
 
+  <div
+    class="seg"
+    (click)="setActive('rootCanalQ')"
+    [class.is-active]="isActive('rootCanalQ')"
+    [class.is-invalid]="isInvalid('rootCanalQ')"
+  >
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.rootCanalQ.value === false"
+      (click)="$event.stopPropagation(); setRootCanalQ(false)"
+    >
+      Nein
+    </button>
 
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.rootCanalQ.value === true"
+      (click)="$event.stopPropagation(); setRootCanalQ(true)"
+    >
+      Ja
+    </button>
+  </div>
+
+  @if (isInvalid('rootCanalQ')) {
+    <p class="error">Bitte wählen Sie eine Option.</p>
+  }
+
+  @if (form.controls.rootCanalQ.value === true) {
+    <div class="teeth">
+      <!-- ===== 55–51 ===== -->
+      <div class="teeth__nums teeth__nums--top">
+        @for (t of teethTop; track t) {
+          <div class="teeth__num" [class.is-hot]="isRootSelected(t)">{{ t }}</div>
+        }
+      </div>
+
+      <div class="teethbar">
+        @for (t of teethTop; track t) {
+          <button
+            type="button"
+            class="toothcell"
+            [class.is-selected]="isRootSelected(t)"
+            (click)="toggleRoot(t)"
+            aria-label="Tooth {{ t }}"
+          >
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M20 6L9 17l-5-5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+          </button>
+        }
+      </div>
+
+      <!-- ===== 85–81 ===== -->
+      <div class="teethbar teethbar--bottom">
+        @for (t of teethBottom; track t) {
+          <button
+            type="button"
+            class="toothcell"
+            [class.is-selected]="isRootSelected(t)"
+            (click)="toggleRoot(t)"
+            aria-label="Tooth {{ t }}"
+          >
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M20 6L9 17l-5-5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+          </button>
+        }
+      </div>
+
+      <div class="teeth__nums teeth__nums--bottom">
+        @for (t of teethBottom; track t) {
+          <div class="teeth__num" [class.is-hot]="isRootSelected(t)">{{ t }}</div>
+        }
+      </div>
+
+      <!-- ===== PERMANENT 18–28 / 48–38 ===== -->
+      <div class="teethperm">
+        <div class="teethperm__nums teethperm__nums--top">
+          @for (t of permTop; track t) {
+            <div class="teethperm__num" [class.is-hot]="isRootPermSelected(t)">{{ t }}</div>
+          }
+        </div>
+
+        <div class="teethperm__wrap">
+          <div class="teethperm__half teethperm__half--left">
+            @for (t of permTop.slice(0, 8); track t) {
+              <button
+                type="button"
+                class="teethperm__cell"
+                [class.is-selected]="isRootPermSelected(t)"
+                (click)="toggleRootPerm(t)"
+                aria-label="Tooth {{ t }}"
+              >
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M20 6L9 17l-5-5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+              </button>
+            }
+          </div>
+
+          <div class="teethperm__half teethperm__half--right">
+            @for (t of permTop.slice(8, 16); track t) {
+              <button
+                type="button"
+                class="teethperm__cell"
+                [class.is-selected]="isRootPermSelected(t)"
+                (click)="toggleRootPerm(t)"
+                aria-label="Tooth {{ t }}"
+              >
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M20 6L9 17l-5-5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+              </button>
+            }
+          </div>
+
+          <span class="teethperm__mid" aria-hidden="true"></span>
+        </div>
+
+        <div class="teethperm__wrap teethperm__wrap--bottom">
+          <div class="teethperm__half teethperm__half--left">
+            @for (t of permBottom.slice(0, 8); track t) {
+              <button
+                type="button"
+                class="teethperm__cell"
+                [class.is-selected]="isRootPermSelected(t)"
+                (click)="toggleRootPerm(t)"
+                aria-label="Tooth {{ t }}"
+              >
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M20 6L9 17l-5-5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+              </button>
+            }
+          </div>
+
+          <div class="teethperm__half teethperm__half--right">
+            @for (t of permBottom.slice(8, 16); track t) {
+              <button
+                type="button"
+                class="teethperm__cell"
+                [class.is-selected]="isRootPermSelected(t)"
+                (click)="toggleRootPerm(t)"
+                aria-label="Tooth {{ t }}"
+              >
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M20 6L9 17l-5-5"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+              </button>
+            }
+          </div>
+
+          <span class="teethperm__mid" aria-hidden="true"></span>
+        </div>
+
+        <div class="teethperm__nums teethperm__nums--bottom">
+          @for (t of permBottom; track t) {
+            <div class="teethperm__num" [class.is-hot]="isRootPermSelected(t)">{{ t }}</div>
+          }
+        </div>
+      </div>
+
+      <!-- ===== 61–65 ===== -->
+      <div class="teeth__nums teeth__nums--top">
+        @for (t of milkTop; track t) {
+          <div class="teeth__num" [class.is-hot]="isRootSelected(t)">{{ t }}</div>
+        }
+      </div>
+
+      <div class="teethbar">
+        @for (t of milkTop; track t) {
+          <button
+            type="button"
+            class="toothcell"
+            [class.is-selected]="isRootSelected(t)"
+            (click)="toggleRoot(t)"
+            aria-label="Tooth {{ t }}"
+          >
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M20 6L9 17l-5-5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+          </button>
+        }
+      </div>
+
+      <!-- ===== 71–75 ===== -->
+      <div class="teethbar teethbar--bottom">
+        @for (t of milkBottom; track t) {
+          <button
+            type="button"
+            class="toothcell"
+            [class.is-selected]="isRootSelected(t)"
+            (click)="toggleRoot(t)"
+            aria-label="Tooth {{ t }}"
+          >
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M20 6L9 17l-5-5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+          </button>
+        }
+      </div>
+
+      <div class="teeth__nums teeth__nums--bottom">
+        @for (t of milkBottom; track t) {
+          <div class="teeth__num" [class.is-hot]="isRootSelected(t)">{{ t }}</div>
+        }
+      </div>
+    </div>
+  }
+</section>
+
+  <!-- 21. Datum der letzten Radiographie -->
+  <section class="home__section">
+    <h2 class="h2">21. Datum der letzten Radiographie:</h2>
+
+    <div
+      class="datebox"
+      (click)="setActive('lastRadiographyDate'); openDatePicker(radioDate)"
+      [class.is-active]="isActive('lastRadiographyDate') || hasText(form.controls.lastRadiographyDate)"
+      [class.is-invalid]="isInvalid('lastRadiographyDate')"
+    >
+      <input
+        #radioDate
+        class="datebox__input"
+        type="date"
+        formControlName="lastRadiographyDate"
+        (focus)="setActive('lastRadiographyDate')"
+      />
+
+      <img
+        src="/Icon.jpg"
+        class="calendar-icon"
+        alt=""
+        aria-hidden="true"
+        (click)="$event.stopPropagation(); setActive('lastRadiographyDate'); openDatePicker(radioDate)"
+      />
+    </div>
+
+    @if (isInvalid('lastRadiographyDate')) {
+      <p class="error">Bitte wählen Sie ein Datum.</p>
+    }
+  </section>
+
+  <!-- 22. Bemerkungen -->
+  <section class="home__section">
+    <h2 class="h2">22. Bemerkungen</h2>
+
+    <div
+      class="box box--textarea box--remarks"
+      (click)="setActive('remarks')"
+      [class.is-active]="isActive('remarks') || hasText(form.controls.remarks)"
+      [class.is-invalid]="isInvalid('remarks')"
+    >
+      <textarea
+        formControlName="remarks"
+        placeholder="Hier eingeben..."
+        (input)="autoResize($event)"
+        (focus)="setActive('remarks')"
+      ></textarea>
+    </div>
+
+    @if (isInvalid('remarks')) {
+      <p class="error">Bitte ausfüllen.</p>
+    }
   </section>
 </form>
 
