@@ -26,7 +26,7 @@
         </div>
 
         @if (isInvalid('heightCm')) {
-          <p class="error">Grösse ist erforderlich (0–350 cm).</p>
+          <p class="error">Grösse ist (0–350 cm).</p>
         }
       </div>
 
@@ -51,15 +51,16 @@
         </div>
 
         @if (isInvalid('weightKg')) {
-          <p class="error">Gewicht ist erforderlich (0–600 kg).</p>
+          <p class="error">Gewicht ist(0–600 kg).</p>
         }
       </div>
     </div>
 
-    <p class="home__note">
+    <p class="p home__subtitle">
       - Falls Sie schwanger sind, geben Sie bitte Ihr Gewicht zu Beginn der Schwangerschaft an.
     </p>
   </section>
+  
 
   <!-- 2. Medikamente -->
   <section class="home__section">
@@ -95,7 +96,7 @@
     }
 
     @if (showMedicationDetails()) {
-      <p class="home__desc">
+      <p class="home__subtitle">
         Nehmen Sie momentan Medikamente ein oder haben Sie in den letzten 2 Jahren regelmässig oder wiederholt
         welche eingenommen (mit Ausnahme von Verhütungsmitteln) oder haben Sie eine medizinische Verordnung für
         Hilfsmittel oder Geräte erhalten (mit Ausnahme von Brillen und Kontaktlinsen)?
@@ -103,8 +104,8 @@
 
       <!-- "Wenn ja, welche?" / "Warum?" -->
       <div class="grid-2 med-head">
-        <p class="home__desc med-head__text">Wenn ja, welche?</p>
-        <p class="home__desc med-head__text">Warum?</p>
+        <p class="home__subtitle med-head__text">Wenn ja, welche?</p>
+        <p class="home__subtitle med-head__text">Warum?</p>
       </div>
 
       <!-- Med Name / Reason -->
@@ -203,13 +204,11 @@
                   />
                   <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
                 </div>
-                @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'startDate'))) {
-                  <p class="error">Bitte Datum wählen.</p>
-                }
-              </div>
+                 @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'startDate'))) { <p class="error">Bitte Datum wählen.</p> }
+                </div>
 
-              <div class="field">
-                <label class="label">Enddatum</label>
+            <div class="field">
+              <label class="label">Enddatum</label>
                 <div
                   class="box"
                   (click)="setActive(medActiveKey(i,'end'))"
@@ -223,9 +222,9 @@
                   />
                   <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
                 </div>
-                @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'endDate'))) {
-                  <p class="error">Bitte Datum wählen.</p>
-                }
+
+               @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'endDate'))) { <p class="error">Bitte Datum wählen.</p>
+              }
               </div>
             </div>
 
@@ -507,9 +506,9 @@
                   <input type="date" formControlName="startDate" (focus)="setActive(illActiveKey(i,'start'))" />
                   <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
                 </div>
-                @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'startDate'))) {
-                  <p class="error">Bitte Datum wählen.</p>
-                }
+               <p class="error">
+               {{ isInvalidCtrl(illnessCtrl(illnessesIll, i,'startDate')) ? 'Bitte Datum wählen.' : '\u00A0' }}
+                  </p>
               </div>
 
               <div class="field">
@@ -523,9 +522,9 @@
                   <input type="date" formControlName="endDate" (focus)="setActive(illActiveKey(i,'end'))" />
                   <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
                 </div>
-                @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'endDate'))) {
-                  <p class="error">Bitte Datum wählen.</p>
-                }
+                <p class="error">
+                {{ isInvalidCtrl(illnessCtrl(illnessesIll, i,'endDate')) ? 'Bitte Datum wählen.' : '\u00A0' }}
+                 </p>
               </div>
             </div>
 
@@ -870,9 +869,9 @@
                       <input type="date" formControlName="startDate" (focus)="setActive(opsBActiveKey(i,'start'))" />
                       <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
                     </div>
-                    @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'startDate'))) {
-                      <p class="error">Bitte Datum wählen.</p>
-                    }
+                     <p class="error">
+                    {{ isInvalidCtrl(illnessCtrl(opsBItems, i,'startDate')) ? 'Bitte Datum wählen.' : '\u00A0' }}
+                     </p>
                   </div>
 
                   <div class="field">
@@ -886,9 +885,9 @@
                       <input type="date" formControlName="endDate" (focus)="setActive(opsBActiveKey(i,'end'))" />
                       <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
                     </div>
-                    @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'endDate'))) {
-                      <p class="error">Bitte Datum wählen.</p>
-                    }
+                    <p class="error">
+                    {{ isInvalidCtrl(illnessCtrl(opsBItems, i,'endDate')) ? 'Bitte Datum wählen.' : '\u00A0' }}
+                     </p>
                   </div>
                 </div>
 
@@ -1172,7 +1171,7 @@
         </div>
 
         @if (isInvalid('doctorFirstName')) {
-          <p class="error">Vorname ist erforderlich.</p>
+          <p class="error">Bitte ausfullen!</p>
         }
       </div>
 
@@ -1192,7 +1191,7 @@
         </div>
 
         @if (isInvalid('doctorLastName')) {
-          <p class="error">Nachname ist erforderlich.</p>
+          <p class="error">Bitte ausfullen!</p>
         }
       </div>
     </div>
@@ -1214,7 +1213,7 @@
         </div>
 
         @if (isInvalid('doctorStreet')) {
-          <p class="error">Strasse ist erforderlich.</p>
+          <p class="error">Bitte ausfullen!</p>
         }
       </div>
 
@@ -1234,7 +1233,7 @@
         </div>
 
         @if (isInvalid('doctorNumber')) {
-          <p class="error">Nummer ist erforderlich.</p>
+          <p class="error">Bitte ausfullen!</p>
         }
       </div>
     </div>
@@ -1255,7 +1254,7 @@
       </div>
 
       @if (isInvalid('doctorCity')) {
-        <p class="error">PLZ und Ort sind erforderlich.</p>
+        <p class="error">Bitte ausfullen!</p>
       }
     </div>
   </section>
@@ -1841,7 +1840,7 @@
   <div
     class="seg"
     (click)="setActive('missingTeethQ')"
-    [class.is-active]="isActive('missingTeethQ')"
+    [class.is-active]="isActive('missingTeethQ') || form.controls.missingTeethQ.value !== null"
     [class.is-invalid]="isInvalid('missingTeethQ')"
   >
     <button
@@ -2125,7 +2124,7 @@
   <div
     class="seg"
     (click)="setActive('fillingsQ')"
-    [class.is-active]="isActive('fillingsQ')"
+    [class.is-active]="isActive('fillingsQ') || form.controls.fillingsQ.value !== null"
     [class.is-invalid]="isInvalid('fillingsQ')"
   >
     <button
@@ -2415,7 +2414,7 @@
   <div
     class="seg"
     (click)="setActive('cariesQ')"
-    [class.is-active]="isActive('cariesQ')"
+    [class.is-active]="isActive('cariesQ') || form.controls.cariesQ.value !== null"
     [class.is-invalid]="isInvalid('cariesQ')"
   >
     <button
@@ -2703,7 +2702,7 @@
   <div
     class="seg"
     (click)="setActive('rootCanalQ')"
-    [class.is-active]="isActive('rootCanalQ')"
+     [class.is-active]="isActive('rootCanalQ') || form.controls.rootCanalQ.value !== null"
     [class.is-invalid]="isInvalid('rootCanalQ')"
   >
     <button
@@ -3017,28 +3016,27 @@
     }
   </section>
 
-  <!-- 22. Bemerkungen -->
-  <section class="home__section">
-    <h2 class="h2">22. Bemerkungen</h2>
+ <!-- 22. Bemerkungen -->
+<section class="home__section">
+  <h2 class="h2">22. Bemerkungen</h2>
 
-    <div
-      class="box box--textarea box--remarks"
-      (click)="setActive('remarks')"
-      [class.is-active]="isActive('remarks') || hasText(form.controls.remarks)"
-      [class.is-invalid]="isInvalid('remarks')"
-    >
-      <textarea
-        formControlName="remarks"
-        placeholder="Hier eingeben..."
-        (input)="autoResize($event)"
-        (focus)="setActive('remarks')"
-      ></textarea>
-    </div>
+  <div
+    class="box box--textarea"
+    [class.is-active]="isActive('remarks') || form.controls.remarks.touched"
+    [class.is-invalid]="isInvalid('remarks')"
+  >
+    <textarea
+      formControlName="remarks"
+      placeholder="Hier eingeben..."
+      (input)="autoResize($event)"
+      (focus)="setActive('remarks')"
+    ></textarea>
+  </div>
 
-    @if (isInvalid('remarks')) {
-      <p class="error">Bitte ausfüllen.</p>
-    }
-  </section>
+  @if (isInvalid('remarks')) {
+    <p class="error">Bitte ausfüllen.</p>
+  }
+</section>
 </form>
 
 <app-footer (weiter)="onWeiter()"></app-footer>

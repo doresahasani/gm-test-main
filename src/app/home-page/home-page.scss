@@ -40,7 +40,6 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
   color: $text;
 }
 
-/* ROOT BLOCK */
 .home {
   font-family: $font;
 
@@ -51,14 +50,12 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     padding: 18px 16px;
   }
 
-  /* spacing between sections */
   &__section + &__section {
     margin-top: 18px;
   }
 
-  /* Typography */
   .h2 {
-    margin: 0 0 6px 0;
+    margin: 6px 0 6px 0;
     font-weight: 600;
     font-size: 14px;
     line-height: 17px;
@@ -70,13 +67,21 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     margin: 0;
     font-weight: 500;
     font-size: 12px;
-    line-height: 14px;
+    line-height: 10px;
     text-align: left;
   }
 
   &__subtitle {
     color: $muted;
     margin-bottom: 12px;
+  }
+   .home__subtitle {
+    margin: 10px 0 8px 0;
+    font-family: $font;
+    font-size: 12px;
+    line-height: 14px;
+    font-weight: 400;
+    color: #959595;
   }
 
   &__note {
@@ -93,12 +98,24 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     color: #6f6f6f;
   }
 
-  /* Layout helpers */
   .grid-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
   }
+.grid-2.dates .field {
+  position: relative;
+  padding-bottom: 18px;
+}
+
+.grid-2.dates .field > .error {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  line-height: 14px;
+}
 
   .grid-street {
     display: grid;
@@ -109,10 +126,11 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
   .field {
     display: grid;
     gap: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
   .label {
+    margin: 8px 0 2px 0;
     font-size: 12px;
     line-height: 14px;
     color: #6f6f6f;
@@ -123,7 +141,6 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     margin: 0;
     color: #ef4444;
     font-size: 12px;
-    line-height: 14px;
 
     &.error--upload {
       margin: 6px 0 0 0;

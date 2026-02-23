@@ -1,4 +1,3 @@
-// home-page.ts
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import {
@@ -27,6 +26,7 @@ type IllnessForm = FormGroup<{
 }>;
 
 type ActiveKey =
+  | null
   | 'heightCm'
   | 'weightKg'
   // section 2
@@ -119,8 +119,7 @@ type ActiveKey =
   // section 21
   | 'lastRadiographyDate'
   // section 22
-  | 'remarks'
-  | null;
+  | 'remarks';
 
 @Component({
   selector: 'app-home-page',
@@ -138,6 +137,7 @@ export class HomeComponent {
   addAttemptMed = signal(false);
   addAttemptIll = signal(false);
   addAttemptOpsB = signal(false);
+  
 
   // ========================= SECTION 6: UPLOAD (PDF) =========================
   selectedReportName = signal<string>('');
@@ -309,17 +309,19 @@ export class HomeComponent {
   isActive(key: Exclude<ActiveKey, null>) {
     return this.activeKey() === key;
   }
- // Helpers (needed by template)
-hasValue(ctrl: { value: any } | null | undefined): boolean {
-  const v = ctrl?.value;
-  return v !== null && v !== undefined;
-}
 
-hasText(ctrl: { value: any } | null | undefined): boolean {
-  const v = ctrl?.value;
-  if (v === null || v === undefined) return false;
-  return String(v).trim().length > 0;
-}
+  // Helpers (needed by template)
+  hasValue(ctrl: { value: any } | null | undefined): boolean {
+    const v = ctrl?.value;
+    return v !== null && v !== undefined;
+  }
+
+  hasText(ctrl: { value: any } | null | undefined): boolean {
+    const v = ctrl?.value;
+    if (v === null || v === undefined) return false;
+    return String(v).trim().length > 0;
+  }
+
   // ========================= UX HELPERS =========================
   autoResize(event: Event) {
     const textarea = event.target as HTMLTextAreaElement;
@@ -620,14 +622,24 @@ hasText(ctrl: { value: any } | null | undefined): boolean {
     note.updateValueAndValidity({ emitEvent: false });
   }
 
+  // ✅ SAME behavior as teethConditionNote (if you want it)
   setHygiene(value: 'gut' | 'mangelhaft' | 'schlecht') {
     this.form.controls.hygiene.setValue(value);
     this.setActive('hygiene');
 
     const note = this.form.controls.hygieneNote;
-    note.reset('', { emitEvent: false });
-    note.clearValidators();
-    note.disable({ emitEvent: false });
+
+    if (value === 'mangelhaft' || value === 'schlecht') {
+      note.enable({ emitEvent: false });
+      note.setValidators([Validators.required]);
+      note.markAsPristine();
+      note.markAsUntouched();
+    } else {
+      note.reset('', { emitEvent: false });
+      note.clearValidators();
+      note.disable({ emitEvent: false });
+    }
+
     note.updateValueAndValidity({ emitEvent: false });
   }
 
@@ -641,7 +653,7 @@ hasText(ctrl: { value: any } | null | undefined): boolean {
     this.setActive('crownsCondition');
 
     const note = this.form.controls.crownsNote;
-    if (value === 'mangelhaft') {
+    if (value === 'mangelhaft' || value === 'schlecht') {
       note.enable({ emitEvent: false });
       note.setValidators([Validators.required]);
       note.markAsPristine();
@@ -660,8 +672,7 @@ hasText(ctrl: { value: any } | null | undefined): boolean {
     this.setActive('bridgesCondition');
 
     const note = this.form.controls.bridgesNote;
-
-    if (value === 'mangelhaft') {
+    if (value === 'mangelhaft' || value === 'schlecht') {
       note.enable({ emitEvent: false });
       note.setValidators([Validators.required]);
       note.markAsPristine();
@@ -680,8 +691,7 @@ hasText(ctrl: { value: any } | null | undefined): boolean {
     this.setActive('partialDenturesCondition');
 
     const note = this.form.controls.partialDenturesNote;
-
-    if (value === 'mangelhaft') {
+    if (value === 'mangelhaft' || value === 'schlecht') {
       note.enable({ emitEvent: false });
       note.setValidators([Validators.required]);
       note.markAsPristine();
@@ -1356,53 +1366,6 @@ hasText(ctrl: { value: any } | null | undefined): boolean {
       answers.push({ code, value });
     };
 
-    const simpleKeys: string[] = [
-      'heightCm',
-      'weightKg',
-      'medication',
-      'medName',
-      'medReason',
-      'illnessQ',
-      'opsQ',
-      'opsA',
-      'opsB',
-      'opsC',
-      'opsD',
-      'doctorFirstName',
-      'doctorLastName',
-      'doctorStreet',
-      'doctorNumber',
-      'doctorCity',
-      'reportFile',
-      'teethCondition',
-      'teethConditionNote',
-      'hygiene',
-      'hygieneNote',
-      'occlusion',
-      'crownsCondition',
-      'crownsNote',
-      'bridgesCondition',
-      'bridgesNote',
-      'partialDenturesCondition',
-      'partialDenturesNote',
-      'dentition',
-      'dentitionNote',
-      'jaw',
-      'jawNote',
-      'futureTeethDisease',
-      'futureTeethDiseaseNote',
-      'missingTeethQ',
-      'fillingsQ',
-      'cariesQ',
-      'rootCanalQ',
-      'dentalTreatQ',
-      'dentalTreatWhich',
-      'lastRadiographyDate',
-      'remarks',
-    ];
-
-    for (const k of simpleKeys) push(k, raw?.[k]);
-
     // arrays (teeth selections)
     push('missingTeeth', raw?.missingTeeth ?? []);
     push('missingPermanent', raw?.missingPermanent ?? []);
@@ -1431,28 +1394,42 @@ hasText(ctrl: { value: any } | null | undefined): boolean {
     );
   }
 
-
- // ========================= SUBMIT / WEITER =========================
+// ========================= SUBMIT / WEITER =========================
 onWeiter() {
   this.submitted.set(true);
 
   this.markEnabledAsTouched(this.form);
   this.form.updateValueAndValidity({ emitEvent: false });
-
-  if (this.form.controls.reportFile.invalid) this.setActive('reportFile');
-  if (this.form.invalid) return;
-
   const raw = this.form.getRawValue();
 
-  const normalized = {
+  const payload = {
     ...raw,
     reportFile: raw.reportFile ? raw.reportFile.name : null,
   };
 
-  const answers = this.buildAnswersArray(normalized);
+  console.log('default values', payload);
 
-  console.log('items in warehouse:', answers);
+  if (this.form.invalid) {
+    this.scrollToFirstError();
+    return;
+  }
+
 }
+
+scrollToFirstError() {
+  setTimeout(() => {
+    const firstInvalid: HTMLElement | null =
+      document.querySelector(
+        '.is-invalid input, .is-invalid textarea, .is-invalid button'
+      );
+
+    if (firstInvalid) {
+      firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      firstInvalid.focus();
+    }
+  });
+}
+
 
   // ========================= TEMPLATE HELPERS for attempts =========================
   attemptMed() {
@@ -1465,3 +1442,4 @@ onWeiter() {
     return this.addAttemptOpsB();
   }
 }
+
