@@ -1,6 +1,7 @@
 :host {
   display: block;
 }
+
 $accent: #f68229;
 $border: #e6e8ef;
 $muted: #959595;
@@ -13,7 +14,6 @@ $radius-input: 12px;
 
 $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
 
-/* MIXINS */
 @mixin control-surface {
   border: 1px solid $border;
   background: #fff;
@@ -43,14 +43,13 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
 .home {
   font-family: $font;
 
-  /* CARD */
   &.card {
     background-color: #fbfbfb;
     border-radius: $radius-card;
     padding: 18px 16px;
   }
 
-  &__section + &__section {
+  &__section+&__section {
     margin-top: 18px;
   }
 
@@ -75,7 +74,8 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     color: $muted;
     margin-bottom: 12px;
   }
-   .home__subtitle {
+
+  .home__subtitle {
     margin: 10px 0 8px 0;
     font-family: $font;
     font-size: 12px;
@@ -103,19 +103,20 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
   }
-.grid-2.dates .field {
-  position: relative;
-  padding-bottom: 14px;
-}
 
-.grid-2.dates .field > .error {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  margin: 0;
-  line-height: 14px;
-}
+  .grid-2.dates .field {
+    position: relative;
+    padding-bottom: 14px;
+  }
+
+  .grid-2.dates .field>.error {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    line-height: 14px;
+  }
 
   .grid-street {
     display: grid;
@@ -148,7 +149,6 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     }
   }
 
-  /* BOX (inputs) */
   .box {
     height: 44px;
     padding: 0 12px;
@@ -235,7 +235,6 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     }
   }
 
-  /* SEG (Nein / Ja) */
   .seg {
     position: relative;
     display: flex;
@@ -297,7 +296,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
         transform: translateY(1px);
       }
 
-      + .seg__btn {
+      +.seg__btn {
         position: relative;
 
         &::before {
@@ -316,7 +315,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     }
 
     &:has(.seg__btn.is-selected) {
-      .seg__btn + .seg__btn::before {
+      .seg__btn+.seg__btn::before {
         opacity: 0;
       }
     }
@@ -329,8 +328,6 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     }
   }
 
-  /* BUTTONS */
- 
   .btn-add {
     width: 100%;
     height: 44px;
@@ -403,8 +400,6 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     }
   }
 
-  /* ILLNESS BLOCK */
-
   .illness {
     margin-top: 10px;
 
@@ -444,8 +439,6 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
       color: #8a8a8a;
     }
   }
-
-  /* ICONS / DATE */
 
   .icon-cal {
     position: absolute;
@@ -509,8 +502,6 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
         height: 44px;
         cursor: pointer;
       }
-      
-      
     }
 
     .calendar-icon {
@@ -525,7 +516,6 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     }
   }
 
-  /* PROVIDER */
   .provider {
     margin-top: 12px;
 
@@ -579,68 +569,65 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     }
   }
 
-  /* UPLOAD (Section 6) */
-
   .upload {
-  height: 66px;
-  margin: 12px auto 0 auto;
+    height: 66px;
+    margin: 12px auto 0 auto;
 
-  border: 1px dashed #F2EBEB;  
-  border-radius: 10px;
-  background: #FFFFFF;         
+    border: 1px dashed #F2EBEB;
+    border-radius: 10px;
+    background: #FFFFFF;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &.upload--active {
-    border-color: $accent;
-    background: #fff7ed;
-  }
-
-  &--dragover {
-    background: #fff2e2;
-    border-color: $accent;
-  }
-  &.is-invalid {
-    border-color: #ef4444;
-    background: #fff5f5;
-  }
-
-  &__inner {
     display: flex;
     align-items: center;
-    gap: 10px;
-  }
+    justify-content: center;
 
-  &__icon {
-    width: 22px;
-    height: 22px;
-    color: #F2EBEB;
-    transition: 0.2s;
-  }
+    cursor: pointer;
+    transition: all 0.2s ease;
 
-  &__name {
-    font-family: $font;
-    font-size: 14px;
-    font-weight: 500;
-    color: #6B7280; 
-    transition: 0.2s;
-  }
+    &.upload--active {
+      border-color: $accent;
+      background: #fff7ed;
+    }
 
-  &.upload--active &__name {
-    color: $accent;
-  }
+    &--dragover {
+      background: #fff2e2;
+      border-color: $accent;
+    }
 
-  &__input {
-    display: none !important;
-  }
-}
+    &.is-invalid {
+      border-color: #ef4444;
+      background: #fff5f5;
+    }
 
-  /* DENTAL NOTE BOX */
+    &__inner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    &__icon {
+      width: 22px;
+      height: 22px;
+      color: #F2EBEB;
+      transition: 0.2s;
+    }
+
+    &__name {
+      font-family: $font;
+      font-size: 14px;
+      font-weight: 500;
+      color: #6B7280;
+      transition: 0.2s;
+    }
+
+    &.upload--active &__name {
+      color: $accent;
+    }
+
+    &__input {
+      display: none !important;
+    }
+  }
 
   .box--dental-note {
     min-height: 38px;
@@ -689,8 +676,6 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     color: #8a8a8a;
   }
 
-  /* TEETH – PRIMARY */
-
   .teeth {
     margin-top: 10px;
 
@@ -735,7 +720,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     background: rgba($accent, 0.08);
     overflow: hidden;
 
-    + .teethbar {
+    +.teethbar {
       margin-top: 10px;
     }
   }
@@ -778,8 +763,6 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     }
   }
 
-  /* TEETH – PERMANENT */
-  
   .teethperm {
     margin-top: 14px;
 
@@ -921,13 +904,13 @@ form.card.home {
 
 .nav {
   display: flex;
-  justify-content: center;  
+  justify-content: center;
   margin-top: 12px;
 }
 
 .nav .btn-next {
-  width: 160px;          
-  height: 34px;          
+  width: 160px;
+  height: 34px;
   border-radius: 12px;
   font-size: 13px;
   font-weight: 600;
@@ -949,54 +932,57 @@ form.card.home {
 .nav .btn-back {
   display: none;
 }
+
 .card.home {
-  padding-bottom: 90px; 
+  padding-bottom: 90px;
 }
 
 
-.finish-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.25);
-  display: grid;
-  place-items: center;
-  z-index: 1000;
-}
+.finish {
+  &-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.25);
+    display: grid;
+    place-items: center;
+    z-index: 1000;
+  }
 
-.finish-card {
-  width: min(420px, calc(100% - 32px));
-  background: #fff;
-  border-radius: 14px;
-  padding: 18px 16px;
-  text-align: center;
-}
+  &-card {
+    width: min(420px, calc(100% - 32px));
+    background: #fff;
+    border-radius: 14px;
+    padding: 18px 16px;
+    text-align: center;
+  }
 
-.finish-btn {
-  margin-top: 12px;
-  width: 100%;
-  height: 44px;
-  border-radius: 12px;
-  border: 1px solid #e6e8ef;
-  background: #fff;
-  font-weight: 600;
-  cursor: pointer;
+  &-btn {
+    margin-top: 12px;
+    width: 100%;
+    height: 44px;
+    border-radius: 12px;
+    border: 1px solid $border;
+    background: #fff;
+    font-weight: 600;
+    cursor: pointer;
+  }
 }
 
 mat-expansion-panel {
-  margin-bottom: 16px; 
+  margin-bottom: 16px;
 }
 
 .mat-expansion-panel-header.mat-expanded {
-    height: 50px !important;
-    padding: 0;
-} 
-.mat-expansion-panel:not([class*=mat-elevation-z])
- {
-    box-shadow: none !important;
+  height: 50px !important;
+  padding: 0;
 }
 
-::ng-deep{
+.mat-expansion-panel:not([class*=mat-elevation-z]) {
+  box-shadow: none !important;
+}
+
+::ng-deep {
   .mat-expansion-panel-body {
     padding: 0 0 16px !important;
-}
+  }
 }

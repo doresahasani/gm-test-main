@@ -1,9 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Navbar } from "./layot/navbar/navbar";
+import { Navbar } from './layot/navbar/navbar';
 import { Footer } from './layot/footer/footer';
-
-
+import { FooterActionsService } from './layot/footer/footer-actions.service';
 
 @Component({
   selector: 'app-root',
@@ -13,5 +12,10 @@ import { Footer } from './layot/footer/footer';
   styleUrls: ['./app.scss'],
 })
 export class App {
-  
+  private footerActions = inject(FooterActionsService);
+
+  handleWeiter = () => {
+    this.footerActions.triggerNext();
+  };
 }
+

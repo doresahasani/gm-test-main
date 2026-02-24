@@ -1,11 +1,7 @@
 <form class="card home" [formGroup]="form" (submit)="$event.preventDefault()">
   <mat-accordion [multi]="false">
     <!-- 1. Grösse und Gewicht -->
-    <mat-expansion-panel
-      hideToggle
-      [expanded]="currentStep() === 1"
-      (opened)="goToStep(1)"
-    >
+    <mat-expansion-panel hideToggle [expanded]="currentStep() === 1" (opened)="goToStep(1)">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -18,53 +14,31 @@
         Welches sind Ihre Körpermasse?
       </p>
       <div class="grid-2">
-        <!-- Height -->
         <div class="field">
-          <div
-            class="box box--unit"
-            (click)="setActive('heightCm')"
+          <div class="box box--unit" (click)="setActive('heightCm')"
             [class.is-active]="isActive('heightCm') || hasValue(form.controls.heightCm)"
-            [class.is-invalid]="isInvalid('heightCm')"
-          >
-            <input
-              type="number"
-              inputmode="numeric"
-              formControlName="heightCm"
-              placeholder="Grösse"
-              min="0"
-              max="350"
-              (focus)="setActive('heightCm')"
-            />
+            [class.is-invalid]="isInvalid('heightCm')">
+            <input type="number" inputmode="numeric" formControlName="heightCm" placeholder="Grösse" min="0" max="350"
+              (focus)="setActive('heightCm')" />
             <span class="unit">(cm)</span>
           </div>
 
           @if (isInvalid('heightCm')) {
-            <p class="error">Grösse ist (0–350 cm).</p>
+          <p class="error">Grösse ist (0–350 cm).</p>
           }
         </div>
 
-        <!-- Weight -->
         <div class="field">
-          <div
-            class="box box--unit"
-            (click)="setActive('weightKg')"
+          <div class="box box--unit" (click)="setActive('weightKg')"
             [class.is-active]="isActive('weightKg') || hasValue(form.controls.weightKg)"
-            [class.is-invalid]="isInvalid('weightKg')"
-          >
-            <input
-              type="number"
-              inputmode="numeric"
-              formControlName="weightKg"
-              placeholder="Gewicht"
-              min="0"
-              max="600"
-              (focus)="setActive('weightKg')"
-            />
+            [class.is-invalid]="isInvalid('weightKg')">
+            <input type="number" inputmode="numeric" formControlName="weightKg" placeholder="Gewicht" min="0" max="600"
+              (focus)="setActive('weightKg')" />
             <span class="unit">(kg)</span>
           </div>
 
           @if (isInvalid('weightKg')) {
-            <p class="error">Gewicht ist(0–600 kg).</p>
+          <p class="error">Gewicht ist(0–600 kg).</p>
           }
         </div>
       </div>
@@ -80,7 +54,7 @@
 
 
     <!-- 2. Medikamente oder Hilfsmittel -->
-     @if (currentStep() >= 2) {
+    @if (currentStep() >= 2) {
     <mat-expansion-panel hideToggle [expanded]="currentStep() === 2">
       <mat-expansion-panel-header>
         <mat-panel-title>
@@ -89,365 +63,250 @@
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <div
-        class="seg"
-        (click)="setActive('medication')"
+      <div class="seg" (click)="setActive('medication')"
         [class.is-active]="isActive('medication') || hasValue(form.controls.medication)"
-        [class.is-invalid]="isInvalid('medication')"
-      >
-        <button
-          type="button"
-          class="seg__btn"
-          [class.is-selected]="form.controls.medication.value === false"
-          (click)="$event.stopPropagation(); setMedication(false)"
-        >
+        [class.is-invalid]="isInvalid('medication')">
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.medication.value === false"
+          (click)="$event.stopPropagation(); setMedication(false)">
           Nein
         </button>
 
-        <button
-          type="button"
-          class="seg__btn"
-          [class.is-selected]="form.controls.medication.value === true"
-          (click)="$event.stopPropagation(); setMedication(true)"
-        >
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.medication.value === true"
+          (click)="$event.stopPropagation(); setMedication(true)">
           Ja
         </button>
       </div>
 
       @if (isInvalid('medication')) {
-        <p class="error">Bitte wählen Sie eine Option.</p>
+      <p class="error">Bitte wählen Sie eine Option.</p>
       }
 
       @if (showMedicationDetails()) {
-        <p class="home__subtitle">
-          Nehmen Sie momentan Medikamente ein oder haben Sie in den letzten 2 Jahren regelmässig oder wiederholt
-          welche eingenommen (mit Ausnahme von Verhütungsmitteln) oder haben Sie eine medizinische Verordnung für
-          Hilfsmittel oder Geräte erhalten (mit Ausnahme von Brillen und Kontaktlinsen)?
-        </p>
+      <p class="home__subtitle">
+        Nehmen Sie momentan Medikamente ein oder haben Sie in den letzten 2 Jahren regelmässig oder wiederholt
+        welche eingenommen (mit Ausnahme von Verhütungsmitteln) oder haben Sie eine medizinische Verordnung für
+        Hilfsmittel oder Geräte erhalten (mit Ausnahme von Brillen und Kontaktlinsen)?
+      </p>
 
-        <!-- "Wenn ja, welche?" / "Warum?" -->
-        <div class="grid-2 med-head">
-          <p class="home__subtitle med-head__text">Wenn ja, welche?</p>
-          <p class="home__subtitle med-head__text">Warum?</p>
-        </div>
+      <div class="grid-2 med-head">
+        <p class="home__subtitle med-head__text">Wenn ja, welche?</p>
+        <p class="home__subtitle med-head__text">Warum?</p>
+      </div>
 
-        <!-- Med Name / Reason -->
-        <div class="grid-2">
-          <div class="field">
-            <div
-              class="box"
-              (click)="setActive('medName')"
-              [class.is-active]="isActive('medName') || hasText(form.controls.medName)"
-              [class.is-invalid]="isInvalid('medName')"
-            >
-              <input
-                type="text"
-                formControlName="medName"
-                placeholder="Welche?"
-                (focus)="setActive('medName')"
-              />
-            </div>
-            @if (isInvalid('medName')) {
-              <p class="error">Bitte ausfüllen.</p>
-            }
+      <div class="grid-2">
+        <div class="field">
+          <div class="box" (click)="setActive('medName')"
+            [class.is-active]="isActive('medName') || hasText(form.controls.medName)"
+            [class.is-invalid]="isInvalid('medName')">
+            <input type="text" formControlName="medName" placeholder="Welche?" (focus)="setActive('medName')" />
           </div>
-
-          <div class="field">
-            <div
-              class="box"
-              (click)="setActive('medReason')"
-              [class.is-active]="isActive('medReason') || hasText(form.controls.medReason)"
-              [class.is-invalid]="isInvalid('medReason')"
-            >
-              <input
-                type="text"
-                formControlName="medReason"
-                placeholder="Warum?"
-                (focus)="setActive('medReason')"
-              />
-            </div>
-            @if (isInvalid('medReason')) {
-              <p class="error">Bitte ausfüllen.</p>
-            }
-          </div>
-        </div>
-
-        <!-- ILLNESSES (Section 2 Array) -->
-        <div class="illness" formArrayName="illnessesMed">
-          @for (_ of illnessesMed.controls; track $index; let i = $index) {
-            <div class="illness__card" [formGroupName]="i">
-              <div class="illness__head">
-                <div class="illness__title">{{ i + 1 }}) Krankheit erfassen</div>
-
-                @if (illnessesMed.length > 1) {
-                  <button type="button" class="illness__remove" (click)="removeMedIllness(i)">
-                    - Entfernen
-                  </button>
-                }
-              </div>
-
-              <p class="illness__hint">
-                Krankheit, Leiden, Unfall, Behandlungsgrund, betroffene Stelle am Körper (links, rechts)
-              </p>
-
-              <!-- DESC -->
-              <div
-                class="box box--textarea"
-                (click)="setActive(medActiveKey(i,'desc'))"
-                [class.is-active]="isMedActive(i,'desc') || hasText(illnessCtrl(illnessesMed, i,'desc'))"
-                [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'desc'))"
-              >
-                <textarea
-                  formControlName="desc"
-                  placeholder="Hier eingeben..."
-                  (input)="autoResize($event)"
-                  (focus)="setActive(medActiveKey(i,'desc'))"
-                ></textarea>
-
-                <span class="icon-pencil" aria-hidden="true"></span>
-              </div>
-
-              @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'desc'))) {
-                <p class="error">Bitte ausfüllen.</p>
-              }
-
-              <!-- Dates -->
-              <div class="grid-2 dates">
-                <div class="field">
-                  <label class="label">Begindatum</label>
-                  <div
-                    class="box"
-                    (click)="setActive(medActiveKey(i,'start'))"
-                    [class.is-active]="isMedActive(i,'start') || hasText(illnessCtrl(illnessesMed, i,'startDate'))"
-                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'startDate'))"
-                  >
-                    <input
-                      type="date"
-                      formControlName="startDate"
-                      (focus)="setActive(medActiveKey(i,'start'))"
-                    />
-                    <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
-                  </div>
-                  @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'startDate'))) {
-                    <p class="error">Bitte Datum wählen.</p>
-                  }
-                </div>
-
-                <div class="field">
-                  <label class="label">Enddatum</label>
-                  <div
-                    class="box"
-                    (click)="setActive(medActiveKey(i,'end'))"
-                    [class.is-active]="isMedActive(i,'end') || hasText(illnessCtrl(illnessesMed, i,'endDate'))"
-                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'endDate'))"
-                  >
-                    <input
-                      type="date"
-                      formControlName="endDate"
-                      (focus)="setActive(medActiveKey(i,'end'))"
-                    />
-                    <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
-                  </div>
-                  @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'endDate'))) {
-                    <p class="error">Bitte Datum wählen.</p>
-                  }
-                </div>
-              </div>
-
-              <!-- Operiert -->
-              <div class="field">
-                <label class="label">Operiert?</label>
-                <div
-                  class="seg"
-                  (click)="setActive(medActiveKey(i,'operated'))"
-                  [class.is-active]="isMedActive(i,'operated') || hasValue(illnessCtrl(illnessesMed, i,'operated'))"
-                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'operated'))"
-                >
-                  <button
-                    type="button"
-                    class="seg__btn"
-                    [class.is-selected]="illnessCtrl(illnessesMed, i,'operated').value === false"
-                    (click)="$event.stopPropagation(); setMedBool(i,'operated',false)"
-                  >
-                    Nein
-                  </button>
-                  <button
-                    type="button"
-                    class="seg__btn"
-                    [class.is-selected]="illnessCtrl(illnessesMed, i,'operated').value === true"
-                    (click)="$event.stopPropagation(); setMedBool(i,'operated',true)"
-                  >
-                    Ja
-                  </button>
-                </div>
-
-                @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'operated'))) {
-                  <p class="error">Bitte wählen.</p>
-                }
-              </div>
-
-              <!-- Behandlung beendet -->
-              <div class="field">
-                <label class="label">Behandlung beendet, genesen ohne Folgen</label>
-                <div
-                  class="seg"
-                  (click)="setActive(medActiveKey(i,'treatmentDone'))"
-                  [class.is-active]="isMedActive(i,'treatmentDone') || hasValue(illnessCtrl(illnessesMed, i,'treatmentDone'))"
-                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'treatmentDone'))"
-                >
-                  <button
-                    type="button"
-                    class="seg__btn"
-                    [class.is-selected]="illnessCtrl(illnessesMed, i,'treatmentDone').value === false"
-                    (click)="$event.stopPropagation(); setMedBool(i,'treatmentDone',false)"
-                  >
-                    Nein
-                  </button>
-                  <button
-                    type="button"
-                    class="seg__btn"
-                    [class.is-selected]="illnessCtrl(illnessesMed, i,'treatmentDone').value === true"
-                    (click)="$event.stopPropagation(); setMedBool(i,'treatmentDone',true)"
-                  >
-                    Ja
-                  </button>
-                </div>
-
-                @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'treatmentDone'))) {
-                  <p class="error">Bitte wählen.</p>
-                }
-              </div>
-
-              <!-- Provider -->
-              <div class="provider">
-                <p class="provider__title">
-                  Name und Adresse des Arztes, Spitals oder anderen Leistungserbringers
-                </p>
-
-                <div class="provider__grid provider__grid--name">
-                  <div class="field">
-                    <div
-                      class="box provider__box"
-                      (click)="setActive(medActiveKey(i,'docFirstName'))"
-                      [class.is-active]="isMedActive(i,'docFirstName') || hasText(illnessCtrl(illnessesMed, i,'docFirstName'))"
-                      [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docFirstName'))"
-                    >
-                      <input
-                        type="text"
-                        formControlName="docFirstName"
-                        placeholder="Vorname"
-                        (focus)="setActive(medActiveKey(i,'docFirstName'))"
-                      />
-                    </div>
-                    @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'docFirstName'))) {
-                      <p class="error">Bitte ausfüllen.</p>
-                    }
-                  </div>
-
-                  <div class="field">
-                    <div
-                      class="box provider__box"
-                      (click)="setActive(medActiveKey(i,'docLastName'))"
-                      [class.is-active]="isMedActive(i,'docLastName') || hasText(illnessCtrl(illnessesMed, i,'docLastName'))"
-                      [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docLastName'))"
-                    >
-                      <input
-                        type="text"
-                        formControlName="docLastName"
-                        placeholder="Nachname"
-                        (focus)="setActive(medActiveKey(i,'docLastName'))"
-                      />
-                    </div>
-                    @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'docLastName'))) {
-                      <p class="error">Bitte ausfüllen.</p>
-                    }
-                  </div>
-                </div>
-
-                <div class="provider__grid provider__grid--street">
-                  <div class="field">
-                    <div
-                      class="box provider__box"
-                      (click)="setActive(medActiveKey(i,'docStreet'))"
-                      [class.is-active]="isMedActive(i,'docStreet') || hasText(illnessCtrl(illnessesMed, i,'docStreet'))"
-                      [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docStreet'))"
-                    >
-                      <input
-                        type="text"
-                        formControlName="docStreet"
-                        placeholder="Strasse"
-                        (focus)="setActive(medActiveKey(i,'docStreet'))"
-                      />
-                    </div>
-                    @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'docStreet'))) {
-                      <p class="error">Bitte ausfüllen.</p>
-                    }
-                  </div>
-
-                  <div class="field">
-                    <div
-                      class="box provider__box"
-                      (click)="setActive(medActiveKey(i,'docNr'))"
-                      [class.is-active]="isMedActive(i,'docNr') || hasText(illnessCtrl(illnessesMed, i,'docNr'))"
-                      [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docNr'))"
-                    >
-                      <input
-                        type="text"
-                        formControlName="docNr"
-                        placeholder="Nr."
-                        (focus)="setActive(medActiveKey(i,'docNr'))"
-                      />
-                    </div>
-                    @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'docNr'))) {
-                      <p class="error">Bitte ausfüllen.</p>
-                    }
-                  </div>
-                </div>
-
-                <div class="provider__grid provider__grid--zip">
-                  <div class="field">
-                    <div
-                      class="box provider__box"
-                      (click)="setActive(medActiveKey(i,'docZipCity'))"
-                      [class.is-active]="isMedActive(i,'docZipCity') || hasText(illnessCtrl(illnessesMed, i,'docZipCity'))"
-                      [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docZipCity'))"
-                    >
-                      <input
-                        type="text"
-                        formControlName="docZipCity"
-                        placeholder="PLZ, Ort"
-                        (focus)="setActive(medActiveKey(i,'docZipCity'))"
-                      />
-                    </div>
-                    @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'docZipCity'))) {
-                      <p class="error">Bitte ausfüllen.</p>
-                    }
-                  </div>
-                </div>
-              </div>
-            </div>
+          @if (isInvalid('medName')) {
+          <p class="error">Bitte ausfüllen.</p>
           }
         </div>
 
-        <!-- + Krankheit (Section 2) -->
-        <button
-          type="button"
-          class="btn-add btn-add--bottom"
-          (click)="addMedIllness()"
-          [class.is-disabled]="!canAddMedIllness()"
-          [attr.aria-disabled]="!canAddMedIllness()"
-        >
-          + Krankheit erfassen
-        </button>
+        <div class="field">
+          <div class="box" (click)="setActive('medReason')"
+            [class.is-active]="isActive('medReason') || hasText(form.controls.medReason)"
+            [class.is-invalid]="isInvalid('medReason')">
+            <input type="text" formControlName="medReason" placeholder="Warum?" (focus)="setActive('medReason')" />
+          </div>
+          @if (isInvalid('medReason')) {
+          <p class="error">Bitte ausfüllen.</p>
+          }
+        </div>
+      </div>
+
+      <div class="illness" formArrayName="illnessesMed">
+        @for (_ of illnessesMed.controls; track $index; let i = $index) {
+        <div class="illness__card" [formGroupName]="i">
+          <div class="illness__head">
+            <div class="illness__title">{{ i + 1 }}) Krankheit erfassen</div>
+
+            @if (illnessesMed.length > 1) {
+            <button type="button" class="illness__remove" (click)="removeMedIllness(i)">
+              - Entfernen
+            </button>
+            }
+          </div>
+
+          <p class="illness__hint">
+            Krankheit, Leiden, Unfall, Behandlungsgrund, betroffene Stelle am Körper (links, rechts)
+          </p>
+
+          <div class="box box--textarea" (click)="setActive(medActiveKey(i,'desc'))"
+            [class.is-active]="isMedActive(i,'desc') || hasText(illnessCtrl(illnessesMed, i,'desc'))"
+            [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'desc'))">
+            <textarea formControlName="desc" placeholder="Hier eingeben..." (input)="autoResize($event)"
+              (focus)="setActive(medActiveKey(i,'desc'))"></textarea>
+
+            <span class="icon-pencil" aria-hidden="true"></span>
+          </div>
+
+          @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'desc'))) {
+          <p class="error">Bitte ausfüllen.</p>
+          }
+
+          <div class="grid-2 dates">
+            <div class="field">
+              <label class="label">Begindatum</label>
+              <div class="box" (click)="setActive(medActiveKey(i,'start'))"
+                [class.is-active]="isMedActive(i,'start') || hasText(illnessCtrl(illnessesMed, i,'startDate'))"
+                [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'startDate'))">
+                <input type="date" formControlName="startDate" (focus)="setActive(medActiveKey(i,'start'))" />
+                <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
+              </div>
+              @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'startDate'))) {
+              <p class="error">Bitte Datum wählen.</p>
+              }
+            </div>
+
+            <div class="field">
+              <label class="label">Enddatum</label>
+              <div class="box" (click)="setActive(medActiveKey(i,'end'))"
+                [class.is-active]="isMedActive(i,'end') || hasText(illnessCtrl(illnessesMed, i,'endDate'))"
+                [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'endDate'))">
+                <input type="date" formControlName="endDate" (focus)="setActive(medActiveKey(i,'end'))" />
+                <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
+              </div>
+              @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'endDate'))) {
+              <p class="error">Bitte Datum wählen.</p>
+              }
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">Operiert?</label>
+            <div class="seg" (click)="setActive(medActiveKey(i,'operated'))"
+              [class.is-active]="isMedActive(i,'operated') || hasValue(illnessCtrl(illnessesMed, i,'operated'))"
+              [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'operated'))">
+              <button type="button" class="seg__btn"
+                [class.is-selected]="illnessCtrl(illnessesMed, i,'operated').value === false"
+                (click)="$event.stopPropagation(); setMedBool(i,'operated',false)">
+                Nein
+              </button>
+              <button type="button" class="seg__btn"
+                [class.is-selected]="illnessCtrl(illnessesMed, i,'operated').value === true"
+                (click)="$event.stopPropagation(); setMedBool(i,'operated',true)">
+                Ja
+              </button>
+            </div>
+
+            @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'operated'))) {
+            <p class="error">Bitte wählen.</p>
+            }
+          </div>
+
+          <div class="field">
+            <label class="label">Behandlung beendet, genesen ohne Folgen</label>
+            <div class="seg" (click)="setActive(medActiveKey(i,'treatmentDone'))"
+              [class.is-active]="isMedActive(i,'treatmentDone') || hasValue(illnessCtrl(illnessesMed, i,'treatmentDone'))"
+              [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'treatmentDone'))">
+              <button type="button" class="seg__btn"
+                [class.is-selected]="illnessCtrl(illnessesMed, i,'treatmentDone').value === false"
+                (click)="$event.stopPropagation(); setMedBool(i,'treatmentDone',false)">
+                Nein
+              </button>
+              <button type="button" class="seg__btn"
+                [class.is-selected]="illnessCtrl(illnessesMed, i,'treatmentDone').value === true"
+                (click)="$event.stopPropagation(); setMedBool(i,'treatmentDone',true)">
+                Ja
+              </button>
+            </div>
+
+            @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'treatmentDone'))) {
+            <p class="error">Bitte wählen.</p>
+            }
+          </div>
+
+          <div class="provider">
+            <p class="provider__title">
+              Name und Adresse des Arztes, Spitals oder anderen Leistungserbringers
+            </p>
+
+            <div class="provider__grid provider__grid--name">
+              <div class="field">
+                <div class="box provider__box" (click)="setActive(medActiveKey(i,'docFirstName'))"
+                  [class.is-active]="isMedActive(i,'docFirstName') || hasText(illnessCtrl(illnessesMed, i,'docFirstName'))"
+                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docFirstName'))">
+                  <input type="text" formControlName="docFirstName" placeholder="Vorname"
+                    (focus)="setActive(medActiveKey(i,'docFirstName'))" />
+                </div>
+                @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'docFirstName'))) {
+                <p class="error">Bitte ausfüllen.</p>
+                }
+              </div>
+
+              <div class="field">
+                <div class="box provider__box" (click)="setActive(medActiveKey(i,'docLastName'))"
+                  [class.is-active]="isMedActive(i,'docLastName') || hasText(illnessCtrl(illnessesMed, i,'docLastName'))"
+                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docLastName'))">
+                  <input type="text" formControlName="docLastName" placeholder="Nachname"
+                    (focus)="setActive(medActiveKey(i,'docLastName'))" />
+                </div>
+                @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'docLastName'))) {
+                <p class="error">Bitte ausfüllen.</p>
+                }
+              </div>
+            </div>
+
+            <div class="provider__grid provider__grid--street">
+              <div class="field">
+                <div class="box provider__box" (click)="setActive(medActiveKey(i,'docStreet'))"
+                  [class.is-active]="isMedActive(i,'docStreet') || hasText(illnessCtrl(illnessesMed, i,'docStreet'))"
+                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docStreet'))">
+                  <input type="text" formControlName="docStreet" placeholder="Strasse"
+                    (focus)="setActive(medActiveKey(i,'docStreet'))" />
+                </div>
+                @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'docStreet'))) {
+                <p class="error">Bitte ausfüllen.</p>
+                }
+              </div>
+
+              <div class="field">
+                <div class="box provider__box" (click)="setActive(medActiveKey(i,'docNr'))"
+                  [class.is-active]="isMedActive(i,'docNr') || hasText(illnessCtrl(illnessesMed, i,'docNr'))"
+                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docNr'))">
+                  <input type="text" formControlName="docNr" placeholder="Nr."
+                    (focus)="setActive(medActiveKey(i,'docNr'))" />
+                </div>
+                @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'docNr'))) {
+                <p class="error">Bitte ausfüllen.</p>
+                }
+              </div>
+            </div>
+
+            <div class="provider__grid provider__grid--zip">
+              <div class="field">
+                <div class="box provider__box" (click)="setActive(medActiveKey(i,'docZipCity'))"
+                  [class.is-active]="isMedActive(i,'docZipCity') || hasText(illnessCtrl(illnessesMed, i,'docZipCity'))"
+                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docZipCity'))">
+                  <input type="text" formControlName="docZipCity" placeholder="PLZ, Ort"
+                    (focus)="setActive(medActiveKey(i,'docZipCity'))" />
+                </div>
+                @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'docZipCity'))) {
+                <p class="error">Bitte ausfüllen.</p>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+
+      <button type="button" class="btn-add btn-add--bottom" (click)="addMedIllness()"
+        [class.is-disabled]="!canAddMedIllness()" [attr.aria-disabled]="!canAddMedIllness()">
+        + Krankheit erfassen
+      </button>
       }
 
       <div class="nav">
         <button type="button" class="btn-next" (click)="onNext()">Next</button>
       </div>
     </mat-expansion-panel>
-  }
+    }
 
-  <!-- 3. Krankheiten oder Beschwerden -->
+    <!-- 3. Krankheiten oder Beschwerden -->
     @if (currentStep() >= 3) {
     <mat-expansion-panel hideToggle [expanded]="currentStep() === 3">
       <mat-expansion-panel-header>
@@ -457,36 +316,25 @@
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
-    <div
-      class="seg"
-      (click)="setActive('illnessQ')"
-      [class.is-active]="isActive('illnessQ') || hasValue(form.controls.illnessQ)"
-      [class.is-invalid]="isInvalid('illnessQ')"
-    >
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.illnessQ.value === false"
-        (click)="$event.stopPropagation(); setIllnessQ(false)"
-      >
-        Nein
-      </button>
+      <div class="seg" (click)="setActive('illnessQ')"
+        [class.is-active]="isActive('illnessQ') || hasValue(form.controls.illnessQ)"
+        [class.is-invalid]="isInvalid('illnessQ')">
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.illnessQ.value === false"
+          (click)="$event.stopPropagation(); setIllnessQ(false)">
+          Nein
+        </button>
 
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.illnessQ.value === true"
-        (click)="$event.stopPropagation(); setIllnessQ(true)"
-      >
-        Ja
-      </button>
-    </div>
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.illnessQ.value === true"
+          (click)="$event.stopPropagation(); setIllnessQ(true)">
+          Ja
+        </button>
+      </div>
 
-    @if (isInvalid('illnessQ')) {
+      @if (isInvalid('illnessQ')) {
       <p class="error">Bitte wählen Sie eine Option.</p>
-    }
+      }
 
-    @if (showIllnessDetails()) {
+      @if (showIllnessDetails()) {
       <p class="home__desc">
         Haben Sie in den vergangenen 5 Jahren an Krankheiten oder Beschwerden gelitten oder leiden Sie noch daran
         (ausser saisonale Krankheiten und geheilte Covid-Erkrankung ohne Nebenwirkung oder Langzeitfolgen)?
@@ -497,265 +345,193 @@
 
       <div class="illness" formArrayName="illnessesIll">
         @for (_ of illnessesIll.controls; track $index; let i = $index) {
-          <div class="illness__card" [formGroupName]="i">
-            <div class="illness__head">
-              <div class="illness__title">{{ i + 1 }}) Krankheit erfassen</div>
+        <div class="illness__card" [formGroupName]="i">
+          <div class="illness__head">
+            <div class="illness__title">{{ i + 1 }}) Krankheit erfassen</div>
 
-              @if (illnessesIll.length > 1) {
-                <button type="button" class="illness__remove" (click)="removeIllIllness(i)">
-                  - Entfernen
-                </button>
-              }
+            @if (illnessesIll.length > 1) {
+            <button type="button" class="illness__remove" (click)="removeIllIllness(i)">
+              - Entfernen
+            </button>
+            }
+          </div>
+
+          <p class="illness__hint">
+            Krankheit, Leiden, Unfall, Behandlungsgrund, betroffene Stelle am Körper (links, rechts)
+          </p>
+
+          <div class="box box--textarea" (click)="setActive(illActiveKey(i,'desc'))"
+            [class.is-active]="isIllActive(i,'desc') || hasText(illnessCtrl(illnessesIll, i,'desc'))"
+            [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'desc'))">
+            <textarea formControlName="desc" placeholder="Hier eingeben..." (input)="autoResize($event)"
+              (focus)="setActive(illActiveKey(i,'desc'))"></textarea>
+
+            <span class="icon-pencil" aria-hidden="true"></span>
+          </div>
+          @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'desc'))) {
+          <p class="error">Bitte ausfüllen.</p>
+          }
+
+          <div class="grid-2 dates">
+            <div class="field">
+              <label class="label">Begindatum</label>
+              <div class="box" (click)="setActive(illActiveKey(i,'start'))"
+                [class.is-active]="isIllActive(i,'start') || hasText(illnessCtrl(illnessesIll, i,'startDate'))"
+                [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'startDate'))">
+                <input type="date" formControlName="startDate" (focus)="setActive(illActiveKey(i,'start'))" />
+                <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
+              </div>
+              <p class="error">
+                {{ isInvalidCtrl(illnessCtrl(illnessesIll, i,'startDate')) ? 'Bitte Datum wählen.' : '\u00A0' }}
+              </p>
             </div>
 
-            <p class="illness__hint">
-              Krankheit, Leiden, Unfall, Behandlungsgrund, betroffene Stelle am Körper (links, rechts)
+            <div class="field">
+              <label class="label">Enddatum</label>
+              <div class="box" (click)="setActive(illActiveKey(i,'end'))"
+                [class.is-active]="isIllActive(i,'end') || hasText(illnessCtrl(illnessesIll, i,'endDate'))"
+                [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'endDate'))">
+                <input type="date" formControlName="endDate" (focus)="setActive(illActiveKey(i,'end'))" />
+                <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
+              </div>
+              <p class="error">
+                {{ isInvalidCtrl(illnessCtrl(illnessesIll, i,'endDate')) ? 'Bitte Datum wählen.' : '\u00A0' }}
+              </p>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">Operiert?</label>
+            <div class="seg" (click)="setActive(illActiveKey(i,'operated'))"
+              [class.is-active]="isIllActive(i,'operated') || hasValue(illnessCtrl(illnessesIll, i,'operated'))"
+              [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'operated'))">
+              <button type="button" class="seg__btn"
+                [class.is-selected]="illnessCtrl(illnessesIll, i,'operated').value === false"
+                (click)="$event.stopPropagation(); setIllBool(i,'operated',false)">
+                Nein
+              </button>
+              <button type="button" class="seg__btn"
+                [class.is-selected]="illnessCtrl(illnessesIll, i,'operated').value === true"
+                (click)="$event.stopPropagation(); setIllBool(i,'operated',true)">
+                Ja
+              </button>
+            </div>
+
+            @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'operated'))) {
+            <p class="error">Bitte wählen.</p>
+            }
+          </div>
+
+          <div class="field">
+            <label class="label">Behandlung beendet, genesen ohne Folgen</label>
+            <div class="seg" (click)="setActive(illActiveKey(i,'treatmentDone'))"
+              [class.is-active]="isIllActive(i,'treatmentDone') || hasValue(illnessCtrl(illnessesIll, i,'treatmentDone'))"
+              [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'treatmentDone'))">
+              <button type="button" class="seg__btn"
+                [class.is-selected]="illnessCtrl(illnessesIll, i,'treatmentDone').value === false"
+                (click)="$event.stopPropagation(); setIllBool(i,'treatmentDone',false)">
+                Nein
+              </button>
+              <button type="button" class="seg__btn"
+                [class.is-selected]="illnessCtrl(illnessesIll, i,'treatmentDone').value === true"
+                (click)="$event.stopPropagation(); setIllBool(i,'treatmentDone',true)">
+                Ja
+              </button>
+            </div>
+
+            @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'treatmentDone'))) {
+            <p class="error">Bitte wählen.</p>
+            }
+          </div>
+
+          <div class="provider">
+            <p class="provider__title">
+              Name und Adresse des Arztes, Spitals oder anderen Leistungserbringers
             </p>
 
-            <div
-              class="box box--textarea"
-              (click)="setActive(illActiveKey(i,'desc'))"
-              [class.is-active]="isIllActive(i,'desc') || hasText(illnessCtrl(illnessesIll, i,'desc'))"
-              [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'desc'))"
-            >
-              <textarea
-                formControlName="desc"
-                placeholder="Hier eingeben..."
-                (input)="autoResize($event)"
-                (focus)="setActive(illActiveKey(i,'desc'))"
-              ></textarea>
-
-              <span class="icon-pencil" aria-hidden="true"></span>
-            </div>
-            @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'desc'))) {
-              <p class="error">Bitte ausfüllen.</p>
-            }
-
-            <div class="grid-2 dates">
+            <div class="provider__grid provider__grid--name">
               <div class="field">
-                <label class="label">Begindatum</label>
-                <div
-                  class="box"
-                  (click)="setActive(illActiveKey(i,'start'))"
-                  [class.is-active]="isIllActive(i,'start') || hasText(illnessCtrl(illnessesIll, i,'startDate'))"
-                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'startDate'))"
-                >
-                  <input type="date" formControlName="startDate" (focus)="setActive(illActiveKey(i,'start'))" />
-                  <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
+                <div class="box provider__box" (click)="setActive(illActiveKey(i,'docFirstName'))"
+                  [class.is-active]="isIllActive(i,'docFirstName') || hasText(illnessCtrl(illnessesIll, i,'docFirstName'))"
+                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docFirstName'))">
+                  <input type="text" formControlName="docFirstName" placeholder="Vorname"
+                    (focus)="setActive(illActiveKey(i,'docFirstName'))" />
                 </div>
-               <p class="error">
-               {{ isInvalidCtrl(illnessCtrl(illnessesIll, i,'startDate')) ? 'Bitte Datum wählen.' : '\u00A0' }}
-                  </p>
+                @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'docFirstName'))) {
+                <p class="error">Bitte ausfüllen.</p>
+                }
               </div>
 
               <div class="field">
-                <label class="label">Enddatum</label>
-                <div
-                  class="box"
-                  (click)="setActive(illActiveKey(i,'end'))"
-                  [class.is-active]="isIllActive(i,'end') || hasText(illnessCtrl(illnessesIll, i,'endDate'))"
-                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'endDate'))"
-                >
-                  <input type="date" formControlName="endDate" (focus)="setActive(illActiveKey(i,'end'))" />
-                  <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
+                <div class="box provider__box" (click)="setActive(illActiveKey(i,'docLastName'))"
+                  [class.is-active]="isIllActive(i,'docLastName') || hasText(illnessCtrl(illnessesIll, i,'docLastName'))"
+                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docLastName'))">
+                  <input type="text" formControlName="docLastName" placeholder="Nachname"
+                    (focus)="setActive(illActiveKey(i,'docLastName'))" />
                 </div>
-                <p class="error">
-                {{ isInvalidCtrl(illnessCtrl(illnessesIll, i,'endDate')) ? 'Bitte Datum wählen.' : '\u00A0' }}
-                 </p>
+                @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'docLastName'))) {
+                <p class="error">Bitte ausfüllen.</p>
+                }
               </div>
             </div>
 
-            <div class="field">
-              <label class="label">Operiert?</label>
-              <div
-                class="seg"
-                (click)="setActive(illActiveKey(i,'operated'))"
-                [class.is-active]="isIllActive(i,'operated') || hasValue(illnessCtrl(illnessesIll, i,'operated'))"
-                [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'operated'))"
-              >
-                <button
-                  type="button"
-                  class="seg__btn"
-                  [class.is-selected]="illnessCtrl(illnessesIll, i,'operated').value === false"
-                  (click)="$event.stopPropagation(); setIllBool(i,'operated',false)"
-                >
-                  Nein
-                </button>
-                <button
-                  type="button"
-                  class="seg__btn"
-                  [class.is-selected]="illnessCtrl(illnessesIll, i,'operated').value === true"
-                  (click)="$event.stopPropagation(); setIllBool(i,'operated',true)"
-                >
-                  Ja
-                </button>
+            <div class="provider__grid provider__grid--street">
+              <div class="field">
+                <div class="box provider__box" (click)="setActive(illActiveKey(i,'docStreet'))"
+                  [class.is-active]="isIllActive(i,'docStreet') || hasText(illnessCtrl(illnessesIll, i,'docStreet'))"
+                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docStreet'))">
+                  <input type="text" formControlName="docStreet" placeholder="Strasse"
+                    (focus)="setActive(illActiveKey(i,'docStreet'))" />
+                </div>
+                @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'docStreet'))) {
+                <p class="error">Bitte ausfüllen.</p>
+                }
               </div>
 
-              @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'operated'))) {
-                <p class="error">Bitte wählen.</p>
-              }
+              <div class="field">
+                <div class="box provider__box" (click)="setActive(illActiveKey(i,'docNr'))"
+                  [class.is-active]="isIllActive(i,'docNr') || hasText(illnessCtrl(illnessesIll, i,'docNr'))"
+                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docNr'))">
+                  <input type="text" formControlName="docNr" placeholder="Nr."
+                    (focus)="setActive(illActiveKey(i,'docNr'))" />
+                </div>
+                @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'docNr'))) {
+                <p class="error">Bitte ausfüllen.</p>
+                }
+              </div>
             </div>
 
-            <div class="field">
-              <label class="label">Behandlung beendet, genesen ohne Folgen</label>
-              <div
-                class="seg"
-                (click)="setActive(illActiveKey(i,'treatmentDone'))"
-                [class.is-active]="isIllActive(i,'treatmentDone') || hasValue(illnessCtrl(illnessesIll, i,'treatmentDone'))"
-                [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'treatmentDone'))"
-              >
-                <button
-                  type="button"
-                  class="seg__btn"
-                  [class.is-selected]="illnessCtrl(illnessesIll, i,'treatmentDone').value === false"
-                  (click)="$event.stopPropagation(); setIllBool(i,'treatmentDone',false)"
-                >
-                  Nein
-                </button>
-                <button
-                  type="button"
-                  class="seg__btn"
-                  [class.is-selected]="illnessCtrl(illnessesIll, i,'treatmentDone').value === true"
-                  (click)="$event.stopPropagation(); setIllBool(i,'treatmentDone',true)"
-                >
-                  Ja
-                </button>
-              </div>
-
-              @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'treatmentDone'))) {
-                <p class="error">Bitte wählen.</p>
-              }
-            </div>
-
-            <!-- Provider (same structure) -->
-            <div class="provider">
-              <p class="provider__title">
-                Name und Adresse des Arztes, Spitals oder anderen Leistungserbringers
-              </p>
-
-              <div class="provider__grid provider__grid--name">
-                <div class="field">
-                  <div
-                    class="box provider__box"
-                    (click)="setActive(illActiveKey(i,'docFirstName'))"
-                    [class.is-active]="isIllActive(i,'docFirstName') || hasText(illnessCtrl(illnessesIll, i,'docFirstName'))"
-                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docFirstName'))"
-                  >
-                    <input
-                      type="text"
-                      formControlName="docFirstName"
-                      placeholder="Vorname"
-                      (focus)="setActive(illActiveKey(i,'docFirstName'))"
-                    />
-                  </div>
-                  @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'docFirstName'))) {
-                    <p class="error">Bitte ausfüllen.</p>
-                  }
+            <div class="provider__grid provider__grid--zip">
+              <div class="field">
+                <div class="box provider__box" (click)="setActive(illActiveKey(i,'docZipCity'))"
+                  [class.is-active]="isIllActive(i,'docZipCity') || hasText(illnessCtrl(illnessesIll, i,'docZipCity'))"
+                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docZipCity'))">
+                  <input type="text" formControlName="docZipCity" placeholder="PLZ, Ort"
+                    (focus)="setActive(illActiveKey(i,'docZipCity'))" />
                 </div>
-
-                <div class="field">
-                  <div
-                    class="box provider__box"
-                    (click)="setActive(illActiveKey(i,'docLastName'))"
-                    [class.is-active]="isIllActive(i,'docLastName') || hasText(illnessCtrl(illnessesIll, i,'docLastName'))"
-                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docLastName'))"
-                  >
-                    <input
-                      type="text"
-                      formControlName="docLastName"
-                      placeholder="Nachname"
-                      (focus)="setActive(illActiveKey(i,'docLastName'))"
-                    />
-                  </div>
-                  @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'docLastName'))) {
-                    <p class="error">Bitte ausfüllen.</p>
-                  }
-                </div>
-              </div>
-
-              <div class="provider__grid provider__grid--street">
-                <div class="field">
-                  <div
-                    class="box provider__box"
-                    (click)="setActive(illActiveKey(i,'docStreet'))"
-                    [class.is-active]="isIllActive(i,'docStreet') || hasText(illnessCtrl(illnessesIll, i,'docStreet'))"
-                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docStreet'))"
-                  >
-                    <input
-                      type="text"
-                      formControlName="docStreet"
-                      placeholder="Strasse"
-                      (focus)="setActive(illActiveKey(i,'docStreet'))"
-                    />
-                  </div>
-                  @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'docStreet'))) {
-                    <p class="error">Bitte ausfüllen.</p>
-                  }
-                </div>
-
-                <div class="field">
-                  <div
-                    class="box provider__box"
-                    (click)="setActive(illActiveKey(i,'docNr'))"
-                    [class.is-active]="isIllActive(i,'docNr') || hasText(illnessCtrl(illnessesIll, i,'docNr'))"
-                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docNr'))"
-                  >
-                    <input
-                      type="text"
-                      formControlName="docNr"
-                      placeholder="Nr."
-                      (focus)="setActive(illActiveKey(i,'docNr'))"
-                    />
-                  </div>
-                  @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'docNr'))) {
-                    <p class="error">Bitte ausfüllen.</p>
-                  }
-                </div>
-              </div>
-
-              <div class="provider__grid provider__grid--zip">
-                <div class="field">
-                  <div
-                    class="box provider__box"
-                    (click)="setActive(illActiveKey(i,'docZipCity'))"
-                    [class.is-active]="isIllActive(i,'docZipCity') || hasText(illnessCtrl(illnessesIll, i,'docZipCity'))"
-                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docZipCity'))"
-                  >
-                    <input
-                      type="text"
-                      formControlName="docZipCity"
-                      placeholder="PLZ, Ort"
-                      (focus)="setActive(illActiveKey(i,'docZipCity'))"
-                    />
-                  </div>
-                  @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'docZipCity'))) {
-                    <p class="error">Bitte ausfüllen.</p>
-                  }
-                </div>
+                @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'docZipCity'))) {
+                <p class="error">Bitte ausfüllen.</p>
+                }
               </div>
             </div>
           </div>
+        </div>
         }
       </div>
 
-      <button
-        type="button"
-        class="btn-add btn-add--bottom"
-        (click)="addIllIllness()"
-        [class.is-disabled]="!canAddIllIllness()"
-        [attr.aria-disabled]="!canAddIllIllness()"
-      >
+      <button type="button" class="btn-add btn-add--bottom" (click)="addIllIllness()"
+        [class.is-disabled]="!canAddIllIllness()" [attr.aria-disabled]="!canAddIllIllness()">
         + Krankheit erfassen
       </button>
-    }
-   <div class="nav">
+      }
+      <div class="nav">
         <button type="button" class="btn-next" (click)="onNext()">Next</button>
       </div>
     </mat-expansion-panel>
-  }
+    }
 
-  <!-- 4. Behandlungen -->
-   @if (currentStep() >= 4) {
+    <!-- 4. Behandlungen -->
+    @if (currentStep() >= 4) {
     <mat-expansion-panel hideToggle [expanded]="currentStep() === 4">
       <mat-expansion-panel-header>
         <mat-panel-title>
@@ -765,444 +541,308 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
 
-    <div
-      class="seg"
-      (click)="setActive('opsQ')"
-      [class.is-active]="isActive('opsQ') || hasValue(form.controls.opsQ)"
-      [class.is-invalid]="isInvalid('opsQ')"
-    >
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.opsQ.value === false"
-        (click)="$event.stopPropagation(); setOpsQ(false)"
-      >
-        Nein
-      </button>
+      <div class="seg" (click)="setActive('opsQ')" [class.is-active]="isActive('opsQ') || hasValue(form.controls.opsQ)"
+        [class.is-invalid]="isInvalid('opsQ')">
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.opsQ.value === false"
+          (click)="$event.stopPropagation(); setOpsQ(false)">
+          Nein
+        </button>
 
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.opsQ.value === true"
-        (click)="$event.stopPropagation(); setOpsQ(true)"
-      >
-        Ja
-      </button>
-    </div>
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.opsQ.value === true"
+          (click)="$event.stopPropagation(); setOpsQ(true)">
+          Ja
+        </button>
+      </div>
 
-    @if (isInvalid('opsQ')) {
+      @if (isInvalid('opsQ')) {
       <p class="error">Bitte wählen Sie eine Option.</p>
-    }
+      }
 
-    @if (showOpsDetails()) {
+      @if (showOpsDetails()) {
       <p class="home__desc">
         Haben Sie sich in den letzten fünf Jahren einer Operation unterzogen, fand ein Spitalaufenthalt statt oder
         haben Sie sich einer (medizinischen oder therapeutischen) Behandlung unterzogen oder beabsichtigen Sie,
         sich einer Konsultation, Behandlung oder Operation zu unterziehen?
       </p>
 
-      <!-- a) -->
       <div class="home__sub">
         <h2 class="h2">a) In einem Spital, einer Kureinrichtung oder einer Entzugsklinik</h2>
 
-        <div
-          class="seg"
-          (click)="setActive('opsA')"
-          [class.is-active]="isActive('opsA') || hasValue(form.controls.opsA)"
-          [class.is-invalid]="isInvalid('opsA')"
-        >
-          <button
-            type="button"
-            class="seg__btn"
-            [class.is-selected]="form.controls.opsA.value === false"
-            (click)="$event.stopPropagation(); setOpsA(false)"
-          >
+        <div class="seg" (click)="setActive('opsA')"
+          [class.is-active]="isActive('opsA') || hasValue(form.controls.opsA)" [class.is-invalid]="isInvalid('opsA')">
+          <button type="button" class="seg__btn" [class.is-selected]="form.controls.opsA.value === false"
+            (click)="$event.stopPropagation(); setOpsA(false)">
             Nein
           </button>
 
-          <button
-            type="button"
-            class="seg__btn"
-            [class.is-selected]="form.controls.opsA.value === true"
-            (click)="$event.stopPropagation(); setOpsA(true)"
-          >
+          <button type="button" class="seg__btn" [class.is-selected]="form.controls.opsA.value === true"
+            (click)="$event.stopPropagation(); setOpsA(true)">
             Ja
           </button>
         </div>
 
         @if (isInvalid('opsA')) {
-          <p class="error">Bitte wählen.</p>
+        <p class="error">Bitte wählen.</p>
         }
       </div>
 
-      <!-- b) -->
       <div class="home__sub">
         <h2 class="h2">b) Bei einem Arzt, Physiotherapeuten oder Chiropraktiker</h2>
 
-        <div
-          class="seg"
-          (click)="setActive('opsB')"
-          [class.is-active]="isActive('opsB') || hasValue(form.controls.opsB)"
-          [class.is-invalid]="isInvalid('opsB')"
-        >
-          <button
-            type="button"
-            class="seg__btn"
-            [class.is-selected]="form.controls.opsB.value === false"
-            (click)="$event.stopPropagation(); setOpsB(false)"
-          >
+        <div class="seg" (click)="setActive('opsB')"
+          [class.is-active]="isActive('opsB') || hasValue(form.controls.opsB)" [class.is-invalid]="isInvalid('opsB')">
+          <button type="button" class="seg__btn" [class.is-selected]="form.controls.opsB.value === false"
+            (click)="$event.stopPropagation(); setOpsB(false)">
             Nein
           </button>
 
-          <button
-            type="button"
-            class="seg__btn"
-            [class.is-selected]="form.controls.opsB.value === true"
-            (click)="$event.stopPropagation(); setOpsB(true)"
-          >
+          <button type="button" class="seg__btn" [class.is-selected]="form.controls.opsB.value === true"
+            (click)="$event.stopPropagation(); setOpsB(true)">
             Ja
           </button>
         </div>
 
         @if (isInvalid('opsB')) {
-          <p class="error">Bitte wählen.</p>
+        <p class="error">Bitte wählen.</p>
         }
 
         @if (form.controls.opsB.value === true) {
-          <div class="illness" formArrayName="opsBItems">
-            @for (_ of opsBItems.controls; track $index; let i = $index) {
-              <div class="illness__card" [formGroupName]="i">
-                <div class="illness__head">
-                  <div class="illness__title">{{ i + 1 }}. Krankheit erfassen</div>
+        <div class="illness" formArrayName="opsBItems">
+          @for (_ of opsBItems.controls; track $index; let i = $index) {
+          <div class="illness__card" [formGroupName]="i">
+            <div class="illness__head">
+              <div class="illness__title">{{ i + 1 }}. Krankheit erfassen</div>
 
-                  @if (opsBItems.length > 1) {
-                    <button type="button" class="illness__remove" (click)="removeOpsBItem(i)">
-                      - Entfernen
-                    </button>
-                  }
+              @if (opsBItems.length > 1) {
+              <button type="button" class="illness__remove" (click)="removeOpsBItem(i)">
+                - Entfernen
+              </button>
+              }
+            </div>
+
+            <p class="illness__hint">
+              Krankheit, Leiden, Unfall, Behandlungsgrund, betroffene Stelle am Körper (links, rechts)
+            </p>
+
+            <div class="box box--textarea" (click)="setActive(opsBActiveKey(i,'desc'))"
+              [class.is-active]="isOpsBActive(i,'desc') || hasText(illnessCtrl(opsBItems, i,'desc'))"
+              [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'desc'))">
+              <textarea formControlName="desc" placeholder="Hier eingeben..." (input)="autoResize($event)"
+                (focus)="setActive(opsBActiveKey(i,'desc'))"></textarea>
+
+              <span class="icon-pencil" aria-hidden="true"></span>
+            </div>
+            @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'desc'))) {
+            <p class="error">Bitte ausfüllen.</p>
+            }
+
+            <div class="grid-2 dates">
+              <div class="field">
+                <label class="label">Begindatum</label>
+                <div class="box" (click)="setActive(opsBActiveKey(i,'start'))"
+                  [class.is-active]="isOpsBActive(i,'start') || hasText(illnessCtrl(opsBItems, i,'startDate'))"
+                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'startDate'))">
+                  <input type="date" formControlName="startDate" (focus)="setActive(opsBActiveKey(i,'start'))" />
+                  <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
                 </div>
-
-                <p class="illness__hint">
-                  Krankheit, Leiden, Unfall, Behandlungsgrund, betroffene Stelle am Körper (links, rechts)
+                <p class="error">
+                  {{ isInvalidCtrl(illnessCtrl(opsBItems, i,'startDate')) ? 'Bitte Datum wählen.' : '\u00A0' }}
                 </p>
+              </div>
 
-                <div
-                  class="box box--textarea"
-                  (click)="setActive(opsBActiveKey(i,'desc'))"
-                  [class.is-active]="isOpsBActive(i,'desc') || hasText(illnessCtrl(opsBItems, i,'desc'))"
-                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'desc'))"
-                >
-                  <textarea
-                    formControlName="desc"
-                    placeholder="Hier eingeben..."
-                    (input)="autoResize($event)"
-                    (focus)="setActive(opsBActiveKey(i,'desc'))"
-                  ></textarea>
-
-                  <span class="icon-pencil" aria-hidden="true"></span>
+              <div class="field">
+                <label class="label">Enddatum</label>
+                <div class="box" (click)="setActive(opsBActiveKey(i,'end'))"
+                  [class.is-active]="isOpsBActive(i,'end') || hasText(illnessCtrl(opsBItems, i,'endDate'))"
+                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'endDate'))">
+                  <input type="date" formControlName="endDate" (focus)="setActive(opsBActiveKey(i,'end'))" />
+                  <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
                 </div>
-                @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'desc'))) {
+                <p class="error">
+                  {{ isInvalidCtrl(illnessCtrl(opsBItems, i,'endDate')) ? 'Bitte Datum wählen.' : '\u00A0' }}
+                </p>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label">Operiert?</label>
+              <div class="seg" (click)="setActive(opsBActiveKey(i,'operated'))"
+                [class.is-active]="isOpsBActive(i,'operated') || hasValue(illnessCtrl(opsBItems, i,'operated'))"
+                [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'operated'))">
+                <button type="button" class="seg__btn"
+                  [class.is-selected]="illnessCtrl(opsBItems, i,'operated').value === false"
+                  (click)="$event.stopPropagation(); setOpsBBool(i,'operated',false)">
+                  Nein
+                </button>
+                <button type="button" class="seg__btn"
+                  [class.is-selected]="illnessCtrl(opsBItems, i,'operated').value === true"
+                  (click)="$event.stopPropagation(); setOpsBBool(i,'operated',true)">
+                  Ja
+                </button>
+              </div>
+
+              @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'operated'))) {
+              <p class="error">Bitte wählen.</p>
+              }
+            </div>
+
+            <div class="field">
+              <label class="label">Behandlung beendet, genesen ohne Folgen</label>
+              <div class="seg" (click)="setActive(opsBActiveKey(i,'treatmentDone'))"
+                [class.is-active]="isOpsBActive(i,'treatmentDone') || hasValue(illnessCtrl(opsBItems, i,'treatmentDone'))"
+                [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'treatmentDone'))">
+                <button type="button" class="seg__btn"
+                  [class.is-selected]="illnessCtrl(opsBItems, i,'treatmentDone').value === false"
+                  (click)="$event.stopPropagation(); setOpsBBool(i,'treatmentDone',false)">
+                  Nein
+                </button>
+                <button type="button" class="seg__btn"
+                  [class.is-selected]="illnessCtrl(opsBItems, i,'treatmentDone').value === true"
+                  (click)="$event.stopPropagation(); setOpsBBool(i,'treatmentDone',true)">
+                  Ja
+                </button>
+              </div>
+
+              @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'treatmentDone'))) {
+              <p class="error">Bitte wählen.</p>
+              }
+            </div>
+
+            <div class="provider">
+              <p class="provider__title">
+                Name und Adresse des Arztes, Spitals oder anderen Leistungserbringers
+              </p>
+
+              <div class="provider__grid provider__grid--name">
+                <div class="field">
+                  <div class="box provider__box" (click)="setActive(opsBActiveKey(i,'docFirstName'))"
+                    [class.is-active]="isOpsBActive(i,'docFirstName') || hasText(illnessCtrl(opsBItems, i,'docFirstName'))"
+                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'docFirstName'))">
+                    <input type="text" formControlName="docFirstName" placeholder="Vorname"
+                      (focus)="setActive(opsBActiveKey(i,'docFirstName'))" />
+                  </div>
+                  @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'docFirstName'))) {
                   <p class="error">Bitte ausfüllen.</p>
-                }
-
-                <div class="grid-2 dates">
-                  <div class="field">
-                    <label class="label">Begindatum</label>
-                    <div
-                      class="box"
-                      (click)="setActive(opsBActiveKey(i,'start'))"
-                      [class.is-active]="isOpsBActive(i,'start') || hasText(illnessCtrl(opsBItems, i,'startDate'))"
-                      [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'startDate'))"
-                    >
-                      <input type="date" formControlName="startDate" (focus)="setActive(opsBActiveKey(i,'start'))" />
-                      <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
-                    </div>
-                     <p class="error">
-                    {{ isInvalidCtrl(illnessCtrl(opsBItems, i,'startDate')) ? 'Bitte Datum wählen.' : '\u00A0' }}
-                     </p>
-                  </div>
-
-                  <div class="field">
-                    <label class="label">Enddatum</label>
-                    <div
-                      class="box"
-                      (click)="setActive(opsBActiveKey(i,'end'))"
-                      [class.is-active]="isOpsBActive(i,'end') || hasText(illnessCtrl(opsBItems, i,'endDate'))"
-                      [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'endDate'))"
-                    >
-                      <input type="date" formControlName="endDate" (focus)="setActive(opsBActiveKey(i,'end'))" />
-                      <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
-                    </div>
-                    <p class="error">
-                    {{ isInvalidCtrl(illnessCtrl(opsBItems, i,'endDate')) ? 'Bitte Datum wählen.' : '\u00A0' }}
-                     </p>
-                  </div>
-                </div>
-
-                <div class="field">
-                  <label class="label">Operiert?</label>
-                  <div
-                    class="seg"
-                    (click)="setActive(opsBActiveKey(i,'operated'))"
-                    [class.is-active]="isOpsBActive(i,'operated') || hasValue(illnessCtrl(opsBItems, i,'operated'))"
-                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'operated'))"
-                  >
-                    <button
-                      type="button"
-                      class="seg__btn"
-                      [class.is-selected]="illnessCtrl(opsBItems, i,'operated').value === false"
-                      (click)="$event.stopPropagation(); setOpsBBool(i,'operated',false)"
-                    >
-                      Nein
-                    </button>
-                    <button
-                      type="button"
-                      class="seg__btn"
-                      [class.is-selected]="illnessCtrl(opsBItems, i,'operated').value === true"
-                      (click)="$event.stopPropagation(); setOpsBBool(i,'operated',true)"
-                    >
-                      Ja
-                    </button>
-                  </div>
-
-                  @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'operated'))) {
-                    <p class="error">Bitte wählen.</p>
                   }
                 </div>
 
                 <div class="field">
-                  <label class="label">Behandlung beendet, genesen ohne Folgen</label>
-                  <div
-                    class="seg"
-                    (click)="setActive(opsBActiveKey(i,'treatmentDone'))"
-                    [class.is-active]="isOpsBActive(i,'treatmentDone') || hasValue(illnessCtrl(opsBItems, i,'treatmentDone'))"
-                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'treatmentDone'))"
-                  >
-                    <button
-                      type="button"
-                      class="seg__btn"
-                      [class.is-selected]="illnessCtrl(opsBItems, i,'treatmentDone').value === false"
-                      (click)="$event.stopPropagation(); setOpsBBool(i,'treatmentDone',false)"
-                    >
-                      Nein
-                    </button>
-                    <button
-                      type="button"
-                      class="seg__btn"
-                      [class.is-selected]="illnessCtrl(opsBItems, i,'treatmentDone').value === true"
-                      (click)="$event.stopPropagation(); setOpsBBool(i,'treatmentDone',true)"
-                    >
-                      Ja
-                    </button>
+                  <div class="box provider__box" (click)="setActive(opsBActiveKey(i,'docLastName'))"
+                    [class.is-active]="isOpsBActive(i,'docLastName') || hasText(illnessCtrl(opsBItems, i,'docLastName'))"
+                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'docLastName'))">
+                    <input type="text" formControlName="docLastName" placeholder="Nachname"
+                      (focus)="setActive(opsBActiveKey(i,'docLastName'))" />
                   </div>
-
-                  @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'treatmentDone'))) {
-                    <p class="error">Bitte wählen.</p>
+                  @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'docLastName'))) {
+                  <p class="error">Bitte ausfüllen.</p>
                   }
-                </div>
-
-                <!-- Provider (same pattern) -->
-                <div class="provider">
-                  <p class="provider__title">
-                    Name und Adresse des Arztes, Spitals oder anderen Leistungserbringers
-                  </p>
-
-                  <div class="provider__grid provider__grid--name">
-                    <div class="field">
-                      <div
-                        class="box provider__box"
-                        (click)="setActive(opsBActiveKey(i,'docFirstName'))"
-                        [class.is-active]="isOpsBActive(i,'docFirstName') || hasText(illnessCtrl(opsBItems, i,'docFirstName'))"
-                        [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'docFirstName'))"
-                      >
-                        <input
-                          type="text"
-                          formControlName="docFirstName"
-                          placeholder="Vorname"
-                          (focus)="setActive(opsBActiveKey(i,'docFirstName'))"
-                        />
-                      </div>
-                      @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'docFirstName'))) {
-                        <p class="error">Bitte ausfüllen.</p>
-                      }
-                    </div>
-
-                    <div class="field">
-                      <div
-                        class="box provider__box"
-                        (click)="setActive(opsBActiveKey(i,'docLastName'))"
-                        [class.is-active]="isOpsBActive(i,'docLastName') || hasText(illnessCtrl(opsBItems, i,'docLastName'))"
-                        [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'docLastName'))"
-                      >
-                        <input
-                          type="text"
-                          formControlName="docLastName"
-                          placeholder="Nachname"
-                          (focus)="setActive(opsBActiveKey(i,'docLastName'))"
-                        />
-                      </div>
-                      @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'docLastName'))) {
-                        <p class="error">Bitte ausfüllen.</p>
-                      }
-                    </div>
-                  </div>
-
-                  <div class="provider__grid provider__grid--street">
-                    <div class="field">
-                      <div
-                        class="box provider__box"
-                        (click)="setActive(opsBActiveKey(i,'docStreet'))"
-                        [class.is-active]="isOpsBActive(i,'docStreet') || hasText(illnessCtrl(opsBItems, i,'docStreet'))"
-                        [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'docStreet'))"
-                      >
-                        <input
-                          type="text"
-                          formControlName="docStreet"
-                          placeholder="Strasse"
-                          (focus)="setActive(opsBActiveKey(i,'docStreet'))"
-                        />
-                      </div>
-                      @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'docStreet'))) {
-                        <p class="error">Bitte ausfüllen.</p>
-                      }
-                    </div>
-
-                    <div class="field">
-                      <div
-                        class="box provider__box"
-                        (click)="setActive(opsBActiveKey(i,'docNr'))"
-                        [class.is-active]="isOpsBActive(i,'docNr') || hasText(illnessCtrl(opsBItems, i,'docNr'))"
-                        [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'docNr'))"
-                      >
-                        <input
-                          type="text"
-                          formControlName="docNr"
-                          placeholder="Nr."
-                          (focus)="setActive(opsBActiveKey(i,'docNr'))"
-                        />
-                      </div>
-                      @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'docNr'))) {
-                        <p class="error">Bitte ausfüllen.</p>
-                      }
-                    </div>
-                  </div>
-
-                  <div class="provider__grid provider__grid--zip">
-                    <div class="field">
-                      <div
-                        class="box provider__box"
-                        (click)="setActive(opsBActiveKey(i,'docZipCity'))"
-                        [class.is-active]="isOpsBActive(i,'docZipCity') || hasText(illnessCtrl(opsBItems, i,'docZipCity'))"
-                        [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'docZipCity'))"
-                      >
-                        <input
-                          type="text"
-                          formControlName="docZipCity"
-                          placeholder="PLZ, Ort"
-                          (focus)="setActive(opsBActiveKey(i,'docZipCity'))"
-                        />
-                      </div>
-                      @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'docZipCity'))) {
-                        <p class="error">Bitte ausfüllen.</p>
-                      }
-                    </div>
-                  </div>
                 </div>
               </div>
-            }
-          </div>
 
-          <button
-            type="button"
-            class="btn-add btn-add--bottom"
-            (click)="addOpsBItem()"
-            [class.is-disabled]="!canAddOpsBItem()"
-            [attr.aria-disabled]="!canAddOpsBItem()"
-          >
-            + Krankheit erfassen
-          </button>
+              <div class="provider__grid provider__grid--street">
+                <div class="field">
+                  <div class="box provider__box" (click)="setActive(opsBActiveKey(i,'docStreet'))"
+                    [class.is-active]="isOpsBActive(i,'docStreet') || hasText(illnessCtrl(opsBItems, i,'docStreet'))"
+                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'docStreet'))">
+                    <input type="text" formControlName="docStreet" placeholder="Strasse"
+                      (focus)="setActive(opsBActiveKey(i,'docStreet'))" />
+                  </div>
+                  @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'docStreet'))) {
+                  <p class="error">Bitte ausfüllen.</p>
+                  }
+                </div>
+
+                <div class="field">
+                  <div class="box provider__box" (click)="setActive(opsBActiveKey(i,'docNr'))"
+                    [class.is-active]="isOpsBActive(i,'docNr') || hasText(illnessCtrl(opsBItems, i,'docNr'))"
+                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'docNr'))">
+                    <input type="text" formControlName="docNr" placeholder="Nr."
+                      (focus)="setActive(opsBActiveKey(i,'docNr'))" />
+                  </div>
+                  @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'docNr'))) {
+                  <p class="error">Bitte ausfüllen.</p>
+                  }
+                </div>
+              </div>
+
+              <div class="provider__grid provider__grid--zip">
+                <div class="field">
+                  <div class="box provider__box" (click)="setActive(opsBActiveKey(i,'docZipCity'))"
+                    [class.is-active]="isOpsBActive(i,'docZipCity') || hasText(illnessCtrl(opsBItems, i,'docZipCity'))"
+                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'docZipCity'))">
+                    <input type="text" formControlName="docZipCity" placeholder="PLZ, Ort"
+                      (focus)="setActive(opsBActiveKey(i,'docZipCity'))" />
+                  </div>
+                  @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'docZipCity'))) {
+                  <p class="error">Bitte ausfüllen.</p>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+          }
+        </div>
+
+        <button type="button" class="btn-add btn-add--bottom" (click)="addOpsBItem()"
+          [class.is-disabled]="!canAddOpsBItem()" [attr.aria-disabled]="!canAddOpsBItem()">
+          + Krankheit erfassen
+        </button>
         }
       </div>
 
-      <!-- c) -->
       <div class="home__sub">
         <h2 class="h2">c) Bei einem Psychiater, Psychologen oder Psychotherapeuten</h2>
 
-        <div
-          class="seg"
-          (click)="setActive('opsC')"
-          [class.is-active]="isActive('opsC') || hasValue(form.controls.opsC)"
-          [class.is-invalid]="isInvalid('opsC')"
-        >
-          <button
-            type="button"
-            class="seg__btn"
-            [class.is-selected]="form.controls.opsC.value === false"
-            (click)="$event.stopPropagation(); setOpsC(false)"
-          >
+        <div class="seg" (click)="setActive('opsC')"
+          [class.is-active]="isActive('opsC') || hasValue(form.controls.opsC)" [class.is-invalid]="isInvalid('opsC')">
+          <button type="button" class="seg__btn" [class.is-selected]="form.controls.opsC.value === false"
+            (click)="$event.stopPropagation(); setOpsC(false)">
             Nein
           </button>
 
-          <button
-            type="button"
-            class="seg__btn"
-            [class.is-selected]="form.controls.opsC.value === true"
-            (click)="$event.stopPropagation(); setOpsC(true)"
-          >
+          <button type="button" class="seg__btn" [class.is-selected]="form.controls.opsC.value === true"
+            (click)="$event.stopPropagation(); setOpsC(true)">
             Ja
           </button>
         </div>
 
         @if (isInvalid('opsC')) {
-          <p class="error">Bitte wählen.</p>
+        <p class="error">Bitte wählen.</p>
         }
       </div>
 
-      <!-- d) -->
       <div class="home__sub">
         <h2 class="h2">
           d) Bei einem Naturheilpraktiker, einem nichtmedizinischen Therapeuten,
           einem Therapeuten für Naturheilkunde oder einem Osteopathen
         </h2>
 
-        <div
-          class="seg"
-          (click)="setActive('opsD')"
-          [class.is-active]="isActive('opsD') || hasValue(form.controls.opsD)"
-          [class.is-invalid]="isInvalid('opsD')"
-        >
-          <button
-            type="button"
-            class="seg__btn"
-            [class.is-selected]="form.controls.opsD.value === false"
-            (click)="$event.stopPropagation(); setOpsD(false)"
-          >
+        <div class="seg" (click)="setActive('opsD')"
+          [class.is-active]="isActive('opsD') || hasValue(form.controls.opsD)" [class.is-invalid]="isInvalid('opsD')">
+          <button type="button" class="seg__btn" [class.is-selected]="form.controls.opsD.value === false"
+            (click)="$event.stopPropagation(); setOpsD(false)">
             Nein
           </button>
 
-          <button
-            type="button"
-            class="seg__btn"
-            [class.is-selected]="form.controls.opsD.value === true"
-            (click)="$event.stopPropagation(); setOpsD(true)"
-          >
+          <button type="button" class="seg__btn" [class.is-selected]="form.controls.opsD.value === true"
+            (click)="$event.stopPropagation(); setOpsD(true)">
             Ja
           </button>
         </div>
 
         @if (isInvalid('opsD')) {
-          <p class="error">Bitte wählen.</p>
+        <p class="error">Bitte wählen.</p>
         }
       </div>
-    }
-   <div class="nav">
+      }
+      <div class="nav">
         <button type="button" class="btn-next" (click)="onNext()">Next</button>
       </div>
     </mat-expansion-panel>
-  }
+    }
 
-  <!-- 5. Arzt -->
-   @if (currentStep() >= 5) {
+    <!-- 5. Arzt -->
+    @if (currentStep() >= 5) {
     <mat-expansion-panel hideToggle [expanded]="currentStep() === 5">
       <mat-expansion-panel-header>
         <mat-panel-title>
@@ -1212,172 +852,120 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
 
-    <p class="p home__subtitle">Name und Adresse des Arztes, den Sie gewöhnlich aufsuchen:</p>
+      <p class="p home__subtitle">Name und Adresse des Arztes, den Sie gewöhnlich aufsuchen:</p>
 
-    <div class="grid-2">
-      <div class="field">
-        <div
-          class="box"
-          (click)="setActive('doctorFirstName')"
-          [class.is-active]="isActive('doctorFirstName') || hasText(form.controls.doctorFirstName)"
-          [class.is-invalid]="isInvalid('doctorFirstName')"
-        >
-          <input
-            type="text"
-            formControlName="doctorFirstName"
-            placeholder="Vorname"
-            (focus)="setActive('doctorFirstName')"
-          />
+      <div class="grid-2">
+        <div class="field">
+          <div class="box" (click)="setActive('doctorFirstName')"
+            [class.is-active]="isActive('doctorFirstName') || hasText(form.controls.doctorFirstName)"
+            [class.is-invalid]="isInvalid('doctorFirstName')">
+            <input type="text" formControlName="doctorFirstName" placeholder="Vorname"
+              (focus)="setActive('doctorFirstName')" />
+          </div>
+
+          @if (isInvalid('doctorFirstName')) {
+          <p class="error">Bitte ausfullen!</p>
+          }
         </div>
 
-        @if (isInvalid('doctorFirstName')) {
+        <div class="field">
+          <div class="box" (click)="setActive('doctorLastName')"
+            [class.is-active]="isActive('doctorLastName') || hasText(form.controls.doctorLastName)"
+            [class.is-invalid]="isInvalid('doctorLastName')">
+            <input type="text" formControlName="doctorLastName" placeholder="Nachname"
+              (focus)="setActive('doctorLastName')" />
+          </div>
+
+          @if (isInvalid('doctorLastName')) {
           <p class="error">Bitte ausfullen!</p>
-        }
+          }
+        </div>
       </div>
 
-      <div class="field">
-        <div
-          class="box"
-          (click)="setActive('doctorLastName')"
-          [class.is-active]="isActive('doctorLastName') || hasText(form.controls.doctorLastName)"
-          [class.is-invalid]="isInvalid('doctorLastName')"
-        >
-          <input
-            type="text"
-            formControlName="doctorLastName"
-            placeholder="Nachname"
-            (focus)="setActive('doctorLastName')"
-          />
+      <div class="grid-street">
+        <div class="field">
+          <div class="box" (click)="setActive('doctorStreet')"
+            [class.is-active]="isActive('doctorStreet') || hasText(form.controls.doctorStreet)"
+            [class.is-invalid]="isInvalid('doctorStreet')">
+            <input type="text" formControlName="doctorStreet" placeholder="Strasse"
+              (focus)="setActive('doctorStreet')" />
+          </div>
+
+          @if (isInvalid('doctorStreet')) {
+          <p class="error">Bitte ausfullen!</p>
+          }
         </div>
 
-        @if (isInvalid('doctorLastName')) {
-          <p class="error">Bitte ausfullen!</p>
-        }
-      </div>
-    </div>
+        <div class="field">
+          <div class="box" (click)="setActive('doctorNumber')"
+            [class.is-active]="isActive('doctorNumber') || hasText(form.controls.doctorNumber)"
+            [class.is-invalid]="isInvalid('doctorNumber')">
+            <input type="text" formControlName="doctorNumber" placeholder="Nr." (focus)="setActive('doctorNumber')" />
+          </div>
 
-    <div class="grid-street">
-      <div class="field">
-        <div
-          class="box"
-          (click)="setActive('doctorStreet')"
-          [class.is-active]="isActive('doctorStreet') || hasText(form.controls.doctorStreet)"
-          [class.is-invalid]="isInvalid('doctorStreet')"
-        >
-          <input
-            type="text"
-            formControlName="doctorStreet"
-            placeholder="Strasse"
-            (focus)="setActive('doctorStreet')"
-          />
+          @if (isInvalid('doctorNumber')) {
+          <p class="error">Bitte ausfullen!</p>
+          }
         </div>
-
-        @if (isInvalid('doctorStreet')) {
-          <p class="error">Bitte ausfullen!</p>
-        }
       </div>
 
       <div class="field">
-        <div
-          class="box"
-          (click)="setActive('doctorNumber')"
-          [class.is-active]="isActive('doctorNumber') || hasText(form.controls.doctorNumber)"
-          [class.is-invalid]="isInvalid('doctorNumber')"
-        >
-          <input
-            type="text"
-            formControlName="doctorNumber"
-            placeholder="Nr."
-            (focus)="setActive('doctorNumber')"
-          />
+        <div class="box" (click)="setActive('doctorCity')"
+          [class.is-active]="isActive('doctorCity') || hasText(form.controls.doctorCity)"
+          [class.is-invalid]="isInvalid('doctorCity')">
+          <input type="text" formControlName="doctorCity" placeholder="PLZ, Ort" (focus)="setActive('doctorCity')" />
         </div>
 
-        @if (isInvalid('doctorNumber')) {
-          <p class="error">Bitte ausfullen!</p>
-        }
-      </div>
-    </div>
-
-    <div class="field">
-      <div
-        class="box"
-        (click)="setActive('doctorCity')"
-        [class.is-active]="isActive('doctorCity') || hasText(form.controls.doctorCity)"
-        [class.is-invalid]="isInvalid('doctorCity')"
-      >
-        <input
-          type="text"
-          formControlName="doctorCity"
-          placeholder="PLZ, Ort"
-          (focus)="setActive('doctorCity')"
-        />
-      </div>
-
-      @if (isInvalid('doctorCity')) {
+        @if (isInvalid('doctorCity')) {
         <p class="error">Bitte ausfullen!</p>
-      }
-    </div>
+        }
+      </div>
       <div class="nav">
         <button type="button" class="btn-next" (click)="onNext()">Next</button>
       </div>
     </mat-expansion-panel>
-  }
+    }
 
-  <!-- ===================== 6. BERICHTE UPLOAD ===================== -->
-   @if (currentStep() >= 6) {
+    <!--  6. BERICHTE UPLOAD -->
+    @if (currentStep() >= 6) {
     <mat-expansion-panel hideToggle [expanded]="currentStep() === 6">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
-              6. Lade bitte deine vorhandenen Berichte wie
-             Operationsbericht, Austrittsbericht oder Arztbericht hoch.
+            6. Lade bitte deine vorhandenen Berichte wie
+            Operationsbericht, Austrittsbericht oder Arztbericht hoch.
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
 
-    <div
-      class="upload"
-      [class.upload--inactive]="!selectedReportName()"
-      [class.upload--active]="selectedReportName()"
-      [class.upload--dragover]="isReportDragOver()"
-      [class.is-invalid]="isInvalid('reportFile')"
-      (dragover)="onReportDragOver($event)"
-      (dragleave)="onReportDragLeave($event)"
-      (drop)="onReportDrop($event)"
-      (click)="reportInput.click()"
-      role="button"
-      tabindex="0"
-      (keydown.enter)="reportInput.click()"
-      (keydown.space)="$event.preventDefault(); reportInput.click()"
-    >
-      <div class="upload__inner">
-        <img src="cloud-upload-24px.svg.svg" alt="" class="upload__icon" />
-        <div class="upload__name">
-          {{ selectedReportName() || 'Upload' }}
+      <div class="upload" [class.upload--inactive]="!selectedReportName()" [class.upload--active]="selectedReportName()"
+        [class.upload--dragover]="isReportDragOver()" [class.is-invalid]="isInvalid('reportFile')"
+        (dragover)="onReportDragOver($event)" (dragleave)="onReportDragLeave($event)" (drop)="onReportDrop($event)"
+        (click)="reportInput.click()" role="button" tabindex="0" (keydown.enter)="reportInput.click()"
+        (keydown.space)="$event.preventDefault(); reportInput.click()">
+        <div class="upload__inner">
+          <img src="cloud-upload-24px.svg.svg" alt="" class="upload__icon" />
+          <div class="upload__name">
+            {{ selectedReportName() || 'Upload' }}
+          </div>
         </div>
+
+        <input #reportInput type="file" class="upload__input" accept="application/pdf,.pdf"
+          (change)="onReportPicked($event)" />
       </div>
 
-      <input
-        #reportInput
-        type="file"
-        class="upload__input"
-        accept="application/pdf,.pdf"
-        (change)="onReportPicked($event)"
-      />
-    </div>
-
-    @if (isInvalid('reportFile')) {
+      @if (isInvalid('reportFile')) {
       <p class="error">Bitte lade eine PDF-Datei hoch.</p>
-    }
+      }
 
-    <button type="button" class="pill-btn">Dental Fragen</button>
-    <div class="nav">
+      <button type="button" class="pill-btn">Dental Fragen</button>
+      <div class="nav">
         <button type="button" class="btn-next" (click)="onNext()">Next</button>
       </div>
     </mat-expansion-panel>
-  }
+    }
 
-  <!-- 7. Zustand des Zahnbetts -->
+    <!-- 7. Zustand des Zahnbetts -->
     @if (currentStep() >= 7) {
     <mat-expansion-panel hideToggle [expanded]="currentStep() === 7">
       <mat-expansion-panel-header>
@@ -1388,125 +976,87 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
 
-    <div
-      class="seg seg--dental seg--triple"
-      [class.seg--dental-active]="hasValue(form.controls.teethCondition)"
-      [class.is-invalid]="isInvalid('teethCondition')"
-    >
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.teethCondition.value === 'gut'"
-        (click)="$event.stopPropagation(); setTeethCondition('gut')"
-      >
-        Gut
-      </button>
+      <div class="seg seg--dental seg--triple" [class.seg--dental-active]="hasValue(form.controls.teethCondition)"
+        [class.is-invalid]="isInvalid('teethCondition')">
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.teethCondition.value === 'gut'"
+          (click)="$event.stopPropagation(); setTeethCondition('gut')">
+          Gut
+        </button>
 
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.teethCondition.value === 'mangelhaft'"
-        (click)="$event.stopPropagation(); setTeethCondition('mangelhaft')"
-      >
-        Mangelhaft
-      </button>
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.teethCondition.value === 'mangelhaft'"
+          (click)="$event.stopPropagation(); setTeethCondition('mangelhaft')">
+          Mangelhaft
+        </button>
 
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.teethCondition.value === 'schlecht'"
-        (click)="$event.stopPropagation(); setTeethCondition('schlecht')"
-      >
-        Schlecht
-      </button>
-    </div>
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.teethCondition.value === 'schlecht'"
+          (click)="$event.stopPropagation(); setTeethCondition('schlecht')">
+          Schlecht
+        </button>
+      </div>
 
-    @if (isInvalid('teethCondition')) {
+      @if (isInvalid('teethCondition')) {
       <p class="error">Bitte wählen.</p>
-    }
+      }
 
-    @if (form.controls.teethCondition.value === 'mangelhaft' || form.controls.teethCondition.value === 'schlecht') {
+      @if (form.controls.teethCondition.value === 'mangelhaft' || form.controls.teethCondition.value === 'schlecht') {
       <p class="dental-help">Falls mangelhaft oder schlecht, bitte Stelle präzisieren:</p>
 
-      <div
-        class="box box--textarea box--dental-note"
-        (click)="setActive('teethConditionNote')"
+      <div class="box box--textarea box--dental-note" (click)="setActive('teethConditionNote')"
         [class.is-active]="isActive('teethConditionNote') || hasText(form.controls.teethConditionNote)"
-        [class.is-invalid]="isInvalid('teethConditionNote')"
-      >
-        <textarea
-          formControlName="teethConditionNote"
-          class="dental-note__textarea"
-          placeholder="Hier eingeben..."
-          (input)="autoResize($event)"
-          (focus)="setActive('teethConditionNote')"
-        ></textarea>
+        [class.is-invalid]="isInvalid('teethConditionNote')">
+        <textarea formControlName="teethConditionNote" class="dental-note__textarea" placeholder="Hier eingeben..."
+          (input)="autoResize($event)" (focus)="setActive('teethConditionNote')"></textarea>
       </div>
 
       @if (isInvalid('teethConditionNote')) {
-        <p class="error">Bitte ausfüllen.</p>
+      <p class="error">Bitte ausfüllen.</p>
       }
-    }
-   <div class="nav">
+      }
+      <div class="nav">
         <button type="button" class="btn-next" (click)="onNext()">Next</button>
       </div>
     </mat-expansion-panel>
-  }
-
-<!-- 8. Hygiene -->
-@if (currentStep() >= 8) {
-  <mat-expansion-panel hideToggle [expanded]="currentStep() === 8">
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        <h2 class="h2">8. Hygiene:</h2>
-      </mat-panel-title>
-    </mat-expansion-panel-header>
-
-    <div
-      class="seg seg--dental seg--triple"
-      [class.seg--dental-active]="hasValue(form.controls.hygiene)"
-      [class.is-invalid]="isInvalid('hygiene')"
-    >
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.hygiene.value === 'gut'"
-        (click)="$event.stopPropagation(); setHygiene('gut')"
-      >
-        Gut
-      </button>
-
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.hygiene.value === 'mangelhaft'"
-        (click)="$event.stopPropagation(); setHygiene('mangelhaft')"
-      >
-        Mangelhaft
-      </button>
-
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.hygiene.value === 'schlecht'"
-        (click)="$event.stopPropagation(); setHygiene('schlecht')"
-      >
-        Schlecht
-      </button>
-    </div>
-
-    @if (isInvalid('hygiene')) {
-      <p class="error">Bitte wählen.</p>
     }
 
-    <div class="nav">
-      <button type="button" class="btn-next" (click)="onNext()">Next</button>
-    </div>
-  </mat-expansion-panel>
-}
+    <!-- 8. Hygiene -->
+    @if (currentStep() >= 8) {
+    <mat-expansion-panel hideToggle [expanded]="currentStep() === 8">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h2 class="h2">8. Hygiene:</h2>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <div class="seg seg--dental seg--triple" [class.seg--dental-active]="hasValue(form.controls.hygiene)"
+        [class.is-invalid]="isInvalid('hygiene')">
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.hygiene.value === 'gut'"
+          (click)="$event.stopPropagation(); setHygiene('gut')">
+          Gut
+        </button>
+
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.hygiene.value === 'mangelhaft'"
+          (click)="$event.stopPropagation(); setHygiene('mangelhaft')">
+          Mangelhaft
+        </button>
+
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.hygiene.value === 'schlecht'"
+          (click)="$event.stopPropagation(); setHygiene('schlecht')">
+          Schlecht
+        </button>
+      </div>
+
+      @if (isInvalid('hygiene')) {
+      <p class="error">Bitte wählen.</p>
+      }
+
+      <div class="nav">
+        <button type="button" class="btn-next" (click)="onNext()">Next</button>
+      </div>
+    </mat-expansion-panel>
+    }
 
 
-  <!-- 9. Okklusion -->
+    <!-- 9. Okklusion -->
     @if (currentStep() >= 9) {
     <mat-expansion-panel hideToggle [expanded]="currentStep() === 9">
       <mat-expansion-panel-header>
@@ -1517,46 +1067,34 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
 
-    <div class="seg seg--dental seg--triple" [class.seg--dental-active]="hasValue(form.controls.occlusion)">
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.occlusion.value === 'klasse1'"
-        (click)="setOcclusion('klasse1')"
-      >
-        Klasse I
-      </button>
+      <div class="seg seg--dental seg--triple" [class.seg--dental-active]="hasValue(form.controls.occlusion)">
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.occlusion.value === 'klasse1'"
+          (click)="setOcclusion('klasse1')">
+          Klasse I
+        </button>
 
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.occlusion.value === 'klasse2'"
-        (click)="setOcclusion('klasse2')"
-      >
-        Klasse II
-      </button>
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.occlusion.value === 'klasse2'"
+          (click)="setOcclusion('klasse2')">
+          Klasse II
+        </button>
 
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.occlusion.value === 'klasse3'"
-        (click)="setOcclusion('klasse3')"
-      >
-        Klasse III
-      </button>
-    </div>
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.occlusion.value === 'klasse3'"
+          (click)="setOcclusion('klasse3')">
+          Klasse III
+        </button>
+      </div>
 
-    @if (isInvalid('occlusion')) {
+      @if (isInvalid('occlusion')) {
       <p class="error">Bitte wählen Sie eine Option.</p>
-    }
-  <div class="nav">
+      }
+      <div class="nav">
         <button type="button" class="btn-next" (click)="onNext()">Next</button>
       </div>
     </mat-expansion-panel>
-  }
+    }
 
-  <!-- 10. Zustand der Kronen -->
-   @if (currentStep() >= 10) {
+    <!-- 10. Zustand der Kronen -->
+    @if (currentStep() >= 10) {
     <mat-expansion-panel hideToggle [expanded]="currentStep() === 10">
       <mat-expansion-panel-header>
         <mat-panel-title>
@@ -1566,76 +1104,54 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
 
-    <div class="seg seg--dental seg--quad" [class.seg--dental-active]="hasValue(form.controls.crownsCondition)">
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.crownsCondition.value === 'keine'"
-        (click)="setCrownsCondition('keine')"
-      >
-        Keine
-      </button>
+      <div class="seg seg--dental seg--quad" [class.seg--dental-active]="hasValue(form.controls.crownsCondition)">
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.crownsCondition.value === 'keine'"
+          (click)="setCrownsCondition('keine')">
+          Keine
+        </button>
 
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.crownsCondition.value === 'gut'"
-        (click)="setCrownsCondition('gut')"
-      >
-        Gut
-      </button>
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.crownsCondition.value === 'gut'"
+          (click)="setCrownsCondition('gut')">
+          Gut
+        </button>
 
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.crownsCondition.value === 'mangelhaft'"
-        (click)="setCrownsCondition('mangelhaft')"
-      >
-        Mangelhaft
-      </button>
+        <button type="button" class="seg__btn"
+          [class.is-selected]="form.controls.crownsCondition.value === 'mangelhaft'"
+          (click)="setCrownsCondition('mangelhaft')">
+          Mangelhaft
+        </button>
 
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.crownsCondition.value === 'schlecht'"
-        (click)="setCrownsCondition('schlecht')"
-      >
-        Schlecht
-      </button>
-    </div>
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.crownsCondition.value === 'schlecht'"
+          (click)="setCrownsCondition('schlecht')">
+          Schlecht
+        </button>
+      </div>
 
-    @if (isInvalid('crownsCondition')) {
+      @if (isInvalid('crownsCondition')) {
       <p class="error">Bitte wählen Sie eine Option.</p>
-    }
+      }
 
-    @if (form.controls.crownsCondition.value === 'mangelhaft') {
+      @if (form.controls.crownsCondition.value === 'mangelhaft') {
       <p class="dental-help">Art und Stelle:</p>
 
-      <div
-        class="box box--textarea box--dental-note"
-        (click)="setActive('crownsNote')"
+      <div class="box box--textarea box--dental-note" (click)="setActive('crownsNote')"
         [class.is-active]="isActive('crownsNote') || hasText(form.controls.crownsNote)"
-        [class.is-invalid]="isInvalid('crownsNote')"
-      >
-        <textarea
-          formControlName="crownsNote"
-          placeholder="Hier eingeben..."
-          (input)="autoResize($event)"
-          (focus)="setActive('crownsNote')"
-        ></textarea>
+        [class.is-invalid]="isInvalid('crownsNote')">
+        <textarea formControlName="crownsNote" placeholder="Hier eingeben..." (input)="autoResize($event)"
+          (focus)="setActive('crownsNote')"></textarea>
       </div>
 
       @if (isInvalid('crownsNote')) {
-        <p class="error">Bitte ausfüllen.</p>
+      <p class="error">Bitte ausfüllen.</p>
       }
-    }
-<div class="nav">
+      }
+      <div class="nav">
         <button type="button" class="btn-next" (click)="onNext()">Next</button>
       </div>
     </mat-expansion-panel>
-  }
+    }
 
-  <!-- 11. Zustand der Brücken -->
+    <!-- 11. Zustand der Brücken -->
     @if (currentStep() >= 11) {
     <mat-expansion-panel hideToggle [expanded]="currentStep() === 11">
       <mat-expansion-panel-header>
@@ -1646,76 +1162,54 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
 
-    <div class="seg seg--dental seg--quad" [class.seg--dental-active]="hasValue(form.controls.bridgesCondition)">
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.bridgesCondition.value === 'keine'"
-        (click)="setBridgesCondition('keine')"
-      >
-        Keine
-      </button>
+      <div class="seg seg--dental seg--quad" [class.seg--dental-active]="hasValue(form.controls.bridgesCondition)">
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.bridgesCondition.value === 'keine'"
+          (click)="setBridgesCondition('keine')">
+          Keine
+        </button>
 
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.bridgesCondition.value === 'gut'"
-        (click)="setBridgesCondition('gut')"
-      >
-        Gut
-      </button>
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.bridgesCondition.value === 'gut'"
+          (click)="setBridgesCondition('gut')">
+          Gut
+        </button>
 
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.bridgesCondition.value === 'mangelhaft'"
-        (click)="setBridgesCondition('mangelhaft')"
-      >
-        Mangelhaft
-      </button>
+        <button type="button" class="seg__btn"
+          [class.is-selected]="form.controls.bridgesCondition.value === 'mangelhaft'"
+          (click)="setBridgesCondition('mangelhaft')">
+          Mangelhaft
+        </button>
 
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.bridgesCondition.value === 'schlecht'"
-        (click)="setBridgesCondition('schlecht')"
-      >
-        Schlecht
-      </button>
-    </div>
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.bridgesCondition.value === 'schlecht'"
+          (click)="setBridgesCondition('schlecht')">
+          Schlecht
+        </button>
+      </div>
 
-    @if (isInvalid('bridgesCondition')) {
+      @if (isInvalid('bridgesCondition')) {
       <p class="error">Bitte wählen Sie eine Option.</p>
-    }
+      }
 
-    @if (form.controls.bridgesCondition.value === 'mangelhaft') {
+      @if (form.controls.bridgesCondition.value === 'mangelhaft') {
       <p class="dental-help">Art und Stelle:</p>
 
-      <div
-        class="box box--textarea box--dental-note"
-        (click)="setActive('bridgesNote')"
+      <div class="box box--textarea box--dental-note" (click)="setActive('bridgesNote')"
         [class.is-active]="isActive('bridgesNote') || hasText(form.controls.bridgesNote)"
-        [class.is-invalid]="isInvalid('bridgesNote')"
-      >
-        <textarea
-          formControlName="bridgesNote"
-          placeholder="Hier eingeben..."
-          (input)="autoResize($event)"
-          (focus)="setActive('bridgesNote')"
-        ></textarea>
+        [class.is-invalid]="isInvalid('bridgesNote')">
+        <textarea formControlName="bridgesNote" placeholder="Hier eingeben..." (input)="autoResize($event)"
+          (focus)="setActive('bridgesNote')"></textarea>
       </div>
 
       @if (isInvalid('bridgesNote')) {
-        <p class="error">Bitte ausfüllen.</p>
+      <p class="error">Bitte ausfüllen.</p>
       }
-    }
-  <div class="nav">
+      }
+      <div class="nav">
         <button type="button" class="btn-next" (click)="onNext()">Next</button>
       </div>
     </mat-expansion-panel>
-  }
+    }
 
-  <!-- 12. Zustand der Teilprothesen -->
+    <!-- 12. Zustand der Teilprothesen -->
     @if (currentStep() >= 12) {
     <mat-expansion-panel hideToggle [expanded]="currentStep() === 12">
       <mat-expansion-panel-header>
@@ -1726,80 +1220,59 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
 
-    <div
-      class="seg seg--dental seg--quad"
-      [class.seg--dental-active]="hasValue(form.controls.partialDenturesCondition)"
-    >
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.partialDenturesCondition.value === 'keine'"
-        (click)="setPartialDenturesCondition('keine')"
-      >
-        Keine
-      </button>
+      <div class="seg seg--dental seg--quad"
+        [class.seg--dental-active]="hasValue(form.controls.partialDenturesCondition)">
+        <button type="button" class="seg__btn"
+          [class.is-selected]="form.controls.partialDenturesCondition.value === 'keine'"
+          (click)="setPartialDenturesCondition('keine')">
+          Keine
+        </button>
 
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.partialDenturesCondition.value === 'gut'"
-        (click)="setPartialDenturesCondition('gut')"
-      >
-        Gut
-      </button>
+        <button type="button" class="seg__btn"
+          [class.is-selected]="form.controls.partialDenturesCondition.value === 'gut'"
+          (click)="setPartialDenturesCondition('gut')">
+          Gut
+        </button>
 
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.partialDenturesCondition.value === 'mangelhaft'"
-        (click)="setPartialDenturesCondition('mangelhaft')"
-      >
-        Mangelhaft
-      </button>
+        <button type="button" class="seg__btn"
+          [class.is-selected]="form.controls.partialDenturesCondition.value === 'mangelhaft'"
+          (click)="setPartialDenturesCondition('mangelhaft')">
+          Mangelhaft
+        </button>
 
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.partialDenturesCondition.value === 'schlecht'"
-        (click)="setPartialDenturesCondition('schlecht')"
-      >
-        Schlecht
-      </button>
-    </div>
+        <button type="button" class="seg__btn"
+          [class.is-selected]="form.controls.partialDenturesCondition.value === 'schlecht'"
+          (click)="setPartialDenturesCondition('schlecht')">
+          Schlecht
+        </button>
+      </div>
 
-    @if (isInvalid('partialDenturesCondition')) {
+      @if (isInvalid('partialDenturesCondition')) {
       <p class="error">Bitte wählen Sie eine Option.</p>
-    }
+      }
 
-    @if (form.controls.partialDenturesCondition.value === 'mangelhaft') {
+      @if (form.controls.partialDenturesCondition.value === 'mangelhaft') {
       <p class="dental-help">Art und Stelle:</p>
 
-      <div
-        class="box box--textarea box--dental-note"
-        (click)="setActive('partialDenturesNote')"
+      <div class="box box--textarea box--dental-note" (click)="setActive('partialDenturesNote')"
         [class.is-active]="isActive('partialDenturesNote') || hasText(form.controls.partialDenturesNote)"
-        [class.is-invalid]="isInvalid('partialDenturesNote')"
-      >
-        <textarea
-          formControlName="partialDenturesNote"
-          placeholder="Hier eingeben..."
-          (input)="autoResize($event)"
-          (focus)="setActive('partialDenturesNote')"
-        ></textarea>
+        [class.is-invalid]="isInvalid('partialDenturesNote')">
+        <textarea formControlName="partialDenturesNote" placeholder="Hier eingeben..." (input)="autoResize($event)"
+          (focus)="setActive('partialDenturesNote')"></textarea>
       </div>
 
       @if (isInvalid('partialDenturesNote')) {
-        <p class="error">Bitte ausfüllen.</p>
+      <p class="error">Bitte ausfüllen.</p>
       }
-    }
-   <div class="nav">
+      }
+      <div class="nav">
         <button type="button" class="btn-next" (click)="onNext()">Next</button>
       </div>
     </mat-expansion-panel>
-  }
+    }
 
-  <!-- 13. Dentition -->
-   @if (currentStep() >= 13) {
+    <!-- 13. Dentition -->
+    @if (currentStep() >= 13) {
     <mat-expansion-panel hideToggle [expanded]="currentStep() === 13">
       <mat-expansion-panel-header>
         <mat-panel-title>
@@ -1809,1529 +1282,1035 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
 
-    <div
-      class="seg seg--dental seg--binary"
-      (click)="setActive('dentition')"
-      [class.seg--dental-active]="hasValue(form.controls.dentition)"
-      [class.is-invalid]="isInvalid('dentition')"
-    >
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.dentition.value === false"
-        (click)="$event.stopPropagation(); setDentition(false)"
-      >
-        Nein
-      </button>
+      <div class="seg seg--dental seg--binary" (click)="setActive('dentition')"
+        [class.seg--dental-active]="hasValue(form.controls.dentition)" [class.is-invalid]="isInvalid('dentition')">
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.dentition.value === false"
+          (click)="$event.stopPropagation(); setDentition(false)">
+          Nein
+        </button>
 
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.dentition.value === true"
-        (click)="$event.stopPropagation(); setDentition(true)"
-      >
-        Ja
-      </button>
-    </div>
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.dentition.value === true"
+          (click)="$event.stopPropagation(); setDentition(true)">
+          Ja
+        </button>
+      </div>
 
-    @if (isInvalid('dentition')) {
+      @if (isInvalid('dentition')) {
       <p class="error">Bitte wählen Sie eine Option.</p>
-    }
+      }
 
-    @if (form.controls.dentition.value === true) {
+      @if (form.controls.dentition.value === true) {
       <p class="dental-help">Wenn ja, welche?</p>
 
-      <div
-        class="box box--textarea box--dental-note"
-        (click)="setActive('dentitionNote')"
+      <div class="box box--textarea box--dental-note" (click)="setActive('dentitionNote')"
         [class.is-active]="isActive('dentitionNote') || hasText(form.controls.dentitionNote)"
-        [class.is-invalid]="isInvalid('dentitionNote')"
-      >
-        <textarea
-          formControlName="dentitionNote"
-          placeholder="Hier eingeben..."
-          (input)="autoResize($event)"
-          (focus)="setActive('dentitionNote')"
-        ></textarea>
+        [class.is-invalid]="isInvalid('dentitionNote')">
+        <textarea formControlName="dentitionNote" placeholder="Hier eingeben..." (input)="autoResize($event)"
+          (focus)="setActive('dentitionNote')"></textarea>
       </div>
 
       @if (isInvalid('dentitionNote')) {
-        <p class="error">Bitte ausfüllen.</p>
+      <p class="error">Bitte ausfüllen.</p>
       }
-    }
-  <div class="nav">
+      }
+      <div class="nav">
         <button type="button" class="btn-next" (click)="onNext()">Next</button>
       </div>
     </mat-expansion-panel>
-  }
+    }
 
-  <!-- 14. Kiefer -->
-   @if (currentStep() >= 14) {
+    <!-- 14. Kiefer -->
+    @if (currentStep() >= 14) {
     <mat-expansion-panel hideToggle [expanded]="currentStep() === 14">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <h2 class="h2" >
-             14. Kiefer: Hat der Versicherte eine Fehl- oder Missbildung oder einen Stellungsfehler des Kiefers?
+          <h2 class="h2">
+            14. Kiefer: Hat der Versicherte eine Fehl- oder Missbildung oder einen Stellungsfehler des Kiefers?
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
 
-    <div
-      class="seg seg--dental seg--binary"
-      (click)="setActive('jaw')"
-      [class.seg--dental-active]="hasValue(form.controls.jaw)"
-      [class.is-invalid]="isInvalid('jaw')"
-    >
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.jaw.value === false"
-        (click)="$event.stopPropagation(); setJaw(false)"
-      >
-        Nein
-      </button>
+      <div class="seg seg--dental seg--binary" (click)="setActive('jaw')"
+        [class.seg--dental-active]="hasValue(form.controls.jaw)" [class.is-invalid]="isInvalid('jaw')">
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.jaw.value === false"
+          (click)="$event.stopPropagation(); setJaw(false)">
+          Nein
+        </button>
 
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.jaw.value === true"
-        (click)="$event.stopPropagation(); setJaw(true)"
-      >
-        Ja
-      </button>
-    </div>
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.jaw.value === true"
+          (click)="$event.stopPropagation(); setJaw(true)">
+          Ja
+        </button>
+      </div>
 
-    @if (isInvalid('jaw')) {
+      @if (isInvalid('jaw')) {
       <p class="error">Bitte wählen Sie eine Option.</p>
-    }
+      }
 
-    @if (form.controls.jaw.value === true) {
+      @if (form.controls.jaw.value === true) {
       <p class="dental-help">Wenn ja, welche?</p>
 
-      <div
-        class="box box--textarea box--dental-note"
-        (click)="setActive('jawNote')"
+      <div class="box box--textarea box--dental-note" (click)="setActive('jawNote')"
         [class.is-active]="isActive('jawNote') || hasText(form.controls.jawNote)"
-        [class.is-invalid]="isInvalid('jawNote')"
-      >
-        <textarea
-          formControlName="jawNote"
-          placeholder="Hier eingeben..."
-          (input)="autoResize($event)"
-          (focus)="setActive('jawNote')"
-        ></textarea>
+        [class.is-invalid]="isInvalid('jawNote')">
+        <textarea formControlName="jawNote" placeholder="Hier eingeben..." (input)="autoResize($event)"
+          (focus)="setActive('jawNote')"></textarea>
       </div>
 
       @if (isInvalid('jawNote')) {
-        <p class="error">Bitte ausfüllen.</p>
+      <p class="error">Bitte ausfüllen.</p>
       }
-    }
-   <div class="nav">
+      }
+      <div class="nav">
         <button type="button" class="btn-next" (click)="onNext()">Next</button>
       </div>
     </mat-expansion-panel>
-  }
+    }
 
-  <!-- 15. Zukunft -->
+    <!-- 15. Zukunft -->
     @if (currentStep() >= 15) {
     <mat-expansion-panel hideToggle [expanded]="currentStep() === 15">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <h2 class="h2" >
+          <h2 class="h2">
             15. Leidet der Versicherte an einer Krankheit, die den Zustand der Zähne in Zukunft beeinflussen könnte?
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
 
-    <div
-      class="seg seg--dental seg--binary"
-      (click)="setActive('futureTeethDisease')"
-      [class.seg--dental-active]="hasValue(form.controls.futureTeethDisease)"
-      [class.is-invalid]="isInvalid('futureTeethDisease')"
-    >
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.futureTeethDisease.value === false"
-        (click)="$event.stopPropagation(); setFutureTeethDisease(false)"
-      >
-        Nein
-      </button>
+      <div class="seg seg--dental seg--binary" (click)="setActive('futureTeethDisease')"
+        [class.seg--dental-active]="hasValue(form.controls.futureTeethDisease)"
+        [class.is-invalid]="isInvalid('futureTeethDisease')">
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.futureTeethDisease.value === false"
+          (click)="$event.stopPropagation(); setFutureTeethDisease(false)">
+          Nein
+        </button>
 
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.futureTeethDisease.value === true"
-        (click)="$event.stopPropagation(); setFutureTeethDisease(true)"
-      >
-        Ja
-      </button>
-    </div>
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.futureTeethDisease.value === true"
+          (click)="$event.stopPropagation(); setFutureTeethDisease(true)">
+          Ja
+        </button>
+      </div>
 
-    @if (isInvalid('futureTeethDisease')) {
+      @if (isInvalid('futureTeethDisease')) {
       <p class="error">Bitte wählen Sie eine Option.</p>
-    }
+      }
 
-    @if (form.controls.futureTeethDisease.value === true) {
+      @if (form.controls.futureTeethDisease.value === true) {
       <p class="dental-help">Wenn ja, welche?</p>
 
-      <div
-        class="box box--textarea box--dental-note"
-        (click)="setActive('futureTeethDiseaseNote')"
+      <div class="box box--textarea box--dental-note" (click)="setActive('futureTeethDiseaseNote')"
         [class.is-active]="isActive('futureTeethDiseaseNote') || hasText(form.controls.futureTeethDiseaseNote)"
-        [class.is-invalid]="isInvalid('futureTeethDiseaseNote')"
-      >
-        <textarea
-          formControlName="futureTeethDiseaseNote"
-          placeholder="Hier eingeben..."
-          (input)="autoResize($event)"
-          (focus)="setActive('futureTeethDiseaseNote')"
-        ></textarea>
+        [class.is-invalid]="isInvalid('futureTeethDiseaseNote')">
+        <textarea formControlName="futureTeethDiseaseNote" placeholder="Hier eingeben..." (input)="autoResize($event)"
+          (focus)="setActive('futureTeethDiseaseNote')"></textarea>
       </div>
 
       @if (isInvalid('futureTeethDiseaseNote')) {
-        <p class="error">Bitte ausfüllen.</p>
+      <p class="error">Bitte ausfüllen.</p>
       }
-    }
-  <div class="nav">
+      }
+      <div class="nav">
         <button type="button" class="btn-next" (click)="onNext()">Next</button>
       </div>
     </mat-expansion-panel>
-  }
+    }
 
-  <!-- 16. Fehlende, nicht ersetzte Zähne -->
-   @if (currentStep() >= 16) {
+    <!-- 16. Fehlende, nicht ersetzte Zähne -->
+    @if (currentStep() >= 16) {
     <mat-expansion-panel hideToggle [expanded]="currentStep() === 16">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <h2 class="h2" >
+          <h2 class="h2">
             16. Fehlende, nicht ersetzte Zähne:
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
 
-  <div
-    class="seg"
-    (click)="setActive('missingTeethQ')"
-    [class.is-active]="isActive('missingTeethQ') || form.controls.missingTeethQ.value !== null"
-    [class.is-invalid]="isInvalid('missingTeethQ')"
-  >
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.missingTeethQ.value === false"
-      (click)="$event.stopPropagation(); setMissingTeethQ(false)"
-    >
-      Nein
-    </button>
+      <div class="seg" (click)="setActive('missingTeethQ')"
+        [class.is-active]="isActive('missingTeethQ') || form.controls.missingTeethQ.value !== null"
+        [class.is-invalid]="isInvalid('missingTeethQ')">
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.missingTeethQ.value === false"
+          (click)="$event.stopPropagation(); setMissingTeethQ(false)">
+          Nein
+        </button>
 
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.missingTeethQ.value === true"
-      (click)="$event.stopPropagation(); setMissingTeethQ(true)"
-    >
-      Ja
-    </button>
-  </div>
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.missingTeethQ.value === true"
+          (click)="$event.stopPropagation(); setMissingTeethQ(true)">
+          Ja
+        </button>
+      </div>
 
-  @if (isInvalid('missingTeethQ')) {
-    <p class="error">Bitte wählen Sie einen Option.</p>
-  }
+      @if (isInvalid('missingTeethQ')) {
+      <p class="error">Bitte wählen Sie einen Option.</p>
+      }
 
-  @if (form.controls.missingTeethQ.value === true) {
-    <div class="teeth">
+      @if (form.controls.missingTeethQ.value === true) {
+      <div class="teeth">
 
-      <div class="teeth__nums teeth__nums--top">
-        @for (t of teethTop; track t) {
+        <div class="teeth__nums teeth__nums--top">
+          @for (t of teethTop; track t) {
           <div class="teeth__num" [class.is-hot]="isToothSelected(t)">{{ t }}</div>
-        }
-      </div>
-
-      <div class="teethbar">
-        @for (t of teethTop; track t) {
-          <button
-            type="button"
-            class="toothcell"
-            [class.is-selected]="isToothSelected(t)"
-            (click)="toggleTooth(t)"
-            aria-label="Tooth {{ t }}"
-          >
-            <span class="toothcell__badge" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path
-                  d="M20 6L9 17l-5-5"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </span>
-          </button>
-        }
-      </div>
-
-      <div class="teethbar teethbar--bottom">
-        @for (t of teethBottom; track t) {
-          <button
-            type="button"
-            class="toothcell"
-            [class.is-selected]="isToothSelected(t)"
-            (click)="toggleTooth(t)"
-            aria-label="Tooth {{ t }}"
-          >
-            <span class="toothcell__badge" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path
-                  d="M20 6L9 17l-5-5"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </span>
-          </button>
-        }
-      </div>
-
-      <div class="teeth__nums teeth__nums--bottom">
-        @for (t of teethBottom; track t) {
-          <div class="teeth__num" [class.is-hot]="isToothSelected(t)">{{ t }}</div>
-        }
-      </div>
-      <div class="teethperm">
-        <div class="teethperm__nums teethperm__nums--top">
-          @for (t of permTop; track t) {
-            <div class="teethperm__num" [class.is-hot]="isPermSelected(t)">{{ t }}</div>
           }
         </div>
 
-        <div class="teethperm__wrap">
-          <div class="teethperm__half teethperm__half--left">
-            @for (t of permTop.slice(0, 8); track t) {
-              <button
-                type="button"
-                class="teethperm__cell"
-                [class.is-selected]="isPermSelected(t)"
-                (click)="togglePerm(t)"
-                aria-label="Tooth {{ t }}"
-              >
-                <span class="teethperm__badge" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
-                    <path
-                      d="M20 6L9 17l-5-5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </span>
-              </button>
-            }
-          </div>
-
-          <div class="teethperm__half teethperm__half--right">
-            @for (t of permTop.slice(8, 16); track t) {
-              <button
-                type="button"
-                class="teethperm__cell"
-                [class.is-selected]="isPermSelected(t)"
-                (click)="togglePerm(t)"
-                aria-label="Tooth {{ t }}"
-              >
-                <span class="teethperm__badge" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
-                    <path
-                      d="M20 6L9 17l-5-5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </span>
-              </button>
-            }
-          </div>
-
-          <span class="teethperm__mid" aria-hidden="true"></span>
-        </div>
-
-        <div class="teethperm__wrap teethperm__wrap--bottom">
-          <div class="teethperm__half teethperm__half--left">
-            @for (t of permBottom.slice(0, 8); track t) {
-              <button
-                type="button"
-                class="teethperm__cell"
-                [class.is-selected]="isPermSelected(t)"
-                (click)="togglePerm(t)"
-                aria-label="Tooth {{ t }}"
-              >
-                <span class="teethperm__badge" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
-                    <path
-                      d="M20 6L9 17l-5-5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </span>
-              </button>
-            }
-          </div>
-
-          <div class="teethperm__half teethperm__half--right">
-            @for (t of permBottom.slice(8, 16); track t) {
-              <button
-                type="button"
-                class="teethperm__cell"
-                [class.is-selected]="isPermSelected(t)"
-                (click)="togglePerm(t)"
-                aria-label="Tooth {{ t }}"
-              >
-                <span class="teethperm__badge" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
-                    <path
-                      d="M20 6L9 17l-5-5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </span>
-              </button>
-            }
-          </div>
-
-          <span class="teethperm__mid" aria-hidden="true"></span>
-        </div>
-
-        <div class="teethperm__nums teethperm__nums--bottom">
-          @for (t of permBottom; track t) {
-            <div class="teethperm__num" [class.is-hot]="isPermSelected(t)">{{ t }}</div>
+        <div class="teethbar">
+          @for (t of teethTop; track t) {
+          <button type="button" class="toothcell" [class.is-selected]="isToothSelected(t)" (click)="toggleTooth(t)"
+            aria-label="Tooth {{ t }}">
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </span>
+          </button>
           }
         </div>
-      </div>
 
-      <div class="teeth__nums teeth__nums--top">
-        @for (t of milkTop; track t) {
-          <div class="teeth__num" [class.is-hot]="isToothSelected(t)">{{ t }}</div>
-        }
-      </div>
-
-      <div class="teethbar">
-        @for (t of milkTop; track t) {
-          <button
-            type="button"
-            class="toothcell"
-            [class.is-selected]="isToothSelected(t)"
-            (click)="toggleTooth(t)"
-            aria-label="Tooth {{ t }}"
-          >
+        <div class="teethbar teethbar--bottom">
+          @for (t of teethBottom; track t) {
+          <button type="button" class="toothcell" [class.is-selected]="isToothSelected(t)" (click)="toggleTooth(t)"
+            aria-label="Tooth {{ t }}">
             <span class="toothcell__badge" aria-hidden="true">
               <svg viewBox="0 0 24 24">
-                <path
-                  d="M20 6L9 17l-5-5"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
+                <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  stroke-linejoin="round" />
               </svg>
             </span>
           </button>
-        }
-      </div>
+          }
+        </div>
 
-      <div class="teethbar teethbar--bottom">
-        @for (t of milkBottom; track t) {
-          <button
-            type="button"
-            class="toothcell"
-            [class.is-selected]="isToothSelected(t)"
-            (click)="toggleTooth(t)"
-            aria-label="Tooth {{ t }}"
-          >
+        <div class="teeth__nums teeth__nums--bottom">
+          @for (t of teethBottom; track t) {
+          <div class="teeth__num" [class.is-hot]="isToothSelected(t)">{{ t }}</div>
+          }
+        </div>
+        <div class="teethperm">
+          <div class="teethperm__nums teethperm__nums--top">
+            @for (t of permTop; track t) {
+            <div class="teethperm__num" [class.is-hot]="isPermSelected(t)">{{ t }}</div>
+            }
+          </div>
+
+          <div class="teethperm__wrap">
+            <div class="teethperm__half teethperm__half--left">
+              @for (t of permTop.slice(0, 8); track t) {
+              <button type="button" class="teethperm__cell" [class.is-selected]="isPermSelected(t)"
+                (click)="togglePerm(t)" aria-label="Tooth {{ t }}">
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </button>
+              }
+            </div>
+
+            <div class="teethperm__half teethperm__half--right">
+              @for (t of permTop.slice(8, 16); track t) {
+              <button type="button" class="teethperm__cell" [class.is-selected]="isPermSelected(t)"
+                (click)="togglePerm(t)" aria-label="Tooth {{ t }}">
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </button>
+              }
+            </div>
+
+            <span class="teethperm__mid" aria-hidden="true"></span>
+          </div>
+
+          <div class="teethperm__wrap teethperm__wrap--bottom">
+            <div class="teethperm__half teethperm__half--left">
+              @for (t of permBottom.slice(0, 8); track t) {
+              <button type="button" class="teethperm__cell" [class.is-selected]="isPermSelected(t)"
+                (click)="togglePerm(t)" aria-label="Tooth {{ t }}">
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </button>
+              }
+            </div>
+
+            <div class="teethperm__half teethperm__half--right">
+              @for (t of permBottom.slice(8, 16); track t) {
+              <button type="button" class="teethperm__cell" [class.is-selected]="isPermSelected(t)"
+                (click)="togglePerm(t)" aria-label="Tooth {{ t }}">
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </button>
+              }
+            </div>
+
+            <span class="teethperm__mid" aria-hidden="true"></span>
+          </div>
+
+          <div class="teethperm__nums teethperm__nums--bottom">
+            @for (t of permBottom; track t) {
+            <div class="teethperm__num" [class.is-hot]="isPermSelected(t)">{{ t }}</div>
+            }
+          </div>
+        </div>
+
+        <div class="teeth__nums teeth__nums--top">
+          @for (t of milkTop; track t) {
+          <div class="teeth__num" [class.is-hot]="isToothSelected(t)">{{ t }}</div>
+          }
+        </div>
+
+        <div class="teethbar">
+          @for (t of milkTop; track t) {
+          <button type="button" class="toothcell" [class.is-selected]="isToothSelected(t)" (click)="toggleTooth(t)"
+            aria-label="Tooth {{ t }}">
             <span class="toothcell__badge" aria-hidden="true">
               <svg viewBox="0 0 24 24">
-                <path
-                  d="M20 6L9 17l-5-5"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
+                <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  stroke-linejoin="round" />
               </svg>
             </span>
           </button>
-        }
-      </div>
+          }
+        </div>
 
-      <div class="teeth__nums teeth__nums--bottom">
-        @for (t of milkBottom; track t) {
+        <div class="teethbar teethbar--bottom">
+          @for (t of milkBottom; track t) {
+          <button type="button" class="toothcell" [class.is-selected]="isToothSelected(t)" (click)="toggleTooth(t)"
+            aria-label="Tooth {{ t }}">
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </span>
+          </button>
+          }
+        </div>
+
+        <div class="teeth__nums teeth__nums--bottom">
+          @for (t of milkBottom; track t) {
           <div class="teeth__num" [class.is-hot]="isToothSelected(t)">{{ t }}</div>
-        }
-      </div>
+          }
+        </div>
 
-    </div>
-  }
-<div class="nav">
+      </div>
+      }
+      <div class="nav">
         <button type="button" class="btn-next" (click)="onNext()">Next</button>
       </div>
     </mat-expansion-panel>
-  }
+    }
 
 
-<!-- 17. Schadhafte Zahnfüllungen -->
-  @if (currentStep() >= 17) {
+    <!-- 17. Schadhafte Zahnfüllungen -->
+    @if (currentStep() >= 17) {
     <mat-expansion-panel hideToggle [expanded]="currentStep() === 17">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <h2 class="h2" >
+          <h2 class="h2">
             17. Schadhafte Zahnfüllungen:
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
 
-  <div
-    class="seg"
-    (click)="setActive('fillingsQ')"
-    [class.is-active]="isActive('fillingsQ') || form.controls.fillingsQ.value !== null"
-    [class.is-invalid]="isInvalid('fillingsQ')"
-  >
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.fillingsQ.value === false"
-      (click)="$event.stopPropagation(); setFillingsQ(false)"
-    >
-      Nein
-    </button>
+      <div class="seg" (click)="setActive('fillingsQ')"
+        [class.is-active]="isActive('fillingsQ') || form.controls.fillingsQ.value !== null"
+        [class.is-invalid]="isInvalid('fillingsQ')">
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.fillingsQ.value === false"
+          (click)="$event.stopPropagation(); setFillingsQ(false)">
+          Nein
+        </button>
 
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.fillingsQ.value === true"
-      (click)="$event.stopPropagation(); setFillingsQ(true)"
-    >
-      Ja
-    </button>
-  </div>
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.fillingsQ.value === true"
+          (click)="$event.stopPropagation(); setFillingsQ(true)">
+          Ja
+        </button>
+      </div>
 
-  @if (isInvalid('fillingsQ')) {
-    <p class="error">Bitte wählen Sie eine Option.</p>
-  }
+      @if (isInvalid('fillingsQ')) {
+      <p class="error">Bitte wählen Sie eine Option.</p>
+      }
 
-  @if (form.controls.fillingsQ.value === true) {
-    <div class="teeth">
+      @if (form.controls.fillingsQ.value === true) {
+      <div class="teeth">
 
-      <!-- ===== 55–51 ===== -->
-      <div class="teeth__nums teeth__nums--top">
-        @for (t of teethTop; track t) {
+        <div class="teeth__nums teeth__nums--top">
+          @for (t of teethTop; track t) {
           <div class="teeth__num" [class.is-hot]="isFillingSelected(t)">{{ t }}</div>
-        }
-      </div>
-
-      <div class="teethbar">
-        @for (t of teethTop; track t) {
-          <button
-            type="button"
-            class="toothcell"
-            [class.is-selected]="isFillingSelected(t)"
-            (click)="toggleFilling(t)"
-            aria-label="Tooth {{ t }}"
-          >
-            <span class="toothcell__badge" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path
-                  d="M20 6L9 17l-5-5"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </span>
-          </button>
-        }
-      </div>
-
-      <!-- ===== 85–81 ===== -->
-      <div class="teethbar teethbar--bottom">
-        @for (t of teethBottom; track t) {
-          <button
-            type="button"
-            class="toothcell"
-            [class.is-selected]="isFillingSelected(t)"
-            (click)="toggleFilling(t)"
-            aria-label="Tooth {{ t }}"
-          >
-            <span class="toothcell__badge" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path
-                  d="M20 6L9 17l-5-5"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </span>
-          </button>
-        }
-      </div>
-
-      <div class="teeth__nums teeth__nums--bottom">
-        @for (t of teethBottom; track t) {
-          <div class="teeth__num" [class.is-hot]="isFillingSelected(t)">{{ t }}</div>
-        }
-      </div>
-
-      <div class="teethperm">
-        <div class="teethperm__nums teethperm__nums--top">
-          @for (t of permTop; track t) {
-            <div class="teethperm__num" [class.is-hot]="isFillingPermSelected(t)">{{ t }}</div>
           }
         </div>
 
-        <div class="teethperm__wrap">
-          <div class="teethperm__half teethperm__half--left">
-            @for (t of permTop.slice(0, 8); track t) {
-              <button
-                type="button"
-                class="teethperm__cell"
-                [class.is-selected]="isFillingPermSelected(t)"
-                (click)="toggleFillingPerm(t)"
-                aria-label="Tooth {{ t }}"
-              >
-                <span class="teethperm__badge" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
-                    <path
-                      d="M20 6L9 17l-5-5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </span>
-              </button>
-            }
-          </div>
-
-          <div class="teethperm__half teethperm__half--right">
-            @for (t of permTop.slice(8, 16); track t) {
-              <button
-                type="button"
-                class="teethperm__cell"
-                [class.is-selected]="isFillingPermSelected(t)"
-                (click)="toggleFillingPerm(t)"
-                aria-label="Tooth {{ t }}"
-              >
-                <span class="teethperm__badge" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
-                    <path
-                      d="M20 6L9 17l-5-5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </span>
-              </button>
-            }
-          </div>
-
-          <span class="teethperm__mid" aria-hidden="true"></span>
-        </div>
-
-        <div class="teethperm__wrap teethperm__wrap--bottom">
-          <div class="teethperm__half teethperm__half--left">
-            @for (t of permBottom.slice(0, 8); track t) {
-              <button
-                type="button"
-                class="teethperm__cell"
-                [class.is-selected]="isFillingPermSelected(t)"
-                (click)="toggleFillingPerm(t)"
-                aria-label="Tooth {{ t }}"
-              >
-                <span class="teethperm__badge" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
-                    <path
-                      d="M20 6L9 17l-5-5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </span>
-              </button>
-            }
-          </div>
-
-          <div class="teethperm__half teethperm__half--right">
-            @for (t of permBottom.slice(8, 16); track t) {
-              <button
-                type="button"
-                class="teethperm__cell"
-                [class.is-selected]="isFillingPermSelected(t)"
-                (click)="toggleFillingPerm(t)"
-                aria-label="Tooth {{ t }}"
-              >
-                <span class="teethperm__badge" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
-                    <path
-                      d="M20 6L9 17l-5-5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </span>
-              </button>
-            }
-          </div>
-
-          <span class="teethperm__mid" aria-hidden="true"></span>
-        </div>
-
-        <div class="teethperm__nums teethperm__nums--bottom">
-          @for (t of permBottom; track t) {
-            <div class="teethperm__num" [class.is-hot]="isFillingPermSelected(t)">{{ t }}</div>
+        <div class="teethbar">
+          @for (t of teethTop; track t) {
+          <button type="button" class="toothcell" [class.is-selected]="isFillingSelected(t)" (click)="toggleFilling(t)"
+            aria-label="Tooth {{ t }}">
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </span>
+          </button>
           }
         </div>
-      </div>
 
-      <div class="teeth__nums teeth__nums--top">
-        @for (t of milkTop; track t) {
-          <div class="teeth__num" [class.is-hot]="isFillingSelected(t)">{{ t }}</div>
-        }
-      </div>
-
-      <div class="teethbar">
-        @for (t of milkTop; track t) {
-          <button
-            type="button"
-            class="toothcell"
-            [class.is-selected]="isFillingSelected(t)"
-            (click)="toggleFilling(t)"
-            aria-label="Tooth {{ t }}"
-          >
+        <div class="teethbar teethbar--bottom">
+          @for (t of teethBottom; track t) {
+          <button type="button" class="toothcell" [class.is-selected]="isFillingSelected(t)" (click)="toggleFilling(t)"
+            aria-label="Tooth {{ t }}">
             <span class="toothcell__badge" aria-hidden="true">
               <svg viewBox="0 0 24 24">
-                <path
-                  d="M20 6L9 17l-5-5"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
+                <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  stroke-linejoin="round" />
               </svg>
             </span>
           </button>
-        }
-      </div>
+          }
+        </div>
 
-      <div class="teethbar teethbar--bottom">
-        @for (t of milkBottom; track t) {
-          <button
-            type="button"
-            class="toothcell"
-            [class.is-selected]="isFillingSelected(t)"
-            (click)="toggleFilling(t)"
-            aria-label="Tooth {{ t }}"
-          >
+        <div class="teeth__nums teeth__nums--bottom">
+          @for (t of teethBottom; track t) {
+          <div class="teeth__num" [class.is-hot]="isFillingSelected(t)">{{ t }}</div>
+          }
+        </div>
+
+        <div class="teethperm">
+          <div class="teethperm__nums teethperm__nums--top">
+            @for (t of permTop; track t) {
+            <div class="teethperm__num" [class.is-hot]="isFillingPermSelected(t)">{{ t }}</div>
+            }
+          </div>
+
+          <div class="teethperm__wrap">
+            <div class="teethperm__half teethperm__half--left">
+              @for (t of permTop.slice(0, 8); track t) {
+              <button type="button" class="teethperm__cell" [class.is-selected]="isFillingPermSelected(t)"
+                (click)="toggleFillingPerm(t)" aria-label="Tooth {{ t }}">
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </button>
+              }
+            </div>
+
+            <div class="teethperm__half teethperm__half--right">
+              @for (t of permTop.slice(8, 16); track t) {
+              <button type="button" class="teethperm__cell" [class.is-selected]="isFillingPermSelected(t)"
+                (click)="toggleFillingPerm(t)" aria-label="Tooth {{ t }}">
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </button>
+              }
+            </div>
+
+            <span class="teethperm__mid" aria-hidden="true"></span>
+          </div>
+
+          <div class="teethperm__wrap teethperm__wrap--bottom">
+            <div class="teethperm__half teethperm__half--left">
+              @for (t of permBottom.slice(0, 8); track t) {
+              <button type="button" class="teethperm__cell" [class.is-selected]="isFillingPermSelected(t)"
+                (click)="toggleFillingPerm(t)" aria-label="Tooth {{ t }}">
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </button>
+              }
+            </div>
+
+            <div class="teethperm__half teethperm__half--right">
+              @for (t of permBottom.slice(8, 16); track t) {
+              <button type="button" class="teethperm__cell" [class.is-selected]="isFillingPermSelected(t)"
+                (click)="toggleFillingPerm(t)" aria-label="Tooth {{ t }}">
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </button>
+              }
+            </div>
+
+            <span class="teethperm__mid" aria-hidden="true"></span>
+          </div>
+
+          <div class="teethperm__nums teethperm__nums--bottom">
+            @for (t of permBottom; track t) {
+            <div class="teethperm__num" [class.is-hot]="isFillingPermSelected(t)">{{ t }}</div>
+            }
+          </div>
+        </div>
+
+        <div class="teeth__nums teeth__nums--top">
+          @for (t of milkTop; track t) {
+          <div class="teeth__num" [class.is-hot]="isFillingSelected(t)">{{ t }}</div>
+          }
+        </div>
+
+        <div class="teethbar">
+          @for (t of milkTop; track t) {
+          <button type="button" class="toothcell" [class.is-selected]="isFillingSelected(t)" (click)="toggleFilling(t)"
+            aria-label="Tooth {{ t }}">
             <span class="toothcell__badge" aria-hidden="true">
               <svg viewBox="0 0 24 24">
-                <path
-                  d="M20 6L9 17l-5-5"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
+                <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  stroke-linejoin="round" />
               </svg>
             </span>
           </button>
-        }
-      </div>
+          }
+        </div>
 
-      <div class="teeth__nums teeth__nums--bottom">
-        @for (t of milkBottom; track t) {
+        <div class="teethbar teethbar--bottom">
+          @for (t of milkBottom; track t) {
+          <button type="button" class="toothcell" [class.is-selected]="isFillingSelected(t)" (click)="toggleFilling(t)"
+            aria-label="Tooth {{ t }}">
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </span>
+          </button>
+          }
+        </div>
+
+        <div class="teeth__nums teeth__nums--bottom">
+          @for (t of milkBottom; track t) {
           <div class="teeth__num" [class.is-hot]="isFillingSelected(t)">{{ t }}</div>
-        }
-      </div>
+          }
+        </div>
 
-    </div>
-  }
-  <div class="nav">
+      </div>
+      }
+      <div class="nav">
         <button type="button" class="btn-next" (click)="onNext()">Next</button>
       </div>
     </mat-expansion-panel>
-  }
+    }
 
-   <!-- 18. Kariöse Zähne -->
-     @if (currentStep() >= 18) {
+    <!-- 18. Kariöse Zähne -->
+    @if (currentStep() >= 18) {
     <mat-expansion-panel hideToggle [expanded]="currentStep() === 18">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <h2 class="h2" >
+          <h2 class="h2">
             18. Kariöse Zähne:
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
 
-  <div
-    class="seg"
-    (click)="setActive('cariesQ')"
-    [class.is-active]="isActive('cariesQ') || form.controls.cariesQ.value !== null"
-    [class.is-invalid]="isInvalid('cariesQ')"
-  >
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.cariesQ.value === false"
-      (click)="$event.stopPropagation(); setCariesQ(false)"
-    >
-      Nein
-    </button>
+      <div class="seg" (click)="setActive('cariesQ')"
+        [class.is-active]="isActive('cariesQ') || form.controls.cariesQ.value !== null"
+        [class.is-invalid]="isInvalid('cariesQ')">
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.cariesQ.value === false"
+          (click)="$event.stopPropagation(); setCariesQ(false)">
+          Nein
+        </button>
 
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.cariesQ.value === true"
-      (click)="$event.stopPropagation(); setCariesQ(true)"
-    >
-      Ja
-    </button>
-  </div>
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.cariesQ.value === true"
+          (click)="$event.stopPropagation(); setCariesQ(true)">
+          Ja
+        </button>
+      </div>
 
-  @if (isInvalid('cariesQ')) {
-    <p class="error">Bitte wählen Sie eine Option.</p>
-  }
+      @if (isInvalid('cariesQ')) {
+      <p class="error">Bitte wählen Sie eine Option.</p>
+      }
 
-  @if (form.controls.cariesQ.value === true) {
-    <div class="teeth">
-      <div class="teeth__nums teeth__nums--top">
-        @for (t of teethTop; track t) {
+      @if (form.controls.cariesQ.value === true) {
+      <div class="teeth">
+        <div class="teeth__nums teeth__nums--top">
+          @for (t of teethTop; track t) {
           <div class="teeth__num" [class.is-hot]="isCariesSelected(t)">{{ t }}</div>
-        }
-      </div>
-
-      <div class="teethbar">
-        @for (t of teethTop; track t) {
-          <button
-            type="button"
-            class="toothcell"
-            [class.is-selected]="isCariesSelected(t)"
-            (click)="toggleCaries(t)"
-            aria-label="Tooth {{ t }}"
-          >
-            <span class="toothcell__badge" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path
-                  d="M20 6L9 17l-5-5"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </span>
-          </button>
-        }
-      </div>
-
-      <div class="teethbar teethbar--bottom">
-        @for (t of teethBottom; track t) {
-          <button
-            type="button"
-            class="toothcell"
-            [class.is-selected]="isCariesSelected(t)"
-            (click)="toggleCaries(t)"
-            aria-label="Tooth {{ t }}"
-          >
-            <span class="toothcell__badge" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path
-                  d="M20 6L9 17l-5-5"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </span>
-          </button>
-        }
-      </div>
-
-      <div class="teeth__nums teeth__nums--bottom">
-        @for (t of teethBottom; track t) {
-          <div class="teeth__num" [class.is-hot]="isCariesSelected(t)">{{ t }}</div>
-        }
-      </div>
-
-      <div class="teethperm">
-        <div class="teethperm__nums teethperm__nums--top">
-          @for (t of permTop; track t) {
-            <div class="teethperm__num" [class.is-hot]="isCariesPermSelected(t)">{{ t }}</div>
           }
         </div>
 
-        <div class="teethperm__wrap">
-          <div class="teethperm__half teethperm__half--left">
-            @for (t of permTop.slice(0, 8); track t) {
-              <button
-                type="button"
-                class="teethperm__cell"
-                [class.is-selected]="isCariesPermSelected(t)"
-                (click)="toggleCariesPerm(t)"
-                aria-label="Tooth {{ t }}"
-              >
-                <span class="teethperm__badge" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
-                    <path
-                      d="M20 6L9 17l-5-5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </span>
-              </button>
-            }
-          </div>
-
-          <div class="teethperm__half teethperm__half--right">
-            @for (t of permTop.slice(8, 16); track t) {
-              <button
-                type="button"
-                class="teethperm__cell"
-                [class.is-selected]="isCariesPermSelected(t)"
-                (click)="toggleCariesPerm(t)"
-                aria-label="Tooth {{ t }}"
-              >
-                <span class="teethperm__badge" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
-                    <path
-                      d="M20 6L9 17l-5-5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </span>
-              </button>
-            }
-          </div>
-
-          <span class="teethperm__mid" aria-hidden="true"></span>
+        <div class="teethbar">
+          @for (t of teethTop; track t) {
+          <button type="button" class="toothcell" [class.is-selected]="isCariesSelected(t)" (click)="toggleCaries(t)"
+            aria-label="Tooth {{ t }}">
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </span>
+          </button>
+          }
         </div>
 
-        <div class="teethperm__wrap teethperm__wrap--bottom">
-          <div class="teethperm__half teethperm__half--left">
-            @for (t of permBottom.slice(0, 8); track t) {
-              <button
-                type="button"
-                class="teethperm__cell"
-                [class.is-selected]="isCariesPermSelected(t)"
-                (click)="toggleCariesPerm(t)"
-                aria-label="Tooth {{ t }}"
-              >
-                <span class="teethperm__badge" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
-                    <path
-                      d="M20 6L9 17l-5-5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </span>
-              </button>
-            }
-          </div>
-
-          <div class="teethperm__half teethperm__half--right">
-            @for (t of permBottom.slice(8, 16); track t) {
-              <button
-                type="button"
-                class="teethperm__cell"
-                [class.is-selected]="isCariesPermSelected(t)"
-                (click)="toggleCariesPerm(t)"
-                aria-label="Tooth {{ t }}"
-              >
-                <span class="teethperm__badge" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
-                    <path
-                      d="M20 6L9 17l-5-5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </span>
-              </button>
-            }
-          </div>
-
-          <span class="teethperm__mid" aria-hidden="true"></span>
+        <div class="teethbar teethbar--bottom">
+          @for (t of teethBottom; track t) {
+          <button type="button" class="toothcell" [class.is-selected]="isCariesSelected(t)" (click)="toggleCaries(t)"
+            aria-label="Tooth {{ t }}">
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </span>
+          </button>
+          }
         </div>
 
-        <div class="teethperm__nums teethperm__nums--bottom">
-          @for (t of permBottom; track t) {
+        <div class="teeth__nums teeth__nums--bottom">
+          @for (t of teethBottom; track t) {
+          <div class="teeth__num" [class.is-hot]="isCariesSelected(t)">{{ t }}</div>
+          }
+        </div>
+
+        <div class="teethperm">
+          <div class="teethperm__nums teethperm__nums--top">
+            @for (t of permTop; track t) {
             <div class="teethperm__num" [class.is-hot]="isCariesPermSelected(t)">{{ t }}</div>
+            }
+          </div>
+
+          <div class="teethperm__wrap">
+            <div class="teethperm__half teethperm__half--left">
+              @for (t of permTop.slice(0, 8); track t) {
+              <button type="button" class="teethperm__cell" [class.is-selected]="isCariesPermSelected(t)"
+                (click)="toggleCariesPerm(t)" aria-label="Tooth {{ t }}">
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </button>
+              }
+            </div>
+
+            <div class="teethperm__half teethperm__half--right">
+              @for (t of permTop.slice(8, 16); track t) {
+              <button type="button" class="teethperm__cell" [class.is-selected]="isCariesPermSelected(t)"
+                (click)="toggleCariesPerm(t)" aria-label="Tooth {{ t }}">
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </button>
+              }
+            </div>
+
+            <span class="teethperm__mid" aria-hidden="true"></span>
+          </div>
+
+          <div class="teethperm__wrap teethperm__wrap--bottom">
+            <div class="teethperm__half teethperm__half--left">
+              @for (t of permBottom.slice(0, 8); track t) {
+              <button type="button" class="teethperm__cell" [class.is-selected]="isCariesPermSelected(t)"
+                (click)="toggleCariesPerm(t)" aria-label="Tooth {{ t }}">
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </button>
+              }
+            </div>
+
+            <div class="teethperm__half teethperm__half--right">
+              @for (t of permBottom.slice(8, 16); track t) {
+              <button type="button" class="teethperm__cell" [class.is-selected]="isCariesPermSelected(t)"
+                (click)="toggleCariesPerm(t)" aria-label="Tooth {{ t }}">
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </button>
+              }
+            </div>
+
+            <span class="teethperm__mid" aria-hidden="true"></span>
+          </div>
+
+          <div class="teethperm__nums teethperm__nums--bottom">
+            @for (t of permBottom; track t) {
+            <div class="teethperm__num" [class.is-hot]="isCariesPermSelected(t)">{{ t }}</div>
+            }
+          </div>
+        </div>
+
+        <div class="teeth__nums teeth__nums--top">
+          @for (t of milkTop; track t) {
+          <div class="teeth__num" [class.is-hot]="isCariesSelected(t)">{{ t }}</div>
+          }
+        </div>
+
+        <div class="teethbar">
+          @for (t of milkTop; track t) {
+          <button type="button" class="toothcell" [class.is-selected]="isCariesSelected(t)" (click)="toggleCaries(t)"
+            aria-label="Tooth {{ t }}">
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </span>
+          </button>
+          }
+        </div>
+
+        <div class="teethbar teethbar--bottom">
+          @for (t of milkBottom; track t) {
+          <button type="button" class="toothcell" [class.is-selected]="isCariesSelected(t)" (click)="toggleCaries(t)"
+            aria-label="Tooth {{ t }}">
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </span>
+          </button>
+          }
+        </div>
+
+        <div class="teeth__nums teeth__nums--bottom">
+          @for (t of milkBottom; track t) {
+          <div class="teeth__num" [class.is-hot]="isCariesSelected(t)">{{ t }}</div>
           }
         </div>
       </div>
-
-      <div class="teeth__nums teeth__nums--top">
-        @for (t of milkTop; track t) {
-          <div class="teeth__num" [class.is-hot]="isCariesSelected(t)">{{ t }}</div>
-        }
-      </div>
-
-      <div class="teethbar">
-        @for (t of milkTop; track t) {
-          <button
-            type="button"
-            class="toothcell"
-            [class.is-selected]="isCariesSelected(t)"
-            (click)="toggleCaries(t)"
-            aria-label="Tooth {{ t }}"
-          >
-            <span class="toothcell__badge" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path
-                  d="M20 6L9 17l-5-5"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </span>
-          </button>
-        }
-      </div>
-
-      <div class="teethbar teethbar--bottom">
-        @for (t of milkBottom; track t) {
-          <button
-            type="button"
-            class="toothcell"
-            [class.is-selected]="isCariesSelected(t)"
-            (click)="toggleCaries(t)"
-            aria-label="Tooth {{ t }}"
-          >
-            <span class="toothcell__badge" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path
-                  d="M20 6L9 17l-5-5"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </span>
-          </button>
-        }
-      </div>
-
-      <div class="teeth__nums teeth__nums--bottom">
-        @for (t of milkBottom; track t) {
-          <div class="teeth__num" [class.is-hot]="isCariesSelected(t)">{{ t }}</div>
-        }
-      </div>
-    </div>
-  }
- <div class="nav">
+      }
+      <div class="nav">
         <button type="button" class="btn-next" (click)="onNext()">Next</button>
       </div>
     </mat-expansion-panel>
-  }
+    }
 
-        <!-- 19. Wurzelbehandelte Zähne -->
-        @if (currentStep() >= 19) {
+    <!-- 19. Wurzelbehandelte Zähne -->
+    @if (currentStep() >= 19) {
     <mat-expansion-panel hideToggle [expanded]="currentStep() === 19">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <h2 class="h2" >
+          <h2 class="h2">
             19. Wurzelbehandelte Zähne:
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
-  <div
-    class="seg"
-    (click)="setActive('rootCanalQ')"
-     [class.is-active]="isActive('rootCanalQ') || form.controls.rootCanalQ.value !== null"
-    [class.is-invalid]="isInvalid('rootCanalQ')"
-  >
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.rootCanalQ.value === false"
-      (click)="$event.stopPropagation(); setRootCanalQ(false)"
-    >
-      Nein
-    </button>
+      <div class="seg" (click)="setActive('rootCanalQ')"
+        [class.is-active]="isActive('rootCanalQ') || form.controls.rootCanalQ.value !== null"
+        [class.is-invalid]="isInvalid('rootCanalQ')">
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.rootCanalQ.value === false"
+          (click)="$event.stopPropagation(); setRootCanalQ(false)">
+          Nein
+        </button>
 
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.rootCanalQ.value === true"
-      (click)="$event.stopPropagation(); setRootCanalQ(true)"
-    >
-      Ja
-    </button>
-  </div>
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.rootCanalQ.value === true"
+          (click)="$event.stopPropagation(); setRootCanalQ(true)">
+          Ja
+        </button>
+      </div>
 
-  @if (isInvalid('rootCanalQ')) {
-    <p class="error">Bitte wählen Sie eine Option.</p>
-  }
+      @if (isInvalid('rootCanalQ')) {
+      <p class="error">Bitte wählen Sie eine Option.</p>
+      }
 
-  @if (form.controls.rootCanalQ.value === true) {
-    <div class="teeth">
-      <div class="teeth__nums teeth__nums--top">
-        @for (t of teethTop; track t) {
+      @if (form.controls.rootCanalQ.value === true) {
+      <div class="teeth">
+        <div class="teeth__nums teeth__nums--top">
+          @for (t of teethTop; track t) {
           <div class="teeth__num" [class.is-hot]="isRootSelected(t)">{{ t }}</div>
-        }
-      </div>
-
-      <div class="teethbar">
-        @for (t of teethTop; track t) {
-          <button
-            type="button"
-            class="toothcell"
-            [class.is-selected]="isRootSelected(t)"
-            (click)="toggleRoot(t)"
-            aria-label="Tooth {{ t }}"
-          >
-            <span class="toothcell__badge" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path
-                  d="M20 6L9 17l-5-5"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </span>
-          </button>
-        }
-      </div>
-
-      <div class="teethbar teethbar--bottom">
-        @for (t of teethBottom; track t) {
-          <button
-            type="button"
-            class="toothcell"
-            [class.is-selected]="isRootSelected(t)"
-            (click)="toggleRoot(t)"
-            aria-label="Tooth {{ t }}"
-          >
-            <span class="toothcell__badge" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path
-                  d="M20 6L9 17l-5-5"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </span>
-          </button>
-        }
-      </div>
-
-      <div class="teeth__nums teeth__nums--bottom">
-        @for (t of teethBottom; track t) {
-          <div class="teeth__num" [class.is-hot]="isRootSelected(t)">{{ t }}</div>
-        }
-      </div>
-
-      <div class="teethperm">
-        <div class="teethperm__nums teethperm__nums--top">
-          @for (t of permTop; track t) {
-            <div class="teethperm__num" [class.is-hot]="isRootPermSelected(t)">{{ t }}</div>
           }
         </div>
 
-        <div class="teethperm__wrap">
-          <div class="teethperm__half teethperm__half--left">
-            @for (t of permTop.slice(0, 8); track t) {
-              <button
-                type="button"
-                class="teethperm__cell"
-                [class.is-selected]="isRootPermSelected(t)"
-                (click)="toggleRootPerm(t)"
-                aria-label="Tooth {{ t }}"
-              >
-                <span class="teethperm__badge" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
-                    <path
-                      d="M20 6L9 17l-5-5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </span>
-              </button>
-            }
-          </div>
-
-          <div class="teethperm__half teethperm__half--right">
-            @for (t of permTop.slice(8, 16); track t) {
-              <button
-                type="button"
-                class="teethperm__cell"
-                [class.is-selected]="isRootPermSelected(t)"
-                (click)="toggleRootPerm(t)"
-                aria-label="Tooth {{ t }}"
-              >
-                <span class="teethperm__badge" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
-                    <path
-                      d="M20 6L9 17l-5-5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </span>
-              </button>
-            }
-          </div>
-
-          <span class="teethperm__mid" aria-hidden="true"></span>
+        <div class="teethbar">
+          @for (t of teethTop; track t) {
+          <button type="button" class="toothcell" [class.is-selected]="isRootSelected(t)" (click)="toggleRoot(t)"
+            aria-label="Tooth {{ t }}">
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </span>
+          </button>
+          }
         </div>
 
-        <div class="teethperm__wrap teethperm__wrap--bottom">
-          <div class="teethperm__half teethperm__half--left">
-            @for (t of permBottom.slice(0, 8); track t) {
-              <button
-                type="button"
-                class="teethperm__cell"
-                [class.is-selected]="isRootPermSelected(t)"
-                (click)="toggleRootPerm(t)"
-                aria-label="Tooth {{ t }}"
-              >
-                <span class="teethperm__badge" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
-                    <path
-                      d="M20 6L9 17l-5-5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </span>
-              </button>
-            }
-          </div>
-
-          <div class="teethperm__half teethperm__half--right">
-            @for (t of permBottom.slice(8, 16); track t) {
-              <button
-                type="button"
-                class="teethperm__cell"
-                [class.is-selected]="isRootPermSelected(t)"
-                (click)="toggleRootPerm(t)"
-                aria-label="Tooth {{ t }}"
-              >
-                <span class="teethperm__badge" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
-                    <path
-                      d="M20 6L9 17l-5-5"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="3"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </span>
-              </button>
-            }
-          </div>
-
-          <span class="teethperm__mid" aria-hidden="true"></span>
+        <div class="teethbar teethbar--bottom">
+          @for (t of teethBottom; track t) {
+          <button type="button" class="toothcell" [class.is-selected]="isRootSelected(t)" (click)="toggleRoot(t)"
+            aria-label="Tooth {{ t }}">
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </span>
+          </button>
+          }
         </div>
 
-        <div class="teethperm__nums teethperm__nums--bottom">
-          @for (t of permBottom; track t) {
+        <div class="teeth__nums teeth__nums--bottom">
+          @for (t of teethBottom; track t) {
+          <div class="teeth__num" [class.is-hot]="isRootSelected(t)">{{ t }}</div>
+          }
+        </div>
+
+        <div class="teethperm">
+          <div class="teethperm__nums teethperm__nums--top">
+            @for (t of permTop; track t) {
             <div class="teethperm__num" [class.is-hot]="isRootPermSelected(t)">{{ t }}</div>
+            }
+          </div>
+
+          <div class="teethperm__wrap">
+            <div class="teethperm__half teethperm__half--left">
+              @for (t of permTop.slice(0, 8); track t) {
+              <button type="button" class="teethperm__cell" [class.is-selected]="isRootPermSelected(t)"
+                (click)="toggleRootPerm(t)" aria-label="Tooth {{ t }}">
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </button>
+              }
+            </div>
+
+            <div class="teethperm__half teethperm__half--right">
+              @for (t of permTop.slice(8, 16); track t) {
+              <button type="button" class="teethperm__cell" [class.is-selected]="isRootPermSelected(t)"
+                (click)="toggleRootPerm(t)" aria-label="Tooth {{ t }}">
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </button>
+              }
+            </div>
+
+            <span class="teethperm__mid" aria-hidden="true"></span>
+          </div>
+
+          <div class="teethperm__wrap teethperm__wrap--bottom">
+            <div class="teethperm__half teethperm__half--left">
+              @for (t of permBottom.slice(0, 8); track t) {
+              <button type="button" class="teethperm__cell" [class.is-selected]="isRootPermSelected(t)"
+                (click)="toggleRootPerm(t)" aria-label="Tooth {{ t }}">
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </button>
+              }
+            </div>
+
+            <div class="teethperm__half teethperm__half--right">
+              @for (t of permBottom.slice(8, 16); track t) {
+              <button type="button" class="teethperm__cell" [class.is-selected]="isRootPermSelected(t)"
+                (click)="toggleRootPerm(t)" aria-label="Tooth {{ t }}">
+                <span class="teethperm__badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </button>
+              }
+            </div>
+
+            <span class="teethperm__mid" aria-hidden="true"></span>
+          </div>
+
+          <div class="teethperm__nums teethperm__nums--bottom">
+            @for (t of permBottom; track t) {
+            <div class="teethperm__num" [class.is-hot]="isRootPermSelected(t)">{{ t }}</div>
+            }
+          </div>
+        </div>
+
+        <div class="teeth__nums teeth__nums--top">
+          @for (t of milkTop; track t) {
+          <div class="teeth__num" [class.is-hot]="isRootSelected(t)">{{ t }}</div>
+          }
+        </div>
+
+        <div class="teethbar">
+          @for (t of milkTop; track t) {
+          <button type="button" class="toothcell" [class.is-selected]="isRootSelected(t)" (click)="toggleRoot(t)"
+            aria-label="Tooth {{ t }}">
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </span>
+          </button>
+          }
+        </div>
+
+        <div class="teethbar teethbar--bottom">
+          @for (t of milkBottom; track t) {
+          <button type="button" class="toothcell" [class.is-selected]="isRootSelected(t)" (click)="toggleRoot(t)"
+            aria-label="Tooth {{ t }}">
+            <span class="toothcell__badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </span>
+          </button>
+          }
+        </div>
+
+        <div class="teeth__nums teeth__nums--bottom">
+          @for (t of milkBottom; track t) {
+          <div class="teeth__num" [class.is-hot]="isRootSelected(t)">{{ t }}</div>
           }
         </div>
       </div>
-
-      <div class="teeth__nums teeth__nums--top">
-        @for (t of milkTop; track t) {
-          <div class="teeth__num" [class.is-hot]="isRootSelected(t)">{{ t }}</div>
-        }
-      </div>
-
-      <div class="teethbar">
-        @for (t of milkTop; track t) {
-          <button
-            type="button"
-            class="toothcell"
-            [class.is-selected]="isRootSelected(t)"
-            (click)="toggleRoot(t)"
-            aria-label="Tooth {{ t }}"
-          >
-            <span class="toothcell__badge" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path
-                  d="M20 6L9 17l-5-5"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </span>
-          </button>
-        }
-      </div>
-
-      <!-- ===== 71–75 ===== -->
-      <div class="teethbar teethbar--bottom">
-        @for (t of milkBottom; track t) {
-          <button
-            type="button"
-            class="toothcell"
-            [class.is-selected]="isRootSelected(t)"
-            (click)="toggleRoot(t)"
-            aria-label="Tooth {{ t }}"
-          >
-            <span class="toothcell__badge" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path
-                  d="M20 6L9 17l-5-5"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </span>
-          </button>
-        }
-      </div>
-
-      <div class="teeth__nums teeth__nums--bottom">
-        @for (t of milkBottom; track t) {
-          <div class="teeth__num" [class.is-hot]="isRootSelected(t)">{{ t }}</div>
-        }
-      </div>
-    </div>
-  }
- <div class="nav">
+      }
+      <div class="nav">
         <button type="button" class="btn-next" (click)="onNext()">Next</button>
       </div>
     </mat-expansion-panel>
-  }
+    }
 
-      <!--20-->
-      @if (currentStep() >= 20) {
+    <!--20-->
+    @if (currentStep() >= 20) {
     <mat-expansion-panel hideToggle [expanded]="currentStep() === 20">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <h2 class="h2" >
+          <h2 class="h2">
             20. Ist eine Behandlung bei einem Zahnarzt/
             Kieferorthopäden im Gang oder geplant?
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
 
-  <div
-    class="seg"
-    (click)="setActive('dentalTreatQ')"
-    [class.is-active]="isActive('dentalTreatQ') || form.controls.dentalTreatQ.value !== null"
-    [class.is-invalid]="isInvalid('dentalTreatQ')"
-  >
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.dentalTreatQ.value === false"
-      (click)="$event.stopPropagation(); setDentalTreatQ(false)"
-    >
-      Nein
-    </button>
+      <div class="seg" (click)="setActive('dentalTreatQ')"
+        [class.is-active]="isActive('dentalTreatQ') || form.controls.dentalTreatQ.value !== null"
+        [class.is-invalid]="isInvalid('dentalTreatQ')">
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.dentalTreatQ.value === false"
+          (click)="$event.stopPropagation(); setDentalTreatQ(false)">
+          Nein
+        </button>
 
-    <button
-      type="button"
-      class="seg__btn"
-      [class.is-selected]="form.controls.dentalTreatQ.value === true"
-      (click)="$event.stopPropagation(); setDentalTreatQ(true)"
-    >
-      Ja
-    </button>
-  </div>
+        <button type="button" class="seg__btn" [class.is-selected]="form.controls.dentalTreatQ.value === true"
+          (click)="$event.stopPropagation(); setDentalTreatQ(true)">
+          Ja
+        </button>
+      </div>
 
-  @if (isInvalid('dentalTreatQ')) {
-    <p class="error">Bitte wählen Sie eine Option.</p>
-  }
+      @if (isInvalid('dentalTreatQ')) {
+      <p class="error">Bitte wählen Sie eine Option.</p>
+      }
 
-  @if (form.controls.dentalTreatQ.value === true) {
-    <p class="p home__subtitle">Wenn ja, welche?</p>
+      @if (form.controls.dentalTreatQ.value === true) {
+      <p class="p home__subtitle">Wenn ja, welche?</p>
 
-    <div
-      class="box box--textarea"
-      (focusin)="setActive('dentalTreatWhich')"
-      (focusout)="setActive(null)"
-      [class.is-active]="isActive('dentalTreatWhich') || hasText(form.controls.dentalTreatWhich)"
-      [class.is-invalid]="isInvalid('dentalTreatWhich')"
-    >
-      <textarea
-        formControlName="dentalTreatWhich"
-        placeholder="Hier eingeben..."
-        (input)="autoResize($event)"
-      ></textarea>
-    </div>
+      <div class="box box--textarea" (focusin)="setActive('dentalTreatWhich')" (focusout)="setActive(null)"
+        [class.is-active]="isActive('dentalTreatWhich') || hasText(form.controls.dentalTreatWhich)"
+        [class.is-invalid]="isInvalid('dentalTreatWhich')">
+        <textarea formControlName="dentalTreatWhich" placeholder="Hier eingeben..."
+          (input)="autoResize($event)"></textarea>
+      </div>
 
-    @if (isInvalid('dentalTreatWhich')) {
+      @if (isInvalid('dentalTreatWhich')) {
       <p class="error">Bitte ausfüllen.</p>
-    }
-  }
-  <div class="nav">
+      }
+      }
+      <div class="nav">
         <button type="button" class="btn-next" (click)="onNext()">Next</button>
       </div>
     </mat-expansion-panel>
-  }
+    }
 
 
-  <!-- 21. Datum der letzten Radiographie -->
+    <!-- 21. Datum der letzten Radiographie -->
     @if (currentStep() >= 21) {
     <mat-expansion-panel hideToggle [expanded]="currentStep() === 21">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <h2 class="h2" >
+          <h2 class="h2">
             21. Datum der letzten Radiographie:
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
 
-    <div
-      class="datebox"
-      (click)="setActive('lastRadiographyDate'); openDatePicker(radioDate)"
-      [class.is-active]="isActive('lastRadiographyDate') || hasText(form.controls.lastRadiographyDate)"
-      [class.is-invalid]="isInvalid('lastRadiographyDate')"
-    >
-      <input
-        #radioDate
-        class="datebox__input"
-        type="date"
-        formControlName="lastRadiographyDate"
-        (focus)="setActive('lastRadiographyDate')"
-      />
+      <div class="datebox" (click)="setActive('lastRadiographyDate'); openDatePicker(radioDate)"
+        [class.is-active]="isActive('lastRadiographyDate') || hasText(form.controls.lastRadiographyDate)"
+        [class.is-invalid]="isInvalid('lastRadiographyDate')">
+        <input #radioDate class="datebox__input" type="date" formControlName="lastRadiographyDate"
+          (focus)="setActive('lastRadiographyDate')" />
 
-      <img
-        src="/Icon.jpg"
-        class="calendar-icon"
-        alt=""
-        aria-hidden="true"
-        (click)="$event.stopPropagation(); setActive('lastRadiographyDate'); openDatePicker(radioDate)"
-      />
-    </div>
+        <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true"
+          (click)="$event.stopPropagation(); setActive('lastRadiographyDate'); openDatePicker(radioDate)" />
+      </div>
 
-    @if (isInvalid('lastRadiographyDate')) {
+      @if (isInvalid('lastRadiographyDate')) {
       <p class="error">Bitte wählen Sie ein Datum.</p>
-    }
-   <div class="nav">
+      }
+      <div class="nav">
         <button type="button" class="btn-next" (click)="onNext()">Next</button>
       </div>
     </mat-expansion-panel>
-  }
+    }
 
- <!-- 22. Bemerkungen -->
-  @if (currentStep() >= 22) {
+    <!-- 22. Bemerkungen -->
+    @if (currentStep() >= 22) {
     <mat-expansion-panel hideToggle [expanded]="currentStep() === 22">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <h2 class="h2" >
+          <h2 class="h2">
             22. Bemerkungen:
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
 
-  <div
-    class="box box--textarea"
-    [class.is-active]="isActive('remarks') || form.controls.remarks.touched"
-    [class.is-invalid]="isInvalid('remarks')"
-  >
-    <textarea
-      formControlName="remarks"
-      placeholder="Hier eingeben..."
-      (input)="autoResize($event)"
-      (focus)="setActive('remarks')"
-    ></textarea>
-  </div>
+      <div class="box box--textarea" [class.is-active]="isActive('remarks') || form.controls.remarks.touched"
+        [class.is-invalid]="isInvalid('remarks')">
+        <textarea formControlName="remarks" placeholder="Hier eingeben..." (input)="autoResize($event)"
+          (focus)="setActive('remarks')"></textarea>
+      </div>
 
-  @if (isInvalid('remarks')) {
-    <p class="error">Bitte ausfüllen.</p>
-  }
+      @if (isInvalid('remarks')) {
+      <p class="error">Bitte ausfüllen.</p>
+      }
     </mat-expansion-panel>
-  }
+    }
   </mat-accordion>
 
 
-<app-footer (weiter)="onNext()"></app-footer>
 
-@if (isFinished()) {
+  @if (isFinished()) {
   <div class="finish-overlay" (click)="isFinished.set(false)">
     <div class="finish-card" (click)="$event.stopPropagation()">
       <h2 class="h2">Danke! 🎉</h2>
@@ -3341,4 +2320,4 @@
       </button>
     </div>
   </div>
-}
+  }
