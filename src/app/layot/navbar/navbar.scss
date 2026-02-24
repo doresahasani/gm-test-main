@@ -1,4 +1,4 @@
-:host{
+:host {
   display: block;
 }
 
@@ -7,9 +7,10 @@
 }
 
 .header__inner {
-  width: 430px;          
+ 
   margin: 0 auto;
   padding: 16px;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -26,6 +27,7 @@
   border: 1px solid var(--border);
   background: #fff;
   cursor: pointer;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -48,16 +50,18 @@
   display: block;
 }
 
-/* dropdown */
+
 .dropdown {
   position: absolute;
   right: 0;
   top: calc(100% + 10px);
+
   width: 240px;
   background: #fff;
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 8px;
+
   display: none;
   z-index: 50;
 
@@ -69,10 +73,12 @@
     display: block;
     padding: 10px 10px;
     border-radius: 12px;
+
     text-decoration: none;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 500;
     color: #344054;
+    cursor: pointer;
 
     &:hover {
       background: #f9fafb;

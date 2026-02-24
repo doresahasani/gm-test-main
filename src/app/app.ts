@@ -11,4 +11,6 @@ import { Footer } from "./layot/footer/footer";
   templateUrl: './app.html',
   styleUrls: ['./app.scss'],
 })
-export class App {}
+export class App {
+  
+}

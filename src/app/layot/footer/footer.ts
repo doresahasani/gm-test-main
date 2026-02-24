@@ -1,7 +1,10 @@
 import { Component, EventEmitter, Output, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-footer',
+  standalone: true,           
+  imports: [CommonModule],
   templateUrl: './footer.html',
 })
 export class Footer {
@@ -9,6 +12,6 @@ export class Footer {
   @Output() weiter = new EventEmitter<void>();
 
   onWeiterClick() {
-    this.weiter.emit();   
+    this.weiter.emit();
   }
 }

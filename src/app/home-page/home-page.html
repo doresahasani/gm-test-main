@@ -1,425 +1,462 @@
 <form class="card home" [formGroup]="form" (submit)="$event.preventDefault()">
-  <!-- 1. Grösse und Gewicht -->
-  <section class="home__section">
-    <h2 class="h2">1. Grösse und Gewicht</h2>
-    <p class="p home__subtitle">Welches sind Ihre Körpermasse?</p>
-
-    <div class="grid-2">
-      <!-- Height -->
-      <div class="field">
-        <div
-          class="box box--unit"
-          (click)="setActive('heightCm')"
-          [class.is-active]="isActive('heightCm') || hasValue(form.controls.heightCm)"
-          [class.is-invalid]="isInvalid('heightCm')"
-        >
-          <input
-            type="number"
-            inputmode="numeric"
-            formControlName="heightCm"
-            placeholder="Grösse"
-            min="0"
-            max="350"
-            (focus)="setActive('heightCm')"
-          />
-          <span class="unit">(cm)</span>
-        </div>
-
-        @if (isInvalid('heightCm')) {
-          <p class="error">Grösse ist (0–350 cm).</p>
-        }
-      </div>
-
-      <!-- Weight -->
-      <div class="field">
-        <div
-          class="box box--unit"
-          (click)="setActive('weightKg')"
-          [class.is-active]="isActive('weightKg') || hasValue(form.controls.weightKg)"
-          [class.is-invalid]="isInvalid('weightKg')"
-        >
-          <input
-            type="number"
-            inputmode="numeric"
-            formControlName="weightKg"
-            placeholder="Gewicht"
-            min="0"
-            max="600"
-            (focus)="setActive('weightKg')"
-          />
-          <span class="unit">(kg)</span>
-        </div>
-
-        @if (isInvalid('weightKg')) {
-          <p class="error">Gewicht ist(0–600 kg).</p>
-        }
-      </div>
-    </div>
-
-    <p class="p home__subtitle">
-      - Falls Sie schwanger sind, geben Sie bitte Ihr Gewicht zu Beginn der Schwangerschaft an.
-    </p>
-  </section>
-  
-
-  <!-- 2. Medikamente -->
-  <section class="home__section">
-    <h2 class="h2">2. Medikamente oder Hilfsmittel</h2>
-
-    <div
-      class="seg"
-      (click)="setActive('medication')"
-      [class.is-active]="isActive('medication') || hasValue(form.controls.medication)"
-      [class.is-invalid]="isInvalid('medication')"
+  <mat-accordion [multi]="false">
+    <!-- 1. Grösse und Gewicht -->
+    <mat-expansion-panel
+      hideToggle
+      [expanded]="currentStep() === 1"
+      (opened)="goToStep(1)"
     >
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.medication.value === false"
-        (click)="$event.stopPropagation(); setMedication(false)"
-      >
-        Nein
-      </button>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h2 class="h2">
+            1. Grösse und Gewicht
+          </h2>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
-      <button
-        type="button"
-        class="seg__btn"
-        [class.is-selected]="form.controls.medication.value === true"
-        (click)="$event.stopPropagation(); setMedication(true)"
-      >
-        Ja
-      </button>
-    </div>
+      <p class="p home__subtitle">
+        Welches sind Ihre Körpermasse?
+      </p>
+      <div class="grid-2">
+        <!-- Height -->
+        <div class="field">
+          <div
+            class="box box--unit"
+            (click)="setActive('heightCm')"
+            [class.is-active]="isActive('heightCm') || hasValue(form.controls.heightCm)"
+            [class.is-invalid]="isInvalid('heightCm')"
+          >
+            <input
+              type="number"
+              inputmode="numeric"
+              formControlName="heightCm"
+              placeholder="Grösse"
+              min="0"
+              max="350"
+              (focus)="setActive('heightCm')"
+            />
+            <span class="unit">(cm)</span>
+          </div>
 
-    @if (isInvalid('medication')) {
-      <p class="error">Bitte wählen Sie eine Option.</p>
-    }
+          @if (isInvalid('heightCm')) {
+            <p class="error">Grösse ist (0–350 cm).</p>
+          }
+        </div>
 
-    @if (showMedicationDetails()) {
-      <p class="home__subtitle">
-        Nehmen Sie momentan Medikamente ein oder haben Sie in den letzten 2 Jahren regelmässig oder wiederholt
-        welche eingenommen (mit Ausnahme von Verhütungsmitteln) oder haben Sie eine medizinische Verordnung für
-        Hilfsmittel oder Geräte erhalten (mit Ausnahme von Brillen und Kontaktlinsen)?
+        <!-- Weight -->
+        <div class="field">
+          <div
+            class="box box--unit"
+            (click)="setActive('weightKg')"
+            [class.is-active]="isActive('weightKg') || hasValue(form.controls.weightKg)"
+            [class.is-invalid]="isInvalid('weightKg')"
+          >
+            <input
+              type="number"
+              inputmode="numeric"
+              formControlName="weightKg"
+              placeholder="Gewicht"
+              min="0"
+              max="600"
+              (focus)="setActive('weightKg')"
+            />
+            <span class="unit">(kg)</span>
+          </div>
+
+          @if (isInvalid('weightKg')) {
+            <p class="error">Gewicht ist(0–600 kg).</p>
+          }
+        </div>
+      </div>
+
+      <p class="p home__subtitle" style="margin-top: 10px">
+        - Falls Sie schwanger sind, geben Sie bitte Ihr Gewicht zu Beginn der Schwangerschaft an.
       </p>
 
-      <!-- "Wenn ja, welche?" / "Warum?" -->
-      <div class="grid-2 med-head">
-        <p class="home__subtitle med-head__text">Wenn ja, welche?</p>
-        <p class="home__subtitle med-head__text">Warum?</p>
+      <div class="nav">
+        <button type="button" class="btn-next" (click)="onNext()">Next</button>
+      </div>
+    </mat-expansion-panel>
+
+
+    <!-- 2. Medikamente oder Hilfsmittel -->
+     @if (currentStep() >= 2) {
+    <mat-expansion-panel hideToggle [expanded]="currentStep() === 2">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h2 class="h2">
+            2. Medikamente oder Hilfsmittel
+          </h2>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div
+        class="seg"
+        (click)="setActive('medication')"
+        [class.is-active]="isActive('medication') || hasValue(form.controls.medication)"
+        [class.is-invalid]="isInvalid('medication')"
+      >
+        <button
+          type="button"
+          class="seg__btn"
+          [class.is-selected]="form.controls.medication.value === false"
+          (click)="$event.stopPropagation(); setMedication(false)"
+        >
+          Nein
+        </button>
+
+        <button
+          type="button"
+          class="seg__btn"
+          [class.is-selected]="form.controls.medication.value === true"
+          (click)="$event.stopPropagation(); setMedication(true)"
+        >
+          Ja
+        </button>
       </div>
 
-      <!-- Med Name / Reason -->
-      <div class="grid-2">
-        <div class="field">
-          <div
-            class="box"
-            (click)="setActive('medName')"
-            [class.is-active]="isActive('medName') || hasText(form.controls.medName)"
-            [class.is-invalid]="isInvalid('medName')"
-          >
-            <input
-              type="text"
-              formControlName="medName"
-              placeholder="Welche?"
-              (focus)="setActive('medName')"
-            />
-          </div>
-          @if (isInvalid('medName')) {
-            <p class="error">Bitte ausfüllen.</p>
-          }
+      @if (isInvalid('medication')) {
+        <p class="error">Bitte wählen Sie eine Option.</p>
+      }
+
+      @if (showMedicationDetails()) {
+        <p class="home__subtitle">
+          Nehmen Sie momentan Medikamente ein oder haben Sie in den letzten 2 Jahren regelmässig oder wiederholt
+          welche eingenommen (mit Ausnahme von Verhütungsmitteln) oder haben Sie eine medizinische Verordnung für
+          Hilfsmittel oder Geräte erhalten (mit Ausnahme von Brillen und Kontaktlinsen)?
+        </p>
+
+        <!-- "Wenn ja, welche?" / "Warum?" -->
+        <div class="grid-2 med-head">
+          <p class="home__subtitle med-head__text">Wenn ja, welche?</p>
+          <p class="home__subtitle med-head__text">Warum?</p>
         </div>
 
-        <div class="field">
-          <div
-            class="box"
-            (click)="setActive('medReason')"
-            [class.is-active]="isActive('medReason') || hasText(form.controls.medReason)"
-            [class.is-invalid]="isInvalid('medReason')"
-          >
-            <input
-              type="text"
-              formControlName="medReason"
-              placeholder="Warum?"
-              (focus)="setActive('medReason')"
-            />
-          </div>
-          @if (isInvalid('medReason')) {
-            <p class="error">Bitte ausfüllen.</p>
-          }
-        </div>
-      </div>
-
-      <!-- ILLNESSES (Section 2 Array) -->
-      <div class="illness" formArrayName="illnessesMed">
-        @for (_ of illnessesMed.controls; track $index; let i = $index) {
-          <div class="illness__card" [formGroupName]="i">
-            <div class="illness__head">
-              <div class="illness__title">{{ i + 1 }}) Krankheit erfassen</div>
-
-              @if (illnessesMed.length > 1) {
-                <button type="button" class="illness__remove" (click)="removeMedIllness(i)">
-                  - Entfernen
-                </button>
-              }
-            </div>
-
-            <p class="illness__hint">
-              Krankheit, Leiden, Unfall, Behandlungsgrund, betroffene Stelle am Körper (links, rechts)
-            </p>
-
-            <!-- DESC -->
+        <!-- Med Name / Reason -->
+        <div class="grid-2">
+          <div class="field">
             <div
-              class="box box--textarea"
-              (click)="setActive(medActiveKey(i,'desc'))"
-              [class.is-active]="isMedActive(i,'desc') || hasText(illnessCtrl(illnessesMed, i,'desc'))"
-              [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'desc'))"
+              class="box"
+              (click)="setActive('medName')"
+              [class.is-active]="isActive('medName') || hasText(form.controls.medName)"
+              [class.is-invalid]="isInvalid('medName')"
             >
-              <textarea
-                formControlName="desc"
-                placeholder="Hier eingeben..."
-                (input)="autoResize($event)"
-                (focus)="setActive(medActiveKey(i,'desc'))"
-              ></textarea>
-
-              <span class="icon-pencil" aria-hidden="true"></span>
+              <input
+                type="text"
+                formControlName="medName"
+                placeholder="Welche?"
+                (focus)="setActive('medName')"
+              />
             </div>
-            @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'desc'))) {
+            @if (isInvalid('medName')) {
               <p class="error">Bitte ausfüllen.</p>
             }
+          </div>
 
-            <!-- Dates -->
-            <div class="grid-2 dates">
-              <div class="field">
-                <label class="label">Begindatum</label>
-                <div
-                  class="box"
-                  (click)="setActive(medActiveKey(i,'start'))"
-                  [class.is-active]="isMedActive(i,'start') || hasText(illnessCtrl(illnessesMed, i,'startDate'))"
-                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'startDate'))"
-                >
-                  <input
-                    type="date"
-                    formControlName="startDate"
-                    (focus)="setActive(medActiveKey(i,'start'))"
-                  />
-                  <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
-                </div>
-                 @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'startDate'))) { <p class="error">Bitte Datum wählen.</p> }
-                </div>
-
-            <div class="field">
-              <label class="label">Enddatum</label>
-                <div
-                  class="box"
-                  (click)="setActive(medActiveKey(i,'end'))"
-                  [class.is-active]="isMedActive(i,'end') || hasText(illnessCtrl(illnessesMed, i,'endDate'))"
-                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'endDate'))"
-                >
-                  <input
-                    type="date"
-                    formControlName="endDate"
-                    (focus)="setActive(medActiveKey(i,'end'))"
-                  />
-                  <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
-                </div>
-
-               @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'endDate'))) { <p class="error">Bitte Datum wählen.</p>
-              }
-              </div>
+          <div class="field">
+            <div
+              class="box"
+              (click)="setActive('medReason')"
+              [class.is-active]="isActive('medReason') || hasText(form.controls.medReason)"
+              [class.is-invalid]="isInvalid('medReason')"
+            >
+              <input
+                type="text"
+                formControlName="medReason"
+                placeholder="Warum?"
+                (focus)="setActive('medReason')"
+              />
             </div>
+            @if (isInvalid('medReason')) {
+              <p class="error">Bitte ausfüllen.</p>
+            }
+          </div>
+        </div>
 
-            <!-- Operiert -->
-            <div class="field">
-              <label class="label">Operiert?</label>
-              <div
-                class="seg"
-                (click)="setActive(medActiveKey(i,'operated'))"
-                [class.is-active]="isMedActive(i,'operated') || hasValue(illnessCtrl(illnessesMed, i,'operated'))"
-                [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'operated'))"
-              >
-                <button
-                  type="button"
-                  class="seg__btn"
-                  [class.is-selected]="illnessCtrl(illnessesMed, i,'operated').value === false"
-                  (click)="$event.stopPropagation(); setMedBool(i,'operated',false)"
-                >
-                  Nein
-                </button>
-                <button
-                  type="button"
-                  class="seg__btn"
-                  [class.is-selected]="illnessCtrl(illnessesMed, i,'operated').value === true"
-                  (click)="$event.stopPropagation(); setMedBool(i,'operated',true)"
-                >
-                  Ja
-                </button>
+        <!-- ILLNESSES (Section 2 Array) -->
+        <div class="illness" formArrayName="illnessesMed">
+          @for (_ of illnessesMed.controls; track $index; let i = $index) {
+            <div class="illness__card" [formGroupName]="i">
+              <div class="illness__head">
+                <div class="illness__title">{{ i + 1 }}) Krankheit erfassen</div>
+
+                @if (illnessesMed.length > 1) {
+                  <button type="button" class="illness__remove" (click)="removeMedIllness(i)">
+                    - Entfernen
+                  </button>
+                }
               </div>
 
-              @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'operated'))) {
-                <p class="error">Bitte wählen.</p>
-              }
-            </div>
-
-            <!-- Behandlung beendet -->
-            <div class="field">
-              <label class="label">Behandlung beendet, genesen ohne Folgen</label>
-              <div
-                class="seg"
-                (click)="setActive(medActiveKey(i,'treatmentDone'))"
-                [class.is-active]="isMedActive(i,'treatmentDone') || hasValue(illnessCtrl(illnessesMed, i,'treatmentDone'))"
-                [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'treatmentDone'))"
-              >
-                <button
-                  type="button"
-                  class="seg__btn"
-                  [class.is-selected]="illnessCtrl(illnessesMed, i,'treatmentDone').value === false"
-                  (click)="$event.stopPropagation(); setMedBool(i,'treatmentDone',false)"
-                >
-                  Nein
-                </button>
-                <button
-                  type="button"
-                  class="seg__btn"
-                  [class.is-selected]="illnessCtrl(illnessesMed, i,'treatmentDone').value === true"
-                  (click)="$event.stopPropagation(); setMedBool(i,'treatmentDone',true)"
-                >
-                  Ja
-                </button>
-              </div>
-
-              @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'treatmentDone'))) {
-                <p class="error">Bitte wählen.</p>
-              }
-            </div>
-
-            <!-- Provider -->
-            <div class="provider">
-              <p class="provider__title">
-                Name und Adresse des Arztes, Spitals oder anderen Leistungserbringers
+              <p class="illness__hint">
+                Krankheit, Leiden, Unfall, Behandlungsgrund, betroffene Stelle am Körper (links, rechts)
               </p>
 
-              <div class="provider__grid provider__grid--name">
+              <!-- DESC -->
+              <div
+                class="box box--textarea"
+                (click)="setActive(medActiveKey(i,'desc'))"
+                [class.is-active]="isMedActive(i,'desc') || hasText(illnessCtrl(illnessesMed, i,'desc'))"
+                [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'desc'))"
+              >
+                <textarea
+                  formControlName="desc"
+                  placeholder="Hier eingeben..."
+                  (input)="autoResize($event)"
+                  (focus)="setActive(medActiveKey(i,'desc'))"
+                ></textarea>
+
+                <span class="icon-pencil" aria-hidden="true"></span>
+              </div>
+
+              @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'desc'))) {
+                <p class="error">Bitte ausfüllen.</p>
+              }
+
+              <!-- Dates -->
+              <div class="grid-2 dates">
                 <div class="field">
+                  <label class="label">Begindatum</label>
                   <div
-                    class="box provider__box"
-                    (click)="setActive(medActiveKey(i,'docFirstName'))"
-                    [class.is-active]="isMedActive(i,'docFirstName') || hasText(illnessCtrl(illnessesMed, i,'docFirstName'))"
-                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docFirstName'))"
+                    class="box"
+                    (click)="setActive(medActiveKey(i,'start'))"
+                    [class.is-active]="isMedActive(i,'start') || hasText(illnessCtrl(illnessesMed, i,'startDate'))"
+                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'startDate'))"
                   >
                     <input
-                      type="text"
-                      formControlName="docFirstName"
-                      placeholder="Vorname"
-                      (focus)="setActive(medActiveKey(i,'docFirstName'))"
+                      type="date"
+                      formControlName="startDate"
+                      (focus)="setActive(medActiveKey(i,'start'))"
                     />
+                    <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
                   </div>
-                  @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'docFirstName'))) {
-                    <p class="error">Bitte ausfüllen.</p>
+                  @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'startDate'))) {
+                    <p class="error">Bitte Datum wählen.</p>
                   }
                 </div>
 
                 <div class="field">
+                  <label class="label">Enddatum</label>
                   <div
-                    class="box provider__box"
-                    (click)="setActive(medActiveKey(i,'docLastName'))"
-                    [class.is-active]="isMedActive(i,'docLastName') || hasText(illnessCtrl(illnessesMed, i,'docLastName'))"
-                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docLastName'))"
+                    class="box"
+                    (click)="setActive(medActiveKey(i,'end'))"
+                    [class.is-active]="isMedActive(i,'end') || hasText(illnessCtrl(illnessesMed, i,'endDate'))"
+                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'endDate'))"
                   >
                     <input
-                      type="text"
-                      formControlName="docLastName"
-                      placeholder="Nachname"
-                      (focus)="setActive(medActiveKey(i,'docLastName'))"
+                      type="date"
+                      formControlName="endDate"
+                      (focus)="setActive(medActiveKey(i,'end'))"
                     />
+                    <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
                   </div>
-                  @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'docLastName'))) {
-                    <p class="error">Bitte ausfüllen.</p>
+                  @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'endDate'))) {
+                    <p class="error">Bitte Datum wählen.</p>
                   }
                 </div>
               </div>
 
-              <div class="provider__grid provider__grid--street">
-                <div class="field">
-                  <div
-                    class="box provider__box"
-                    (click)="setActive(medActiveKey(i,'docStreet'))"
-                    [class.is-active]="isMedActive(i,'docStreet') || hasText(illnessCtrl(illnessesMed, i,'docStreet'))"
-                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docStreet'))"
+              <!-- Operiert -->
+              <div class="field">
+                <label class="label">Operiert?</label>
+                <div
+                  class="seg"
+                  (click)="setActive(medActiveKey(i,'operated'))"
+                  [class.is-active]="isMedActive(i,'operated') || hasValue(illnessCtrl(illnessesMed, i,'operated'))"
+                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'operated'))"
+                >
+                  <button
+                    type="button"
+                    class="seg__btn"
+                    [class.is-selected]="illnessCtrl(illnessesMed, i,'operated').value === false"
+                    (click)="$event.stopPropagation(); setMedBool(i,'operated',false)"
                   >
-                    <input
-                      type="text"
-                      formControlName="docStreet"
-                      placeholder="Strasse"
-                      (focus)="setActive(medActiveKey(i,'docStreet'))"
-                    />
-                  </div>
-                  @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'docStreet'))) {
-                    <p class="error">Bitte ausfüllen.</p>
-                  }
+                    Nein
+                  </button>
+                  <button
+                    type="button"
+                    class="seg__btn"
+                    [class.is-selected]="illnessCtrl(illnessesMed, i,'operated').value === true"
+                    (click)="$event.stopPropagation(); setMedBool(i,'operated',true)"
+                  >
+                    Ja
+                  </button>
                 </div>
 
-                <div class="field">
-                  <div
-                    class="box provider__box"
-                    (click)="setActive(medActiveKey(i,'docNr'))"
-                    [class.is-active]="isMedActive(i,'docNr') || hasText(illnessCtrl(illnessesMed, i,'docNr'))"
-                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docNr'))"
-                  >
-                    <input
-                      type="text"
-                      formControlName="docNr"
-                      placeholder="Nr."
-                      (focus)="setActive(medActiveKey(i,'docNr'))"
-                    />
-                  </div>
-                  @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'docNr'))) {
-                    <p class="error">Bitte ausfüllen.</p>
-                  }
-                </div>
+                @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'operated'))) {
+                  <p class="error">Bitte wählen.</p>
+                }
               </div>
 
-              <div class="provider__grid provider__grid--zip">
-                <div class="field">
-                  <div
-                    class="box provider__box"
-                    (click)="setActive(medActiveKey(i,'docZipCity'))"
-                    [class.is-active]="isMedActive(i,'docZipCity') || hasText(illnessCtrl(illnessesMed, i,'docZipCity'))"
-                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docZipCity'))"
+              <!-- Behandlung beendet -->
+              <div class="field">
+                <label class="label">Behandlung beendet, genesen ohne Folgen</label>
+                <div
+                  class="seg"
+                  (click)="setActive(medActiveKey(i,'treatmentDone'))"
+                  [class.is-active]="isMedActive(i,'treatmentDone') || hasValue(illnessCtrl(illnessesMed, i,'treatmentDone'))"
+                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'treatmentDone'))"
+                >
+                  <button
+                    type="button"
+                    class="seg__btn"
+                    [class.is-selected]="illnessCtrl(illnessesMed, i,'treatmentDone').value === false"
+                    (click)="$event.stopPropagation(); setMedBool(i,'treatmentDone',false)"
                   >
-                    <input
-                      type="text"
-                      formControlName="docZipCity"
-                      placeholder="PLZ, Ort"
-                      (focus)="setActive(medActiveKey(i,'docZipCity'))"
-                    />
+                    Nein
+                  </button>
+                  <button
+                    type="button"
+                    class="seg__btn"
+                    [class.is-selected]="illnessCtrl(illnessesMed, i,'treatmentDone').value === true"
+                    (click)="$event.stopPropagation(); setMedBool(i,'treatmentDone',true)"
+                  >
+                    Ja
+                  </button>
+                </div>
+
+                @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'treatmentDone'))) {
+                  <p class="error">Bitte wählen.</p>
+                }
+              </div>
+
+              <!-- Provider -->
+              <div class="provider">
+                <p class="provider__title">
+                  Name und Adresse des Arztes, Spitals oder anderen Leistungserbringers
+                </p>
+
+                <div class="provider__grid provider__grid--name">
+                  <div class="field">
+                    <div
+                      class="box provider__box"
+                      (click)="setActive(medActiveKey(i,'docFirstName'))"
+                      [class.is-active]="isMedActive(i,'docFirstName') || hasText(illnessCtrl(illnessesMed, i,'docFirstName'))"
+                      [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docFirstName'))"
+                    >
+                      <input
+                        type="text"
+                        formControlName="docFirstName"
+                        placeholder="Vorname"
+                        (focus)="setActive(medActiveKey(i,'docFirstName'))"
+                      />
+                    </div>
+                    @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'docFirstName'))) {
+                      <p class="error">Bitte ausfüllen.</p>
+                    }
                   </div>
-                  @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'docZipCity'))) {
-                    <p class="error">Bitte ausfüllen.</p>
-                  }
+
+                  <div class="field">
+                    <div
+                      class="box provider__box"
+                      (click)="setActive(medActiveKey(i,'docLastName'))"
+                      [class.is-active]="isMedActive(i,'docLastName') || hasText(illnessCtrl(illnessesMed, i,'docLastName'))"
+                      [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docLastName'))"
+                    >
+                      <input
+                        type="text"
+                        formControlName="docLastName"
+                        placeholder="Nachname"
+                        (focus)="setActive(medActiveKey(i,'docLastName'))"
+                      />
+                    </div>
+                    @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'docLastName'))) {
+                      <p class="error">Bitte ausfüllen.</p>
+                    }
+                  </div>
+                </div>
+
+                <div class="provider__grid provider__grid--street">
+                  <div class="field">
+                    <div
+                      class="box provider__box"
+                      (click)="setActive(medActiveKey(i,'docStreet'))"
+                      [class.is-active]="isMedActive(i,'docStreet') || hasText(illnessCtrl(illnessesMed, i,'docStreet'))"
+                      [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docStreet'))"
+                    >
+                      <input
+                        type="text"
+                        formControlName="docStreet"
+                        placeholder="Strasse"
+                        (focus)="setActive(medActiveKey(i,'docStreet'))"
+                      />
+                    </div>
+                    @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'docStreet'))) {
+                      <p class="error">Bitte ausfüllen.</p>
+                    }
+                  </div>
+
+                  <div class="field">
+                    <div
+                      class="box provider__box"
+                      (click)="setActive(medActiveKey(i,'docNr'))"
+                      [class.is-active]="isMedActive(i,'docNr') || hasText(illnessCtrl(illnessesMed, i,'docNr'))"
+                      [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docNr'))"
+                    >
+                      <input
+                        type="text"
+                        formControlName="docNr"
+                        placeholder="Nr."
+                        (focus)="setActive(medActiveKey(i,'docNr'))"
+                      />
+                    </div>
+                    @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'docNr'))) {
+                      <p class="error">Bitte ausfüllen.</p>
+                    }
+                  </div>
+                </div>
+
+                <div class="provider__grid provider__grid--zip">
+                  <div class="field">
+                    <div
+                      class="box provider__box"
+                      (click)="setActive(medActiveKey(i,'docZipCity'))"
+                      [class.is-active]="isMedActive(i,'docZipCity') || hasText(illnessCtrl(illnessesMed, i,'docZipCity'))"
+                      [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docZipCity'))"
+                    >
+                      <input
+                        type="text"
+                        formControlName="docZipCity"
+                        placeholder="PLZ, Ort"
+                        (focus)="setActive(medActiveKey(i,'docZipCity'))"
+                      />
+                    </div>
+                    @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'docZipCity'))) {
+                      <p class="error">Bitte ausfüllen.</p>
+                    }
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        }
-      </div>
+          }
+        </div>
 
-      <!-- + Krankheit (Section 2) -->
-      <button
-        type="button"
-        class="btn-add btn-add--bottom"
-        (click)="addMedIllness()"
-        [class.is-disabled]="!canAddMedIllness()"
-        [attr.aria-disabled]="!canAddMedIllness()"
-      >
-        + Krankheit erfassen
-      </button>
-    }
-  </section>
+        <!-- + Krankheit (Section 2) -->
+        <button
+          type="button"
+          class="btn-add btn-add--bottom"
+          (click)="addMedIllness()"
+          [class.is-disabled]="!canAddMedIllness()"
+          [attr.aria-disabled]="!canAddMedIllness()"
+        >
+          + Krankheit erfassen
+        </button>
+      }
+
+      <div class="nav">
+        <button type="button" class="btn-next" (click)="onNext()">Next</button>
+      </div>
+    </mat-expansion-panel>
+  }
 
   <!-- 3. Krankheiten oder Beschwerden -->
-  <section class="home__section">
-    <h2 class="h2">3. Krankheiten oder Beschwerden</h2>
-
+    @if (currentStep() >= 3) {
+    <mat-expansion-panel hideToggle [expanded]="currentStep() === 3">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h2 class="h2">
+            3. Krankheiten oder Beschwerden
+          </h2>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
     <div
       class="seg"
       (click)="setActive('illnessQ')"
@@ -711,11 +748,22 @@
         + Krankheit erfassen
       </button>
     }
-  </section>
+   <div class="nav">
+        <button type="button" class="btn-next" (click)="onNext()">Next</button>
+      </div>
+    </mat-expansion-panel>
+  }
 
   <!-- 4. Behandlungen -->
-  <section class="home__section">
-    <h2 class="h2">4. Behandlungen – durchgeführte oder geplante Spitalaufenthalte/Operationen</h2>
+   @if (currentStep() >= 4) {
+    <mat-expansion-panel hideToggle [expanded]="currentStep() === 4">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h2 class="h2">
+            4. Behandlungen – durchgeführte oder geplante Spitalaufenthalte/Operationen
+          </h2>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
     <div
       class="seg"
@@ -1147,11 +1195,23 @@
         }
       </div>
     }
-  </section>
+   <div class="nav">
+        <button type="button" class="btn-next" (click)="onNext()">Next</button>
+      </div>
+    </mat-expansion-panel>
+  }
 
   <!-- 5. Arzt -->
-  <section class="home__section">
-    <h2 class="h2">5. Arzt</h2>
+   @if (currentStep() >= 5) {
+    <mat-expansion-panel hideToggle [expanded]="currentStep() === 5">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h2 class="h2">
+            5. Arzt
+          </h2>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
     <p class="p home__subtitle">Name und Adresse des Arztes, den Sie gewöhnlich aufsuchen:</p>
 
     <div class="grid-2">
@@ -1257,14 +1317,23 @@
         <p class="error">Bitte ausfullen!</p>
       }
     </div>
-  </section>
+      <div class="nav">
+        <button type="button" class="btn-next" (click)="onNext()">Next</button>
+      </div>
+    </mat-expansion-panel>
+  }
 
   <!-- ===================== 6. BERICHTE UPLOAD ===================== -->
-  <section class="home__section">
-    <h2 class="h2">
-      6. Lade bitte deine vorhandenen Berichte wie
-      Operationsbericht, Austrittsbericht oder Arztbericht hoch.
-    </h2>
+   @if (currentStep() >= 6) {
+    <mat-expansion-panel hideToggle [expanded]="currentStep() === 6">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h2 class="h2">
+              6. Lade bitte deine vorhandenen Berichte wie
+             Operationsbericht, Austrittsbericht oder Arztbericht hoch.
+          </h2>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
     <div
       class="upload"
@@ -1302,11 +1371,22 @@
     }
 
     <button type="button" class="pill-btn">Dental Fragen</button>
-  </section>
+    <div class="nav">
+        <button type="button" class="btn-next" (click)="onNext()">Next</button>
+      </div>
+    </mat-expansion-panel>
+  }
 
   <!-- 7. Zustand des Zahnbetts -->
-  <section class="home__section">
-    <h2 class="h2">7. Zustand des Zahnbetts:</h2>
+    @if (currentStep() >= 7) {
+    <mat-expansion-panel hideToggle [expanded]="currentStep() === 7">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h2 class="h2">
+            7. Zustand des Zahnbetts:
+          </h2>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
     <div
       class="seg seg--dental seg--triple"
@@ -1367,11 +1447,20 @@
         <p class="error">Bitte ausfüllen.</p>
       }
     }
-  </section>
+   <div class="nav">
+        <button type="button" class="btn-next" (click)="onNext()">Next</button>
+      </div>
+    </mat-expansion-panel>
+  }
 
-  <!-- 8. Hygiene -->
-  <section class="home__section">
-    <h2 class="h2">8. Hygiene:</h2>
+<!-- 8. Hygiene -->
+@if (currentStep() >= 8) {
+  <mat-expansion-panel hideToggle [expanded]="currentStep() === 8">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <h2 class="h2">8. Hygiene:</h2>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
 
     <div
       class="seg seg--dental seg--triple"
@@ -1409,11 +1498,24 @@
     @if (isInvalid('hygiene')) {
       <p class="error">Bitte wählen.</p>
     }
-  </section>
+
+    <div class="nav">
+      <button type="button" class="btn-next" (click)="onNext()">Next</button>
+    </div>
+  </mat-expansion-panel>
+}
+
 
   <!-- 9. Okklusion -->
-  <section class="home__section">
-    <h2 class="h2">9. Okklusion:</h2>
+    @if (currentStep() >= 9) {
+    <mat-expansion-panel hideToggle [expanded]="currentStep() === 9">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h2 class="h2">
+            9. Okklusion:
+          </h2>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
     <div class="seg seg--dental seg--triple" [class.seg--dental-active]="hasValue(form.controls.occlusion)">
       <button
@@ -1447,11 +1549,22 @@
     @if (isInvalid('occlusion')) {
       <p class="error">Bitte wählen Sie eine Option.</p>
     }
-  </section>
+  <div class="nav">
+        <button type="button" class="btn-next" (click)="onNext()">Next</button>
+      </div>
+    </mat-expansion-panel>
+  }
 
   <!-- 10. Zustand der Kronen -->
-  <section class="home__section">
-    <h2 class="h2">10. Zustand der Kronen:</h2>
+   @if (currentStep() >= 10) {
+    <mat-expansion-panel hideToggle [expanded]="currentStep() === 10">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h2 class="h2">
+            10. Zustand der Kronen:
+          </h2>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
     <div class="seg seg--dental seg--quad" [class.seg--dental-active]="hasValue(form.controls.crownsCondition)">
       <button
@@ -1516,11 +1629,22 @@
         <p class="error">Bitte ausfüllen.</p>
       }
     }
-  </section>
+<div class="nav">
+        <button type="button" class="btn-next" (click)="onNext()">Next</button>
+      </div>
+    </mat-expansion-panel>
+  }
 
   <!-- 11. Zustand der Brücken -->
-  <section class="home__section">
-    <h2 class="h2">11. Zustand der Brücken:</h2>
+    @if (currentStep() >= 11) {
+    <mat-expansion-panel hideToggle [expanded]="currentStep() === 11">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h2 class="h2">
+            11. Zustand der Brücken:
+          </h2>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
     <div class="seg seg--dental seg--quad" [class.seg--dental-active]="hasValue(form.controls.bridgesCondition)">
       <button
@@ -1585,11 +1709,22 @@
         <p class="error">Bitte ausfüllen.</p>
       }
     }
-  </section>
+  <div class="nav">
+        <button type="button" class="btn-next" (click)="onNext()">Next</button>
+      </div>
+    </mat-expansion-panel>
+  }
 
   <!-- 12. Zustand der Teilprothesen -->
-  <section class="home__section">
-    <h2 class="h2">12. Zustand der Teilprothesen:</h2>
+    @if (currentStep() >= 12) {
+    <mat-expansion-panel hideToggle [expanded]="currentStep() === 12">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h2 class="h2">
+            12. Zustand der Teilprothesen:
+          </h2>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
     <div
       class="seg seg--dental seg--quad"
@@ -1657,13 +1792,22 @@
         <p class="error">Bitte ausfüllen.</p>
       }
     }
-  </section>
+   <div class="nav">
+        <button type="button" class="btn-next" (click)="onNext()">Next</button>
+      </div>
+    </mat-expansion-panel>
+  }
 
   <!-- 13. Dentition -->
-  <section class="home__section">
-    <h2 class="h2">
-      13. Dentition: Hat der Versicherte eine Fehl- oder Missbildung oder einen Stellungsfehler der Zähne?
-    </h2>
+   @if (currentStep() >= 13) {
+    <mat-expansion-panel hideToggle [expanded]="currentStep() === 13">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h2 class="h2">
+            13. Dentition: Hat der Versicherte eine Fehl- oder Missbildung oder einen Stellungsfehler der Zähne?
+          </h2>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
     <div
       class="seg seg--dental seg--binary"
@@ -1715,13 +1859,22 @@
         <p class="error">Bitte ausfüllen.</p>
       }
     }
-  </section>
+  <div class="nav">
+        <button type="button" class="btn-next" (click)="onNext()">Next</button>
+      </div>
+    </mat-expansion-panel>
+  }
 
   <!-- 14. Kiefer -->
-  <section class="home__section">
-    <h2 class="h2">
-      14. Kiefer: Hat der Versicherte eine Fehl- oder Missbildung oder einen Stellungsfehler des Kiefers?
-    </h2>
+   @if (currentStep() >= 14) {
+    <mat-expansion-panel hideToggle [expanded]="currentStep() === 14">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h2 class="h2" >
+             14. Kiefer: Hat der Versicherte eine Fehl- oder Missbildung oder einen Stellungsfehler des Kiefers?
+          </h2>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
     <div
       class="seg seg--dental seg--binary"
@@ -1773,13 +1926,22 @@
         <p class="error">Bitte ausfüllen.</p>
       }
     }
-  </section>
+   <div class="nav">
+        <button type="button" class="btn-next" (click)="onNext()">Next</button>
+      </div>
+    </mat-expansion-panel>
+  }
 
   <!-- 15. Zukunft -->
-  <section class="home__section">
-    <h2 class="h2">
-      15. Leidet der Versicherte an einer Krankheit, die den Zustand der Zähne in Zukunft beeinflussen könnte?
-    </h2>
+    @if (currentStep() >= 15) {
+    <mat-expansion-panel hideToggle [expanded]="currentStep() === 15">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h2 class="h2" >
+            15. Leidet der Versicherte an einer Krankheit, die den Zustand der Zähne in Zukunft beeinflussen könnte?
+          </h2>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
     <div
       class="seg seg--dental seg--binary"
@@ -1831,11 +1993,22 @@
         <p class="error">Bitte ausfüllen.</p>
       }
     }
-  </section>
+  <div class="nav">
+        <button type="button" class="btn-next" (click)="onNext()">Next</button>
+      </div>
+    </mat-expansion-panel>
+  }
 
   <!-- 16. Fehlende, nicht ersetzte Zähne -->
-<section class="home__section teeth16">
-  <h2 class="h2">16. Fehlende, nicht ersetzte Zähne:</h2>
+   @if (currentStep() >= 16) {
+    <mat-expansion-panel hideToggle [expanded]="currentStep() === 16">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h2 class="h2" >
+            16. Fehlende, nicht ersetzte Zähne:
+          </h2>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
   <div
     class="seg"
@@ -2116,10 +2289,23 @@
 
     </div>
   }
-</section>
+<div class="nav">
+        <button type="button" class="btn-next" (click)="onNext()">Next</button>
+      </div>
+    </mat-expansion-panel>
+  }
+
+
 <!-- 17. Schadhafte Zahnfüllungen -->
-<section class="home__section teeth17">
-  <h2 class="h2">17. Schadhafte Zahnfüllungen:</h2>
+  @if (currentStep() >= 17) {
+    <mat-expansion-panel hideToggle [expanded]="currentStep() === 17">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h2 class="h2" >
+            17. Schadhafte Zahnfüllungen:
+          </h2>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
   <div
     class="seg"
@@ -2217,7 +2403,6 @@
         }
       </div>
 
-      <!-- ===== PERMANENT 18–28 / 48–38 ===== -->
       <div class="teethperm">
         <div class="teethperm__nums teethperm__nums--top">
           @for (t of permTop; track t) {
@@ -2340,7 +2525,6 @@
         </div>
       </div>
 
-      <!-- ===== 61–65 ===== -->
       <div class="teeth__nums teeth__nums--top">
         @for (t of milkTop; track t) {
           <div class="teeth__num" [class.is-hot]="isFillingSelected(t)">{{ t }}</div>
@@ -2372,7 +2556,6 @@
         }
       </div>
 
-      <!-- ===== 71–75 ===== -->
       <div class="teethbar teethbar--bottom">
         @for (t of milkBottom; track t) {
           <button
@@ -2406,10 +2589,22 @@
 
     </div>
   }
-</section>
+  <div class="nav">
+        <button type="button" class="btn-next" (click)="onNext()">Next</button>
+      </div>
+    </mat-expansion-panel>
+  }
+
    <!-- 18. Kariöse Zähne -->
-<section class="home__section teeth18">
-  <h2 class="h2">18. Kariöse Zähne:</h2>
+     @if (currentStep() >= 18) {
+    <mat-expansion-panel hideToggle [expanded]="currentStep() === 18">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h2 class="h2" >
+            18. Kariöse Zähne:
+          </h2>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
   <div
     class="seg"
@@ -2442,7 +2637,6 @@
 
   @if (form.controls.cariesQ.value === true) {
     <div class="teeth">
-      <!-- ===== 55–51 ===== -->
       <div class="teeth__nums teeth__nums--top">
         @for (t of teethTop; track t) {
           <div class="teeth__num" [class.is-hot]="isCariesSelected(t)">{{ t }}</div>
@@ -2474,7 +2668,6 @@
         }
       </div>
 
-      <!-- ===== 85–81 ===== -->
       <div class="teethbar teethbar--bottom">
         @for (t of teethBottom; track t) {
           <button
@@ -2506,7 +2699,6 @@
         }
       </div>
 
-      <!-- ===== PERMANENT 18–28 / 48–38 ===== -->
       <div class="teethperm">
         <div class="teethperm__nums teethperm__nums--top">
           @for (t of permTop; track t) {
@@ -2629,7 +2821,6 @@
         </div>
       </div>
 
-      <!-- ===== 61–65 ===== -->
       <div class="teeth__nums teeth__nums--top">
         @for (t of milkTop; track t) {
           <div class="teeth__num" [class.is-hot]="isCariesSelected(t)">{{ t }}</div>
@@ -2661,7 +2852,6 @@
         }
       </div>
 
-      <!-- ===== 71–75 ===== -->
       <div class="teethbar teethbar--bottom">
         @for (t of milkBottom; track t) {
           <button
@@ -2694,11 +2884,22 @@
       </div>
     </div>
   }
-</section>
-        <!-- 19. Wurzelbehandelte Zähne -->
-<section class="home__section teeth19">
-  <h2 class="h2">19. Wurzelbehandelte Zähne:</h2>
+ <div class="nav">
+        <button type="button" class="btn-next" (click)="onNext()">Next</button>
+      </div>
+    </mat-expansion-panel>
+  }
 
+        <!-- 19. Wurzelbehandelte Zähne -->
+        @if (currentStep() >= 19) {
+    <mat-expansion-panel hideToggle [expanded]="currentStep() === 19">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h2 class="h2" >
+            19. Wurzelbehandelte Zähne:
+          </h2>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
   <div
     class="seg"
     (click)="setActive('rootCanalQ')"
@@ -2730,7 +2931,6 @@
 
   @if (form.controls.rootCanalQ.value === true) {
     <div class="teeth">
-      <!-- ===== 55–51 ===== -->
       <div class="teeth__nums teeth__nums--top">
         @for (t of teethTop; track t) {
           <div class="teeth__num" [class.is-hot]="isRootSelected(t)">{{ t }}</div>
@@ -2762,7 +2962,6 @@
         }
       </div>
 
-      <!-- ===== 85–81 ===== -->
       <div class="teethbar teethbar--bottom">
         @for (t of teethBottom; track t) {
           <button
@@ -2794,7 +2993,6 @@
         }
       </div>
 
-      <!-- ===== PERMANENT 18–28 / 48–38 ===== -->
       <div class="teethperm">
         <div class="teethperm__nums teethperm__nums--top">
           @for (t of permTop; track t) {
@@ -2917,7 +3115,6 @@
         </div>
       </div>
 
-      <!-- ===== 61–65 ===== -->
       <div class="teeth__nums teeth__nums--top">
         @for (t of milkTop; track t) {
           <div class="teeth__num" [class.is-hot]="isRootSelected(t)">{{ t }}</div>
@@ -2982,11 +3179,91 @@
       </div>
     </div>
   }
-</section>
+ <div class="nav">
+        <button type="button" class="btn-next" (click)="onNext()">Next</button>
+      </div>
+    </mat-expansion-panel>
+  }
+
+      <!--20-->
+      @if (currentStep() >= 20) {
+    <mat-expansion-panel hideToggle [expanded]="currentStep() === 20">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h2 class="h2" >
+            20. Ist eine Behandlung bei einem Zahnarzt/
+            Kieferorthopäden im Gang oder geplant?
+          </h2>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+  <div
+    class="seg"
+    (click)="setActive('dentalTreatQ')"
+    [class.is-active]="isActive('dentalTreatQ') || form.controls.dentalTreatQ.value !== null"
+    [class.is-invalid]="isInvalid('dentalTreatQ')"
+  >
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.dentalTreatQ.value === false"
+      (click)="$event.stopPropagation(); setDentalTreatQ(false)"
+    >
+      Nein
+    </button>
+
+    <button
+      type="button"
+      class="seg__btn"
+      [class.is-selected]="form.controls.dentalTreatQ.value === true"
+      (click)="$event.stopPropagation(); setDentalTreatQ(true)"
+    >
+      Ja
+    </button>
+  </div>
+
+  @if (isInvalid('dentalTreatQ')) {
+    <p class="error">Bitte wählen Sie eine Option.</p>
+  }
+
+  @if (form.controls.dentalTreatQ.value === true) {
+    <p class="p home__subtitle">Wenn ja, welche?</p>
+
+    <div
+      class="box box--textarea"
+      (focusin)="setActive('dentalTreatWhich')"
+      (focusout)="setActive(null)"
+      [class.is-active]="isActive('dentalTreatWhich') || hasText(form.controls.dentalTreatWhich)"
+      [class.is-invalid]="isInvalid('dentalTreatWhich')"
+    >
+      <textarea
+        formControlName="dentalTreatWhich"
+        placeholder="Hier eingeben..."
+        (input)="autoResize($event)"
+      ></textarea>
+    </div>
+
+    @if (isInvalid('dentalTreatWhich')) {
+      <p class="error">Bitte ausfüllen.</p>
+    }
+  }
+  <div class="nav">
+        <button type="button" class="btn-next" (click)="onNext()">Next</button>
+      </div>
+    </mat-expansion-panel>
+  }
+
 
   <!-- 21. Datum der letzten Radiographie -->
-  <section class="home__section">
-    <h2 class="h2">21. Datum der letzten Radiographie:</h2>
+    @if (currentStep() >= 21) {
+    <mat-expansion-panel hideToggle [expanded]="currentStep() === 21">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h2 class="h2" >
+            21. Datum der letzten Radiographie:
+          </h2>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
     <div
       class="datebox"
@@ -3014,11 +3291,22 @@
     @if (isInvalid('lastRadiographyDate')) {
       <p class="error">Bitte wählen Sie ein Datum.</p>
     }
-  </section>
+   <div class="nav">
+        <button type="button" class="btn-next" (click)="onNext()">Next</button>
+      </div>
+    </mat-expansion-panel>
+  }
 
  <!-- 22. Bemerkungen -->
-<section class="home__section">
-  <h2 class="h2">22. Bemerkungen</h2>
+  @if (currentStep() >= 22) {
+    <mat-expansion-panel hideToggle [expanded]="currentStep() === 22">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h2 class="h2" >
+            22. Bemerkungen:
+          </h2>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
 
   <div
     class="box box--textarea"
@@ -3036,7 +3324,21 @@
   @if (isInvalid('remarks')) {
     <p class="error">Bitte ausfüllen.</p>
   }
-</section>
-</form>
+    </mat-expansion-panel>
+  }
+  </mat-accordion>
 
-<app-footer (weiter)="onWeiter()"></app-footer>
+
+<app-footer (weiter)="onNext()"></app-footer>
+
+@if (isFinished()) {
+  <div class="finish-overlay" (click)="isFinished.set(false)">
+    <div class="finish-card" (click)="$event.stopPropagation()">
+      <h2 class="h2">Danke! 🎉</h2>
+      <p class="p">Der Fragebogen wurde erfolgreich ausgefüllt.</p>
+      <button type="button" class="finish-btn" (click)="isFinished.set(false)">
+        OK
+      </button>
+    </div>
+  </div>
+}

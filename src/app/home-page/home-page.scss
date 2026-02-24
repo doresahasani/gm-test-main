@@ -105,7 +105,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
   }
 .grid-2.dates .field {
   position: relative;
-  padding-bottom: 18px;
+  padding-bottom: 14px;
 }
 
 .grid-2.dates .field > .error {
@@ -509,6 +509,8 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
         height: 44px;
         cursor: pointer;
       }
+      
+      
     }
 
     .calendar-icon {
@@ -580,7 +582,6 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
   /* UPLOAD (Section 6) */
 
   .upload {
-  width: 366px;
   height: 66px;
   margin: 12px auto 0 auto;
 
@@ -915,4 +916,87 @@ form.card.home {
   height: auto !important;
   overflow: visible !important;
   padding-bottom: 96px;
+}
+
+
+.nav {
+  display: flex;
+  justify-content: center;  
+  margin-top: 12px;
+}
+
+.nav .btn-next {
+  width: 160px;          
+  height: 34px;          
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid #f68229;
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #f68229;
+  color: #ffffff;
+}
+
+.nav .btn-next:hover {
+  filter: brightness(0.97);
+}
+
+.nav .btn-back {
+  display: none;
+}
+.card.home {
+  padding-bottom: 90px; 
+}
+
+
+.finish-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  display: grid;
+  place-items: center;
+  z-index: 1000;
+}
+
+.finish-card {
+  width: min(420px, calc(100% - 32px));
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px 16px;
+  text-align: center;
+}
+
+.finish-btn {
+  margin-top: 12px;
+  width: 100%;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid #e6e8ef;
+  background: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+mat-expansion-panel {
+  margin-bottom: 16px; 
+}
+
+.mat-expansion-panel-header.mat-expanded {
+    height: 50px !important;
+    padding: 0;
+} 
+.mat-expansion-panel:not([class*=mat-elevation-z])
+ {
+    box-shadow: none !important;
+}
+
+::ng-deep{
+  .mat-expansion-panel-body {
+    padding: 0 0 16px !important;
+}
 }

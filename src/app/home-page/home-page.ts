@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
+import { MatExpansionModule, MatExpansionPanel } from '@angular/material/expansion';
+import { Footer } from '../layot/footer/footer';
 import {
   AbstractControl,
   FormArray,
@@ -9,7 +11,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Footer } from '../layot/footer/footer';
 
 type IllnessForm = FormGroup<{
   desc: FormControl<string>;
@@ -124,11 +125,229 @@ type ActiveKey =
 @Component({
   selector: 'app-home-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, Footer],
+  imports: [CommonModule, ReactiveFormsModule, MatExpansionModule, Footer],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
 })
 export class HomeComponent {
+  isFinished = signal(false);
+
+
+      currentStep = signal<number>(1);
+      readonly TOTAL_STEPS = 22; 
+
+      goToStep(step: number) {
+      if (step < 1 || step > this.TOTAL_STEPS) return;
+      this.currentStep.set(step);
+      this.submitted.set(false);
+      this.activeKey.set(null);
+    }
+
+    onBack() {
+      const step = this.currentStep();
+      if (step > 1) {
+        this.currentStep.set(step - 1);
+        this.submitted.set(false);
+        this.activeKey.set(null);
+      }
+    }
+
+    onNext() {
+  this.submitted.set(true);
+
+  const step = this.currentStep();
+  const controls = this.getControlsForStep12(step);
+
+  controls.forEach((c) => this.markEnabledAsTouched(c));
+  controls.forEach((c) => c.updateValueAndValidity({ emitEvent: false }));
+  this.form.updateValueAndValidity({ emitEvent: false });
+
+  if (!this.isStepValid12(step)) {
+    this.setActiveFirstInvalid12(step);
+    this.scrollToFirstError();
+    return;
+  }
+
+  if (step === this.TOTAL_STEPS) {
+
+    const raw = this.form.getRawValue();
+
+    const payload = {
+      ...raw,
+      reportFile: raw.reportFile ? raw.reportFile.name : null,
+    };
+
+    console.log('FINAL FORM VALUE:', payload);
+
+    this.isFinished.set(true);
+    return;
+  }
+
+  this.currentStep.set(step + 1);
+  this.submitted.set(false);
+  this.activeKey.set(null);
+}
+
+// ========================= Helpers Step =========================
+private getControlsForStep12(step: number): AbstractControl[] {
+  switch (step) {
+    case 1:
+      return [this.form.controls.heightCm, this.form.controls.weightKg];
+
+    case 2:
+      return [
+        this.form.controls.medication,
+        this.form.controls.medName,
+        this.form.controls.medReason,
+        this.form.controls.illnessesMed,
+      ];
+    case 3:
+      return [
+        this.form.controls.illnessQ,
+        this.form.controls.illnessesIll
+      ];
+    case 4:
+      return [
+        this.form.controls.opsQ,
+        this.form.controls.opsA,
+        this.form.controls.opsB,
+        this.form.controls.opsC,
+        this.form.controls.opsD,
+        this.form.controls.opsBItems
+      ]; 
+    case 5:
+      return [
+        this.form.controls.doctorFirstName,
+        this.form.controls.doctorLastName,
+        this.form.controls.doctorStreet,
+        this.form.controls.doctorNumber,
+        this.form.controls.doctorCity
+      ];
+    case 6:
+      return [
+        this.form.controls.reportFile,
+      ]; 
+    case 7:
+      return [
+        this.form.controls.teethCondition,
+        this.form.controls.teethConditionNote,
+      ]; 
+    case 8:
+      return [
+        this.form.controls.hygiene,
+      ]; 
+    case 9:
+      return [
+        this.form.controls.occlusion,
+      ]; 
+    case 10:
+      return [
+        this.form.controls.crownsCondition,
+        this.form.controls.crownsNote,
+      ]; 
+    case 11:
+      return [
+        this.form.controls.bridgesCondition,
+        this.form.controls.bridgesNote,
+      ]; 
+    case 12:
+      return [
+        this.form.controls.partialDenturesCondition,
+        this.form.controls.partialDenturesNote,
+      ]; 
+    case 13:
+      return [
+        this.form.controls.dentition,
+        this.form.controls.dentitionNote,
+      ]; 
+    case 14:
+      return [
+        this.form.controls.jaw,
+        this.form.controls.jawNote,
+      ]; 
+    case 15:
+      return [
+        this.form.controls.futureTeethDisease,
+        this.form.controls.futureTeethDiseaseNote,
+      ];    
+    case 16:
+      return [
+        this.form.controls.missingTeethQ,
+        this.form.controls.missingTeeth,
+        this.form.controls.missingPermanent,
+      ]; 
+    case 17:
+      return [
+        this.form.controls.fillingsQ,
+        this.form.controls.fillingsTeeth,
+        this.form.controls.fillingsPermanent,
+      ]; 
+    case 18:
+      return [
+        this.form.controls.cariesQ,
+        this.form.controls.cariesTeeth,
+        this.form.controls.cariesPermanent,
+      ]; 
+    case 19:
+      return [
+        this.form.controls.rootCanalQ,
+        this.form.controls.rootCanalTeeth,
+        this.form.controls.rootCanalPermanent,
+      ]; 
+    case 20:
+      return [
+        this.form.controls.dentalTreatQ,
+        this.form.controls.dentalTreatWhich
+      ];  
+    case 21:
+      return [
+        this.form.controls.lastRadiographyDate,
+      ];  
+    case 22:
+      return [
+        this.form.controls.remarks,
+      ];                       
+
+    default:
+      return [];
+  }
+}
+
+private isStepValid12(step: number): boolean {
+  return this.getControlsForStep12(step).every((c) => c.disabled || c.valid);
+}
+
+private setActiveFirstInvalid12(step: number) {
+  const setIfInvalid = (key: ActiveKey, ctrl: AbstractControl) => {
+    if (ctrl.enabled && ctrl.invalid) {
+      this.setActive(key);
+      return true;
+    }
+    return false;
+  };
+
+  if (step === 1) {
+    if (setIfInvalid('heightCm', this.form.controls.heightCm)) return;
+    if (setIfInvalid('weightKg', this.form.controls.weightKg)) return;
+    return;
+  }
+
+  if (step === 2) {
+    if (setIfInvalid('medication', this.form.controls.medication)) return;
+    if (setIfInvalid('medName', this.form.controls.medName)) return;
+    if (setIfInvalid('medReason', this.form.controls.medReason)) return;
+
+    const arr = this.illnessesMed;
+    for (let i = 0; i < arr.length; i++) {
+      const g = arr.at(i);
+      if (g.enabled && g.invalid) {
+        this.setActiveToFirstInvalidInArray('med', i, g);
+        return;
+      }
+    }
+  }
+}
+
   private fb = inject(FormBuilder);
 
   activeKey = signal<ActiveKey>(null);
@@ -622,26 +841,11 @@ export class HomeComponent {
     note.updateValueAndValidity({ emitEvent: false });
   }
 
-  // ✅ SAME behavior as teethConditionNote (if you want it)
+  
   setHygiene(value: 'gut' | 'mangelhaft' | 'schlecht') {
-    this.form.controls.hygiene.setValue(value);
-    this.setActive('hygiene');
-
-    const note = this.form.controls.hygieneNote;
-
-    if (value === 'mangelhaft' || value === 'schlecht') {
-      note.enable({ emitEvent: false });
-      note.setValidators([Validators.required]);
-      note.markAsPristine();
-      note.markAsUntouched();
-    } else {
-      note.reset('', { emitEvent: false });
-      note.clearValidators();
-      note.disable({ emitEvent: false });
-    }
-
-    note.updateValueAndValidity({ emitEvent: false });
-  }
+  this.form.controls.hygiene.setValue(value);
+  this.setActive('hygiene');
+}
 
   setOcclusion(value: 'klasse1' | 'klasse2' | 'klasse3') {
     this.form.controls.occlusion.setValue(value);
@@ -730,26 +934,6 @@ export class HomeComponent {
     this.setActive('jaw');
 
     const note = this.form.controls.jawNote;
-
-    if (value === true) {
-      note.enable({ emitEvent: false });
-      note.setValidators([Validators.required]);
-      note.markAsPristine();
-      note.markAsUntouched();
-    } else {
-      note.reset('', { emitEvent: false });
-      note.clearValidators();
-      note.disable({ emitEvent: false });
-    }
-
-    note.updateValueAndValidity({ emitEvent: false });
-  }
-
-  setFutureTeethDisease(value: boolean) {
-    this.form.controls.futureTeethDisease.setValue(value);
-    this.setActive('futureTeethDisease');
-
-    const note = this.form.controls.futureTeethDiseaseNote;
 
     if (value === true) {
       note.enable({ emitEvent: false });
@@ -1255,6 +1439,27 @@ export class HomeComponent {
     c.markAsDirty();
     c.updateValueAndValidity({ emitEvent: false });
   }
+  setFutureTeethDisease(value: boolean) {
+  this.form.controls.futureTeethDisease.setValue(value);
+  this.setActive('futureTeethDisease');
+
+  const note = this.form.controls.futureTeethDiseaseNote;
+
+  if (value === true) {
+    note.enable({ emitEvent: false });
+    note.setValidators([Validators.required]);
+    note.markAsPristine();
+    note.markAsUntouched();
+  } else {
+    note.reset('', { emitEvent: false });
+    note.clearValidators();
+    note.disable({ emitEvent: false });
+    note.markAsPristine();
+    note.markAsUntouched();
+  }
+
+  note.updateValueAndValidity({ emitEvent: false });
+}
 
   // ========================= GENERIC ADD (med/ill) =========================
   private addIllnessGeneric(arr: FormArray<IllnessForm>, kind: 'med' | 'ill') {
@@ -1420,12 +1625,15 @@ scrollToFirstError() {
   setTimeout(() => {
     const firstInvalid: HTMLElement | null =
       document.querySelector(
-        '.is-invalid input, .is-invalid textarea, .is-invalid button'
+        '.is-invalid input, ' +
+        '.is-invalid textarea, ' +
+        '.is-invalid button, ' +
+        '.upload.is-invalid'   
       );
 
     if (firstInvalid) {
       firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      firstInvalid.focus();
+      firstInvalid.focus?.();
     }
   });
 }

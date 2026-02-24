@@ -1,25 +1,29 @@
 <header class="header">
   <div class="page header__inner">
-    <h1 class="h1">Gesundheitsdeklaration</h1>
+    <h2>Gesundheitsdeklaration</h2>
 
     <div class="menu">
-      <button class="menu__btn" type="button" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen()"
-        aria-haspopup="menu" aria-label="Menü öffnen">
+      <button
+        class="menu__btn"
+        type="button"
+        (click)="toggleMenu()"
+        [attr.aria-expanded]="menuOpen()"
+        aria-haspopup="menu"
+        aria-label="Menü öffnen"
+      >
         <span class="hamburger" aria-hidden="true">
           <span></span><span></span><span></span>
         </span>
       </button>
 
       <div class="dropdown" [class.open]="menuOpen()" role="menu">
-        <a role="menuitem" routerLink="/" (click)="closeMenu()">Allgemein</a>
-        <a role="menuitem" routerLink="/" (click)="closeMenu()">Medizinisch</a>
-        <a role="menuitem" routerLink="/" (click)="closeMenu()">Dental</a>
+        <a role="menuitem" (click)="goTo(1)">Allgemein</a>
+        <a role="menuitem" (click)="goTo(2)">Medizinisch</a>
+        <a role="menuitem" (click)="goTo(3)">Dental</a>
 
         <div class="dropdown__divider"></div>
 
-        <a role="menuitem" routerLink="/" (click)="closeMenu()">
-          Überprüfung &amp; Absenden
-        </a>
+        <a role="menuitem" (click)="goTo(4)">Überprüfung &amp; Absenden</a>
       </div>
     </div>
   </div>
