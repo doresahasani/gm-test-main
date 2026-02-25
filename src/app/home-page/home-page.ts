@@ -700,7 +700,7 @@ export class HomeComponent {
     this.markGroupPristineUntouched(first);
   }
 
-  private removeIllnessGeneric(arr: FormArray<IllnessForm>, i: number) {
+  private removeIllnessByRef(arr: FormArray<IllnessForm>, group: IllnessForm) {
     this.submitted.set(false);
     this.addAttemptMed.set(false);
     this.addAttemptIll.set(false);
@@ -712,16 +712,11 @@ export class HomeComponent {
       return;
     }
 
-    arr.removeAt(i);
-    arr.updateValueAndValidity({emitEvent: false});
+    const idx = arr.controls.indexOf(group);
+    if (idx === -1) return;
 
-    const idxToClean = Math.min(i, arr.length - 1);
-    const g = arr.at(idxToClean);
-
-    this.markGroupPristineUntouched(g);
-
-    requestAnimationFrame(() => {
-    });
+    arr.removeAt(idx);
+    arr.updateValueAndValidity({ emitEvent: false });
   }
 
   //arrays
@@ -1237,9 +1232,9 @@ export class HomeComponent {
     this.addIllnessGeneric(this.illnessesMed, 'med');
   }
 
-  removeMedIllness(i: number) {
+  removeMedIllnessByRef(g: IllnessForm) {
     if (this.illnessesMed.disabled) return;
-    this.removeIllnessGeneric(this.illnessesMed, i);
+    this.removeIllnessByRef(this.illnessesMed, g);
   }
 
   setMedBool(i: number, key: 'operated' | 'treatmentDone', val: boolean) {
@@ -1296,9 +1291,9 @@ export class HomeComponent {
     this.addIllnessGeneric(this.illnessesIll, 'ill');
   }
 
-  removeIllIllness(i: number) {
+  removeIllIllnessByRef(g: IllnessForm) {
     if (this.illnessesIll.disabled) return;
-    this.removeIllnessGeneric(this.illnessesIll, i);
+    this.removeIllnessByRef(this.illnessesIll, g);
   }
 
   setIllBool(i: number, key: 'operated' | 'treatmentDone', val: boolean) {
@@ -1414,9 +1409,9 @@ export class HomeComponent {
     this.addOpsBGeneric();
   }
 
-  removeOpsBItem(i: number) {
+  removeOpsBItemByRef(g: IllnessForm) {
     if (this.opsBItems.disabled) return;
-    this.removeIllnessGeneric(this.opsBItems, i);
+    this.removeIllnessByRef(this.opsBItems, g);
   }
 
   setOpsBBool(i: number, key: 'operated' | 'treatmentDone', val: boolean) {

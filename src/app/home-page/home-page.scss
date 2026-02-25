@@ -54,7 +54,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
   }
 
   .h2 {
-    margin: 6px 0 6px 0;
+    margin: 0px 0 8px 0;
     font-weight: 600;
     font-size: 14px;
     line-height: 17px;
@@ -911,6 +911,7 @@ form.card.home {
   height: auto !important;
   overflow: visible !important;
   padding-bottom: 96px;
+  border: 1px solid #f7f7f7;
 }
 
 

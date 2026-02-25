@@ -183,13 +183,17 @@
           </div>
 
           <div class="illness" formArrayName="illnessesMed">
-            @for (_ of illnessesMed.controls; track $index; let i = $index) {
-              <div [formGroupName]="i" class="illness__card">
+            @for (g of illnessesMed.controls; track g; let i = $index) {
+              <div [formGroupName]="i" class="illness__card" (click)="$event.stopPropagation()">
                 <div class="illness__head">
                   <div class="illness__title">{{ i + 1 }}) Krankheit erfassen</div>
 
                   @if (illnessesMed.length > 1) {
-                    <button (click)="removeMedIllness(i)" class="illness__remove" type="button">
+                    <button
+                      type="button"
+                      class="illness__remove"
+                      (click)="$event.stopPropagation(); removeMedIllnessByRef(g)"
+                    >
                       - Entfernen
                     </button>
                   }
@@ -513,13 +517,17 @@
           </p>
 
           <div class="illness" formArrayName="illnessesIll">
-            @for (_ of illnessesIll.controls; track $index; let i = $index) {
-              <div [formGroupName]="i" class="illness__card">
+            @for (g of illnessesIll.controls; track g; let i = $index) {
+              <div [formGroupName]="i" class="illness__card" (click)="$event.stopPropagation()">
                 <div class="illness__head">
                   <div class="illness__title">{{ i + 1 }}) Krankheit erfassen</div>
 
                   @if (illnessesIll.length > 1) {
-                    <button (click)="removeIllIllness(i)" class="illness__remove" type="button">
+                    <button
+                      type="button"
+                      class="illness__remove"
+                      (click)="$event.stopPropagation(); removeIllIllnessByRef(g)"
+                    >
                       - Entfernen
                     </button>
                   }
@@ -906,13 +914,17 @@
 
             @if (form.controls.opsB.value === true) {
               <div class="illness" formArrayName="opsBItems">
-                @for (_ of opsBItems.controls; track $index; let i = $index) {
-                  <div [formGroupName]="i" class="illness__card">
+                @for (g of opsBItems.controls; track g; let i = $index) {
+                  <div [formGroupName]="i" class="illness__card" (click)="$event.stopPropagation()">
                     <div class="illness__head">
-                      <div class="illness__title">{{ i + 1 }}. Krankheit erfassen</div>
+                      <div class="illness__title">{{ i + 1 }}) Krankheit erfassen</div>
 
                       @if (opsBItems.length > 1) {
-                        <button (click)="removeOpsBItem(i)" class="illness__remove" type="button">
+                        <button
+                          type="button"
+                          class="illness__remove"
+                          (click)="$event.stopPropagation(); removeOpsBItemByRef(g)"
+                        >
                           - Entfernen
                         </button>
                       }
