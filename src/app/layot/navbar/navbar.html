@@ -1,6 +1,14 @@
 <header class="header">
   <div class="page header__inner">
-    <h2>Gesundheitsdeklaration</h2>
+    <h4
+      style="
+        font-family: Roboto, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+        font-size: 24px;
+        font-weight: 400;
+      "
+    >
+      Gesundheitsdeklaration
+    </h4>
 
     <div class="menu">
       <button
@@ -11,9 +19,12 @@
         aria-haspopup="menu"
         aria-label="Menü öffnen"
       >
-        <span class="hamburger" aria-hidden="true">
-          <span></span><span></span><span></span>
-        </span>
+        <img
+          src="/Icon-menu-alt-3.svg"
+          alt=""
+          width="20"
+          height="20"
+        />
       </button>
 
       <div class="dropdown" [class.open]="menuOpen()" role="menu">

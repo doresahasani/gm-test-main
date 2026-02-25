@@ -1,17 +1,15 @@
-import { Component, EventEmitter, Output, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-footer',
-  standalone: true,           
-  imports: [CommonModule],
+  standalone: true,
   templateUrl: './footer.html',
+  styleUrl: './footer.scss', 
 })
 export class Footer {
-  @Input() disableWeiter = false;
-  @Output() weiter = new EventEmitter<void>();
+  @Input() onWeiter: (() => void) | null = null;
 
   onWeiterClick() {
-    this.weiter.emit();
+    this.onWeiter?.();
   }
 }

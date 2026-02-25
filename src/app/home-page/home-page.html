@@ -18,56 +18,66 @@
         Welches sind Ihre Körpermasse?
       </p>
       <div class="grid-2">
-        <!-- Height -->
-        <div class="field">
-          <div
-            class="box box--unit"
-            (click)="setActive('heightCm')"
-            [class.is-active]="isActive('heightCm') || hasValue(form.controls.heightCm)"
-            [class.is-invalid]="isInvalid('heightCm')"
-          >
-            <input
-              type="number"
-              inputmode="numeric"
-              formControlName="heightCm"
-              placeholder="Grösse"
-              min="0"
-              max="350"
-              (focus)="setActive('heightCm')"
-            />
-            <span class="unit">(cm)</span>
-          </div>
+  <div class="field">
+    <div
+      class="box box--unit"
+      (click)="setActive('heightCm')"
+      [class.is-active]="isActive('heightCm') || hasValue(form.controls.heightCm)"
+      [class.is-invalid]="isInvalid('heightCm')"
+      [class.has-value]="hasValue(form.controls.heightCm)"
+    >
+      <input
+        type="number"
+        inputmode="numeric"
+        formControlName="heightCm"
+        placeholder="Grösse"
+        min="0"
+        max="350"
+        (focus)="setActive('heightCm')"
+      />
+      <span
+        class="unit"
+        [style.color]="hasValue(form.controls.heightCm) ? '#0E0E0E' : null"
+      >
+        (cm)
+      </span>
+    </div>
 
-          @if (isInvalid('heightCm')) {
-            <p class="error">Grösse ist (0–350 cm).</p>
-          }
-        </div>
+    @if (isInvalid('heightCm')) {
+      <p class="error">Grösse ist (0–350 cm).</p>
+    }
+  </div>
 
-        <!-- Weight -->
-        <div class="field">
-          <div
-            class="box box--unit"
-            (click)="setActive('weightKg')"
-            [class.is-active]="isActive('weightKg') || hasValue(form.controls.weightKg)"
-            [class.is-invalid]="isInvalid('weightKg')"
-          >
-            <input
-              type="number"
-              inputmode="numeric"
-              formControlName="weightKg"
-              placeholder="Gewicht"
-              min="0"
-              max="600"
-              (focus)="setActive('weightKg')"
-            />
-            <span class="unit">(kg)</span>
-          </div>
-
-          @if (isInvalid('weightKg')) {
-            <p class="error">Gewicht ist(0–600 kg).</p>
-          }
-        </div>
+    <div class="field">
+      <div
+        class="box box--unit"
+        (click)="setActive('weightKg')"
+        [class.is-active]="isActive('weightKg') || hasValue(form.controls.weightKg)"
+        [class.is-invalid]="isInvalid('weightKg')"
+        [class.has-value]="hasValue(form.controls.weightKg)"
+      >
+        <input
+          type="number"
+          inputmode="numeric"
+          formControlName="weightKg"
+          placeholder="Gewicht"
+          min="0"
+          max="600"
+          (focus)="setActive('weightKg')"
+        />
+        <span
+          class="unit"
+          [style.color]="hasValue(form.controls.weightKg) ? '#0E0E0E' : null"
+        >
+          (kg)
+        </span>
       </div>
+
+      @if (isInvalid('weightKg')) {
+        <p class="error">Gewicht ist (0–600 kg).</p>
+      }
+    </div>
+  </div>
 
       <p class="p home__subtitle" style="margin-top: 10px">
         - Falls Sie schwanger sind, geben Sie bitte Ihr Gewicht zu Beginn der Schwangerschaft an.
@@ -80,15 +90,17 @@
 
 
     <!-- 2. Medikamente oder Hilfsmittel -->
-     @if (currentStep() >= 2) {
-    <mat-expansion-panel hideToggle [expanded]="currentStep() === 2">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <h2 class="h2">
-            2. Medikamente oder Hilfsmittel
-          </h2>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
+     @if (maxStepReached() >= 2) {
+    <mat-expansion-panel
+    hideToggle
+    [expanded]="currentStep() === 2"
+    (opened)="goToStep(2)"
+    >
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <h2 class="h2">2. Medikamente oder Hilfsmittel</h2>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
       <div
         class="seg"
         (click)="setActive('medication')"
@@ -125,13 +137,11 @@
           Hilfsmittel oder Geräte erhalten (mit Ausnahme von Brillen und Kontaktlinsen)?
         </p>
 
-        <!-- "Wenn ja, welche?" / "Warum?" -->
         <div class="grid-2 med-head">
           <p class="home__subtitle med-head__text">Wenn ja, welche?</p>
           <p class="home__subtitle med-head__text">Warum?</p>
         </div>
 
-        <!-- Med Name / Reason -->
         <div class="grid-2">
           <div class="field">
             <div
@@ -172,7 +182,6 @@
           </div>
         </div>
 
-        <!-- ILLNESSES (Section 2 Array) -->
         <div class="illness" formArrayName="illnessesMed">
           @for (_ of illnessesMed.controls; track $index; let i = $index) {
             <div class="illness__card" [formGroupName]="i">
@@ -190,7 +199,6 @@
                 Krankheit, Leiden, Unfall, Behandlungsgrund, betroffene Stelle am Körper (links, rechts)
               </p>
 
-              <!-- DESC -->
               <div
                 class="box box--textarea"
                 (click)="setActive(medActiveKey(i,'desc'))"
@@ -211,50 +219,58 @@
                 <p class="error">Bitte ausfüllen.</p>
               }
 
-              <!-- Dates -->
-              <div class="grid-2 dates">
-                <div class="field">
-                  <label class="label">Begindatum</label>
-                  <div
-                    class="box"
-                    (click)="setActive(medActiveKey(i,'start'))"
-                    [class.is-active]="isMedActive(i,'start') || hasText(illnessCtrl(illnessesMed, i,'startDate'))"
-                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'startDate'))"
-                  >
-                    <input
-                      type="date"
-                      formControlName="startDate"
-                      (focus)="setActive(medActiveKey(i,'start'))"
-                    />
-                    <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
-                  </div>
-                  @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'startDate'))) {
-                    <p class="error">Bitte Datum wählen.</p>
-                  }
-                </div>
+          <div class="grid-2 dates">
+            <div
+              class="field"
+              [class.has-error]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'startDate'))"
+            >
+              <label class="label">Begindatum</label>
 
-                <div class="field">
-                  <label class="label">Enddatum</label>
-                  <div
-                    class="box"
-                    (click)="setActive(medActiveKey(i,'end'))"
-                    [class.is-active]="isMedActive(i,'end') || hasText(illnessCtrl(illnessesMed, i,'endDate'))"
-                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'endDate'))"
-                  >
-                    <input
-                      type="date"
-                      formControlName="endDate"
-                      (focus)="setActive(medActiveKey(i,'end'))"
-                    />
-                    <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
-                  </div>
-                  @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'endDate'))) {
-                    <p class="error">Bitte Datum wählen.</p>
-                  }
-                </div>
+              <div
+                class="box"
+                (click)="setActive(medActiveKey(i,'start'))"
+                [class.is-active]="isMedActive(i,'start') || hasText(illnessCtrl(illnessesMed, i,'startDate'))"
+                [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'startDate'))"
+              >
+                <input
+                  type="date"
+                  formControlName="startDate"
+                  (focus)="setActive(medActiveKey(i,'start'))"
+                />
+                <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
               </div>
 
-              <!-- Operiert -->
+              @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'startDate'))) {
+                <p class="error">Bitte Datum wählen.</p>
+              }
+            </div>
+
+            <div
+              class="field"
+              [class.has-error]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'endDate'))"
+            >
+              <label class="label">Enddatum</label>
+
+              <div
+                class="box"
+                (click)="setActive(medActiveKey(i,'end'))"
+                [class.is-active]="isMedActive(i,'end') || hasText(illnessCtrl(illnessesMed, i,'endDate'))"
+                [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'endDate'))"
+              >
+                <input
+                  type="date"
+                  formControlName="endDate"
+                  (focus)="setActive(medActiveKey(i,'end'))"
+                />
+                <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
+              </div>
+
+              @if (isInvalidCtrl(illnessCtrl(illnessesMed, i,'endDate'))) {
+                <p class="error">Bitte Datum wählen.</p>
+              }
+            </div>
+          </div>
+
               <div class="field">
                 <label class="label">Operiert?</label>
                 <div
@@ -286,7 +302,6 @@
                 }
               </div>
 
-              <!-- Behandlung beendet -->
               <div class="field">
                 <label class="label">Behandlung beendet, genesen ohne Folgen</label>
                 <div
@@ -318,7 +333,6 @@
                 }
               </div>
 
-              <!-- Provider -->
               <div class="provider">
                 <p class="provider__title">
                   Name und Adresse des Arztes, Spitals oder anderen Leistungserbringers
@@ -429,7 +443,6 @@
           }
         </div>
 
-        <!-- + Krankheit (Section 2) -->
         <button
           type="button"
           class="btn-add btn-add--bottom"
@@ -448,15 +461,19 @@
   }
 
   <!-- 3. Krankheiten oder Beschwerden -->
-    @if (currentStep() >= 3) {
-    <mat-expansion-panel hideToggle [expanded]="currentStep() === 3">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <h2 class="h2">
-            3. Krankheiten oder Beschwerden
-          </h2>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
+    @if (maxStepReached() >= 3) {
+  <mat-expansion-panel
+    hideToggle
+    [expanded]="currentStep() === 3"
+    (opened)="goToStep(3)"
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <h2 class="h2">
+          3. Krankheiten oder Beschwerden
+        </h2>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
     <div
       class="seg"
       (click)="setActive('illnessQ')"
@@ -531,37 +548,55 @@
               <p class="error">Bitte ausfüllen.</p>
             }
 
-            <div class="grid-2 dates">
-              <div class="field">
+           <div class="grid-2 dates">
+              <div
+                class="field"
+                [class.has-error]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'startDate'))"
+              >
                 <label class="label">Begindatum</label>
+
                 <div
                   class="box"
                   (click)="setActive(illActiveKey(i,'start'))"
                   [class.is-active]="isIllActive(i,'start') || hasText(illnessCtrl(illnessesIll, i,'startDate'))"
                   [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'startDate'))"
                 >
-                  <input type="date" formControlName="startDate" (focus)="setActive(illActiveKey(i,'start'))" />
+                  <input
+                    type="date"
+                    formControlName="startDate"
+                    (focus)="setActive(illActiveKey(i,'start'))"
+                  />
                   <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
                 </div>
-               <p class="error">
-               {{ isInvalidCtrl(illnessCtrl(illnessesIll, i,'startDate')) ? 'Bitte Datum wählen.' : '\u00A0' }}
-                  </p>
+
+                @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'startDate'))) {
+                  <p class="error">Bitte Datum wählen.</p>
+                }
               </div>
 
-              <div class="field">
+              <div
+                class="field"
+                [class.has-error]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'endDate'))"
+              >
                 <label class="label">Enddatum</label>
+
                 <div
                   class="box"
                   (click)="setActive(illActiveKey(i,'end'))"
                   [class.is-active]="isIllActive(i,'end') || hasText(illnessCtrl(illnessesIll, i,'endDate'))"
                   [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'endDate'))"
                 >
-                  <input type="date" formControlName="endDate" (focus)="setActive(illActiveKey(i,'end'))" />
+                  <input
+                    type="date"
+                    formControlName="endDate"
+                    (focus)="setActive(illActiveKey(i,'end'))"
+                  />
                   <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
                 </div>
-                <p class="error">
-                {{ isInvalidCtrl(illnessCtrl(illnessesIll, i,'endDate')) ? 'Bitte Datum wählen.' : '\u00A0' }}
-                 </p>
+
+                @if (isInvalidCtrl(illnessCtrl(illnessesIll, i,'endDate'))) {
+                  <p class="error">Bitte Datum wählen.</p>
+                }
               </div>
             </div>
 
@@ -627,7 +662,6 @@
               }
             </div>
 
-            <!-- Provider (same structure) -->
             <div class="provider">
               <p class="provider__title">
                 Name und Adresse des Arztes, Spitals oder anderen Leistungserbringers
@@ -755,15 +789,19 @@
   }
 
   <!-- 4. Behandlungen -->
-   @if (currentStep() >= 4) {
-    <mat-expansion-panel hideToggle [expanded]="currentStep() === 4">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <h2 class="h2">
-            4. Behandlungen – durchgeführte oder geplante Spitalaufenthalte/Operationen
-          </h2>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
+   @if (maxStepReached() >= 4) {
+  <mat-expansion-panel
+    hideToggle
+    [expanded]="currentStep() === 4"
+    (opened)="goToStep(4)"
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <h2 class="h2">
+          4. Behandlungen – durchgeführte oder geplante Spitalaufenthalte/Operationen
+        </h2>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
 
     <div
       class="seg"
@@ -801,7 +839,6 @@
         sich einer Konsultation, Behandlung oder Operation zu unterziehen?
       </p>
 
-      <!-- a) -->
       <div class="home__sub">
         <h2 class="h2">a) In einem Spital, einer Kureinrichtung oder einer Entzugsklinik</h2>
 
@@ -835,7 +872,6 @@
         }
       </div>
 
-      <!-- b) -->
       <div class="home__sub">
         <h2 class="h2">b) Bei einem Arzt, Physiotherapeuten oder Chiropraktiker</h2>
 
@@ -906,39 +942,56 @@
                 }
 
                 <div class="grid-2 dates">
-                  <div class="field">
-                    <label class="label">Begindatum</label>
                     <div
-                      class="box"
-                      (click)="setActive(opsBActiveKey(i,'start'))"
-                      [class.is-active]="isOpsBActive(i,'start') || hasText(illnessCtrl(opsBItems, i,'startDate'))"
-                      [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'startDate'))"
+                      class="field"
+                      [class.has-error]="isInvalidCtrl(illnessCtrl(opsBItems, i,'startDate'))"
                     >
-                      <input type="date" formControlName="startDate" (focus)="setActive(opsBActiveKey(i,'start'))" />
-                      <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
-                    </div>
-                     <p class="error">
-                    {{ isInvalidCtrl(illnessCtrl(opsBItems, i,'startDate')) ? 'Bitte Datum wählen.' : '\u00A0' }}
-                     </p>
-                  </div>
+                      <label class="label">Begindatum</label>
 
-                  <div class="field">
-                    <label class="label">Enddatum</label>
+                      <div
+                        class="box"
+                        (click)="setActive(opsBActiveKey(i,'start'))"
+                        [class.is-active]="isOpsBActive(i,'start') || hasText(illnessCtrl(opsBItems, i,'startDate'))"
+                        [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'startDate'))"
+                      >
+                        <input
+                          type="date"
+                          formControlName="startDate"
+                          (focus)="setActive(opsBActiveKey(i,'start'))"
+                        />
+                        <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
+                      </div>
+
+                      @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'startDate'))) {
+                        <p class="error">Bitte Datum wählen.</p>
+                      }
+                    </div>
+
                     <div
-                      class="box"
-                      (click)="setActive(opsBActiveKey(i,'end'))"
-                      [class.is-active]="isOpsBActive(i,'end') || hasText(illnessCtrl(opsBItems, i,'endDate'))"
-                      [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'endDate'))"
+                      class="field"
+                      [class.has-error]="isInvalidCtrl(illnessCtrl(opsBItems, i,'endDate'))"
                     >
-                      <input type="date" formControlName="endDate" (focus)="setActive(opsBActiveKey(i,'end'))" />
-                      <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
-                    </div>
-                    <p class="error">
-                    {{ isInvalidCtrl(illnessCtrl(opsBItems, i,'endDate')) ? 'Bitte Datum wählen.' : '\u00A0' }}
-                     </p>
-                  </div>
-                </div>
+                      <label class="label">Enddatum</label>
 
+                      <div
+                        class="box"
+                        (click)="setActive(opsBActiveKey(i,'end'))"
+                        [class.is-active]="isOpsBActive(i,'end') || hasText(illnessCtrl(opsBItems, i,'endDate'))"
+                        [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'endDate'))"
+                      >
+                        <input
+                          type="date"
+                          formControlName="endDate"
+                          (focus)="setActive(opsBActiveKey(i,'end'))"
+                        />
+                        <img src="/Icon.jpg" class="calendar-icon" alt="" aria-hidden="true" />
+                      </div>
+
+                      @if (isInvalidCtrl(illnessCtrl(opsBItems, i,'endDate'))) {
+                        <p class="error">Bitte Datum wählen.</p>
+                      }
+                    </div>
+                  </div>
                 <div class="field">
                   <label class="label">Operiert?</label>
                   <div
@@ -1001,7 +1054,6 @@
                   }
                 </div>
 
-                <!-- Provider (same pattern) -->
                 <div class="provider">
                   <p class="provider__title">
                     Name und Adresse des Arztes, Spitals oder anderen Leistungserbringers
@@ -1124,7 +1176,6 @@
         }
       </div>
 
-      <!-- c) -->
       <div class="home__sub">
         <h2 class="h2">c) Bei einem Psychiater, Psychologen oder Psychotherapeuten</h2>
 
@@ -1158,7 +1209,6 @@
         }
       </div>
 
-      <!-- d) -->
       <div class="home__sub">
         <h2 class="h2">
           d) Bei einem Naturheilpraktiker, einem nichtmedizinischen Therapeuten,
@@ -1202,15 +1252,19 @@
   }
 
   <!-- 5. Arzt -->
-   @if (currentStep() >= 5) {
-    <mat-expansion-panel hideToggle [expanded]="currentStep() === 5">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <h2 class="h2">
-            5. Arzt
-          </h2>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
+    @if (maxStepReached() >= 5) {
+      <mat-expansion-panel
+        hideToggle
+        [expanded]="currentStep() === 5"
+        (opened)="goToStep(5)"
+      >
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <h2 class="h2">
+              5. Arzt
+            </h2>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
 
     <p class="p home__subtitle">Name und Adresse des Arztes, den Sie gewöhnlich aufsuchen:</p>
 
@@ -1256,7 +1310,7 @@
       </div>
     </div>
 
-    <div class="grid-street">
+    <div class="provider__grid provider__grid--street">
       <div class="field">
         <div
           class="box"
@@ -1324,16 +1378,20 @@
   }
 
   <!-- ===================== 6. BERICHTE UPLOAD ===================== -->
-   @if (currentStep() >= 6) {
-    <mat-expansion-panel hideToggle [expanded]="currentStep() === 6">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <h2 class="h2">
+   @if (maxStepReached() >= 6) {
+      <mat-expansion-panel
+        hideToggle
+        [expanded]="currentStep() === 6"
+        (opened)="goToStep(6)"
+      >
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <h2 class="h2">
               6. Lade bitte deine vorhandenen Berichte wie
-             Operationsbericht, Austrittsbericht oder Arztbericht hoch.
-          </h2>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
+              Operationsbericht, Austrittsbericht oder Arztbericht hoch.
+            </h2>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
 
     <div
       class="upload"
@@ -1378,15 +1436,19 @@
   }
 
   <!-- 7. Zustand des Zahnbetts -->
-    @if (currentStep() >= 7) {
-    <mat-expansion-panel hideToggle [expanded]="currentStep() === 7">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <h2 class="h2">
-            7. Zustand des Zahnbetts:
-          </h2>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
+    @if (maxStepReached() >= 7) {
+      <mat-expansion-panel
+        hideToggle
+        [expanded]="currentStep() === 7"
+        (opened)="goToStep(7)"
+      >
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <h2 class="h2">
+              7. Zustand des Zahnbetts:
+            </h2>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
 
     <div
       class="seg seg--dental seg--triple"
@@ -1454,14 +1516,17 @@
   }
 
 <!-- 8. Hygiene -->
-@if (currentStep() >= 8) {
-  <mat-expansion-panel hideToggle [expanded]="currentStep() === 8">
+@if (maxStepReached() >= 8) {
+  <mat-expansion-panel
+    hideToggle
+    [expanded]="currentStep() === 8"
+    (opened)="goToStep(8)"
+  >
     <mat-expansion-panel-header>
       <mat-panel-title>
         <h2 class="h2">8. Hygiene:</h2>
       </mat-panel-title>
     </mat-expansion-panel-header>
-
     <div
       class="seg seg--dental seg--triple"
       [class.seg--dental-active]="hasValue(form.controls.hygiene)"
@@ -1507,15 +1572,19 @@
 
 
   <!-- 9. Okklusion -->
-    @if (currentStep() >= 9) {
-    <mat-expansion-panel hideToggle [expanded]="currentStep() === 9">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <h2 class="h2">
-            9. Okklusion:
-          </h2>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
+    @if (maxStepReached() >= 9) {
+  <mat-expansion-panel
+    hideToggle
+    [expanded]="currentStep() === 9"
+    (opened)="goToStep(9)"
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <h2 class="h2">
+          9. Okklusion:
+        </h2>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
 
     <div class="seg seg--dental seg--triple" [class.seg--dental-active]="hasValue(form.controls.occlusion)">
       <button
@@ -1556,15 +1625,19 @@
   }
 
   <!-- 10. Zustand der Kronen -->
-   @if (currentStep() >= 10) {
-    <mat-expansion-panel hideToggle [expanded]="currentStep() === 10">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <h2 class="h2">
-            10. Zustand der Kronen:
-          </h2>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
+   @if (maxStepReached() >= 10) {
+  <mat-expansion-panel
+    hideToggle
+    [expanded]="currentStep() === 10"
+    (opened)="goToStep(10)"
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <h2 class="h2">
+          10. Zustand der Kronen:
+        </h2>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
 
     <div class="seg seg--dental seg--quad" [class.seg--dental-active]="hasValue(form.controls.crownsCondition)">
       <button
@@ -1636,15 +1709,19 @@
   }
 
   <!-- 11. Zustand der Brücken -->
-    @if (currentStep() >= 11) {
-    <mat-expansion-panel hideToggle [expanded]="currentStep() === 11">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <h2 class="h2">
-            11. Zustand der Brücken:
-          </h2>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
+   @if (maxStepReached() >= 11) {
+  <mat-expansion-panel
+    hideToggle
+    [expanded]="currentStep() === 11"
+    (opened)="goToStep(11)"
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <h2 class="h2">
+          11. Zustand der Brücken:
+        </h2>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
 
     <div class="seg seg--dental seg--quad" [class.seg--dental-active]="hasValue(form.controls.bridgesCondition)">
       <button
@@ -1716,16 +1793,19 @@
   }
 
   <!-- 12. Zustand der Teilprothesen -->
-    @if (currentStep() >= 12) {
-    <mat-expansion-panel hideToggle [expanded]="currentStep() === 12">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <h2 class="h2">
-            12. Zustand der Teilprothesen:
-          </h2>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-
+    @if (maxStepReached() >= 12) {
+  <mat-expansion-panel
+    hideToggle
+    [expanded]="currentStep() === 12"
+    (opened)="goToStep(12)"
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <h2 class="h2">
+          12. Zustand der Teilprothesen:
+        </h2>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
     <div
       class="seg seg--dental seg--quad"
       [class.seg--dental-active]="hasValue(form.controls.partialDenturesCondition)"
@@ -1799,15 +1879,19 @@
   }
 
   <!-- 13. Dentition -->
-   @if (currentStep() >= 13) {
-    <mat-expansion-panel hideToggle [expanded]="currentStep() === 13">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <h2 class="h2">
-            13. Dentition: Hat der Versicherte eine Fehl- oder Missbildung oder einen Stellungsfehler der Zähne?
-          </h2>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
+   @if (maxStepReached() >= 13) {
+  <mat-expansion-panel
+    hideToggle
+    [expanded]="currentStep() === 13"
+    (opened)="goToStep(13)"
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <h2 class="h2">
+          13. Dentition: Hat der Versicherte eine Fehl- oder Missbildung oder einen Stellungsfehler der Zähne?
+        </h2>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
 
     <div
       class="seg seg--dental seg--binary"
@@ -1866,15 +1950,19 @@
   }
 
   <!-- 14. Kiefer -->
-   @if (currentStep() >= 14) {
-    <mat-expansion-panel hideToggle [expanded]="currentStep() === 14">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <h2 class="h2" >
-             14. Kiefer: Hat der Versicherte eine Fehl- oder Missbildung oder einen Stellungsfehler des Kiefers?
-          </h2>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
+ @if (maxStepReached() >= 14) {
+  <mat-expansion-panel
+    hideToggle
+    [expanded]="currentStep() === 14"
+    (opened)="goToStep(14)"
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <h2 class="h2">
+          14. Kiefer: Hat der Versicherte eine Fehl- oder Missbildung oder einen Stellungsfehler des Kiefers?
+        </h2>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
 
     <div
       class="seg seg--dental seg--binary"
@@ -1933,15 +2021,19 @@
   }
 
   <!-- 15. Zukunft -->
-    @if (currentStep() >= 15) {
-    <mat-expansion-panel hideToggle [expanded]="currentStep() === 15">
+    @if (maxStepReached() >= 15) {
+    <mat-expansion-panel
+      hideToggle
+      [expanded]="currentStep() === 15"
+      (opened)="goToStep(15)"
+    >
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <h2 class="h2" >
+          <h2 class="h2">
             15. Leidet der Versicherte an einer Krankheit, die den Zustand der Zähne in Zukunft beeinflussen könnte?
           </h2>
         </mat-panel-title>
-      </mat-expansion-panel-header>
+    </mat-expansion-panel-header>
 
     <div
       class="seg seg--dental seg--binary"
@@ -2000,11 +2092,15 @@
   }
 
   <!-- 16. Fehlende, nicht ersetzte Zähne -->
-   @if (currentStep() >= 16) {
-    <mat-expansion-panel hideToggle [expanded]="currentStep() === 16">
+  @if (maxStepReached() >= 16) {
+    <mat-expansion-panel
+      hideToggle
+      [expanded]="currentStep() === 16"
+      (opened)="goToStep(16)"
+    >
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <h2 class="h2" >
+          <h2 class="h2">
             16. Fehlende, nicht ersetzte Zähne:
           </h2>
         </mat-panel-title>
@@ -2297,15 +2393,19 @@
 
 
 <!-- 17. Schadhafte Zahnfüllungen -->
-  @if (currentStep() >= 17) {
-    <mat-expansion-panel hideToggle [expanded]="currentStep() === 17">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <h2 class="h2" >
-            17. Schadhafte Zahnfüllungen:
-          </h2>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
+  @if (maxStepReached() >= 17) {
+  <mat-expansion-panel
+    hideToggle
+    [expanded]="currentStep() === 17"
+    (opened)="goToStep(17)"
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <h2 class="h2">
+          17. Schadhafte Zahnfüllungen:
+        </h2>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
 
   <div
     class="seg"
@@ -2339,7 +2439,6 @@
   @if (form.controls.fillingsQ.value === true) {
     <div class="teeth">
 
-      <!-- ===== 55–51 ===== -->
       <div class="teeth__nums teeth__nums--top">
         @for (t of teethTop; track t) {
           <div class="teeth__num" [class.is-hot]="isFillingSelected(t)">{{ t }}</div>
@@ -2371,7 +2470,6 @@
         }
       </div>
 
-      <!-- ===== 85–81 ===== -->
       <div class="teethbar teethbar--bottom">
         @for (t of teethBottom; track t) {
           <button
@@ -2596,15 +2694,19 @@
   }
 
    <!-- 18. Kariöse Zähne -->
-     @if (currentStep() >= 18) {
-    <mat-expansion-panel hideToggle [expanded]="currentStep() === 18">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <h2 class="h2" >
-            18. Kariöse Zähne:
-          </h2>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
+    @if (maxStepReached() >= 18) {
+      <mat-expansion-panel
+        hideToggle
+        [expanded]="currentStep() === 18"
+        (opened)="goToStep(18)"
+      >
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <h2 class="h2">
+              18. Kariöse Zähne:
+            </h2>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
 
   <div
     class="seg"
@@ -2891,15 +2993,19 @@
   }
 
         <!-- 19. Wurzelbehandelte Zähne -->
-        @if (currentStep() >= 19) {
-    <mat-expansion-panel hideToggle [expanded]="currentStep() === 19">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <h2 class="h2" >
-            19. Wurzelbehandelte Zähne:
-          </h2>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
+   @if (maxStepReached() >= 19) {
+      <mat-expansion-panel
+        hideToggle
+        [expanded]="currentStep() === 19"
+        (opened)="goToStep(19)"
+      >
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <h2 class="h2">
+              19. Wurzelbehandelte Zähne:
+            </h2>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
   <div
     class="seg"
     (click)="setActive('rootCanalQ')"
@@ -3146,7 +3252,7 @@
         }
       </div>
 
-      <!-- ===== 71–75 ===== -->
+      
       <div class="teethbar teethbar--bottom">
         @for (t of milkBottom; track t) {
           <button
@@ -3186,16 +3292,20 @@
   }
 
       <!--20-->
-      @if (currentStep() >= 20) {
-    <mat-expansion-panel hideToggle [expanded]="currentStep() === 20">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <h2 class="h2" >
-            20. Ist eine Behandlung bei einem Zahnarzt/
-            Kieferorthopäden im Gang oder geplant?
-          </h2>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
+    @if (maxStepReached() >= 20) {
+      <mat-expansion-panel
+        hideToggle
+        [expanded]="currentStep() === 20"
+        (opened)="goToStep(20)"
+      >
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <h2 class="h2">
+              20. Ist eine Behandlung bei einem Zahnarzt/
+              Kieferorthopäden im Gang oder geplant?
+            </h2>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
 
   <div
     class="seg"
@@ -3255,15 +3365,19 @@
 
 
   <!-- 21. Datum der letzten Radiographie -->
-    @if (currentStep() >= 21) {
-    <mat-expansion-panel hideToggle [expanded]="currentStep() === 21">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <h2 class="h2" >
-            21. Datum der letzten Radiographie:
-          </h2>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
+    @if (maxStepReached() >= 21) {
+  <mat-expansion-panel
+    hideToggle
+    [expanded]="currentStep() === 21"
+    (opened)="goToStep(21)"
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <h2 class="h2">
+          21. Datum der letzten Radiographie:
+        </h2>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
 
     <div
       class="datebox"
@@ -3298,15 +3412,19 @@
   }
 
  <!-- 22. Bemerkungen -->
-  @if (currentStep() >= 22) {
-    <mat-expansion-panel hideToggle [expanded]="currentStep() === 22">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <h2 class="h2" >
-            22. Bemerkungen:
-          </h2>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
+ @if (maxStepReached() >= 22) {
+  <mat-expansion-panel
+    hideToggle
+    [expanded]="currentStep() === 22"
+    (opened)="goToStep(22)"
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <h2 class="h2">
+          22. Bemerkungen:
+        </h2>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
 
   <div
     class="box box--textarea"
@@ -3329,7 +3447,6 @@
   </mat-accordion>
 
 
-<app-footer (weiter)="onNext()"></app-footer>
 
 @if (isFinished()) {
   <div class="finish-overlay" (click)="isFinished.set(false)">

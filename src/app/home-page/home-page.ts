@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { MatExpansionModule, MatExpansionPanel } from '@angular/material/expansion';
-import { Footer } from '../layot/footer/footer';
+import { FooterActionsService } from '../layot/footer/footer-actions.service';
 import {
   AbstractControl,
   FormArray,
@@ -11,6 +11,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
 
 type IllnessForm = FormGroup<{
   desc: FormControl<string>;
@@ -30,7 +31,6 @@ type ActiveKey =
   | null
   | 'heightCm'
   | 'weightKg'
-  // section 2
   | 'medication'
   | 'medName'
   | 'medReason'
@@ -44,7 +44,6 @@ type ActiveKey =
   | `med.${number}.docStreet`
   | `med.${number}.docNr`
   | `med.${number}.docZipCity`
-  // section 3
   | 'illnessQ'
   | `ill.${number}.desc`
   | `ill.${number}.start`
@@ -56,7 +55,6 @@ type ActiveKey =
   | `ill.${number}.docStreet`
   | `ill.${number}.docNr`
   | `ill.${number}.docZipCity`
-  // section 4
   | 'opsQ'
   | 'opsA'
   | 'opsB'
@@ -72,15 +70,12 @@ type ActiveKey =
   | `opsB.${number}.docStreet`
   | `opsB.${number}.docNr`
   | `opsB.${number}.docZipCity`
-  // section 5
   | 'doctorFirstName'
   | 'doctorLastName'
   | 'doctorStreet'
   | 'doctorNumber'
   | 'doctorCity'
-  // section 6
   | 'reportFile'
-  // section 7-15
   | 'teethCondition'
   | 'teethConditionNote'
   | 'hygiene'
@@ -98,61 +93,71 @@ type ActiveKey =
   | 'jawNote'
   | 'futureTeethDisease'
   | 'futureTeethDiseaseNote'
-  // section 16
   | 'missingTeethQ'
   | 'missingTeeth'
   | 'missingPermanent'
-  // section 17
   | 'fillingsQ'
   | 'fillingsTeeth'
   | 'fillingsPermanent'
-  // section 18
   | 'cariesQ'
   | 'cariesTeeth'
   | 'cariesPermanent'
-  // section 19
   | 'rootCanalQ'
   | 'rootCanalTeeth'
   | 'rootCanalPermanent'
-  // section 20
   | 'dentalTreatQ'
   | 'dentalTreatWhich'
-  // section 21
   | 'lastRadiographyDate'
-  // section 22
   | 'remarks';
 
 @Component({
   selector: 'app-home-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatExpansionModule, Footer],
+  imports: [CommonModule, ReactiveFormsModule, MatExpansionModule,],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
 })
 export class HomeComponent {
+  private footerActions = inject(FooterActionsService);
+  private destroy$ = new Subject<void>();
   isFinished = signal(false);
+
+    ngOnInit() {
+    this.footerActions.nextClick$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.onNext());
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
 
       currentStep = signal<number>(1);
-      readonly TOTAL_STEPS = 22; 
+maxStepReached = signal<number>(1);
+readonly TOTAL_STEPS = 22;
 
-      goToStep(step: number) {
-      if (step < 1 || step > this.TOTAL_STEPS) return;
-      this.currentStep.set(step);
-      this.submitted.set(false);
-      this.activeKey.set(null);
-    }
+private setStep(step: number) {
+  if (step < 1 || step > this.TOTAL_STEPS) return;
 
-    onBack() {
-      const step = this.currentStep();
-      if (step > 1) {
-        this.currentStep.set(step - 1);
-        this.submitted.set(false);
-        this.activeKey.set(null);
-      }
-    }
+  this.currentStep.set(step);
+  this.maxStepReached.set(Math.max(this.maxStepReached(), step));
 
-    onNext() {
+  this.submitted.set(false);
+  this.activeKey.set(null);
+}
+
+goToStep(step: number) {
+  this.setStep(step);
+}
+
+onBack() {
+  const step = this.currentStep();
+  if (step > 1) this.setStep(step - 1);
+}
+
+onNext() {
   this.submitted.set(true);
 
   const step = this.currentStep();
@@ -169,26 +174,20 @@ export class HomeComponent {
   }
 
   if (step === this.TOTAL_STEPS) {
-
     const raw = this.form.getRawValue();
-
     const payload = {
       ...raw,
       reportFile: raw.reportFile ? raw.reportFile.name : null,
     };
 
     console.log('FINAL FORM VALUE:', payload);
-
     this.isFinished.set(true);
     return;
   }
 
-  this.currentStep.set(step + 1);
-  this.submitted.set(false);
-  this.activeKey.set(null);
+  this.setStep(step + 1);
 }
 
-// ========================= Helpers Step =========================
 private getControlsForStep12(step: number): AbstractControl[] {
   switch (step) {
     case 1:
@@ -358,13 +357,10 @@ private setActiveFirstInvalid12(step: number) {
   addAttemptOpsB = signal(false);
   
 
-  // ========================= SECTION 6: UPLOAD (PDF) =========================
   selectedReportName = signal<string>('');
   isReportDragOver = signal(false);
 
-  // ========================= FORM =========================
   form = this.fb.group({
-    // ===== Section 1 =====
     heightCm: this.fb.control<number | null>(null, [
       Validators.required,
       Validators.min(0),
@@ -376,17 +372,14 @@ private setActiveFirstInvalid12(step: number) {
       Validators.max(600),
     ]),
 
-    // ===== Section 2 (Medikamente) =====
     medication: this.fb.control<boolean | null>(null, [Validators.required]),
     medName: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
     medReason: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
     illnessesMed: this.fb.array<IllnessForm>([this.createIllnessGroup()]),
 
-    // ===== Section 3 (Krankheiten) =====
     illnessQ: this.fb.control<boolean | null>(null, [Validators.required]),
     illnessesIll: this.fb.array<IllnessForm>([this.createIllnessGroup()]),
 
-    // ===== Section 4 (Ops) =====
     opsQ: this.fb.control<boolean | null>(null, [Validators.required]),
     opsA: this.fb.control<boolean | null>({ value: null, disabled: true }),
     opsB: this.fb.control<boolean | null>({ value: null, disabled: true }),
@@ -394,17 +387,14 @@ private setActiveFirstInvalid12(step: number) {
     opsD: this.fb.control<boolean | null>({ value: null, disabled: true }),
     opsBItems: this.fb.array<IllnessForm>([this.createIllnessGroup()]),
 
-    // ===== Section 5 (Arzt) =====
     doctorFirstName: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
     doctorLastName: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
     doctorStreet: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
     doctorNumber: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
     doctorCity: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
 
-    // ===== Section 6 (Berichte Upload) =====
     reportFile: this.fb.control<File | null>(null, [Validators.required]),
 
-    // ===== Section 7-15 (Dental) =====
     teethCondition: this.fb.control<'gut' | 'mangelhaft' | 'schlecht' | null>(null, [
       Validators.required,
     ]),
@@ -440,37 +430,30 @@ private setActiveFirstInvalid12(step: number) {
     futureTeethDisease: this.fb.control<boolean | null>(null, [Validators.required]),
     futureTeethDiseaseNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
 
-    // ===== Section 21 (Letzte Röntgenaufnahme) =====
     lastRadiographyDate: this.fb.control<string>('', {
       nonNullable: true,
       validators: [Validators.required],
     }),
 
-    // ===== Section 16 (Missing teeth) =====
     missingTeethQ: this.fb.control<boolean | null>(null, [Validators.required]),
     missingTeeth: this.fb.array<FormControl<string>>([]),
     missingPermanent: this.fb.array<FormControl<string>>([]),
 
-    // ===== Section 17 (Schadhafte Zahnfüllungen) =====
     fillingsQ: this.fb.control<boolean | null>(null, [Validators.required]),
     fillingsTeeth: this.fb.array<FormControl<string>>([]),
     fillingsPermanent: this.fb.array<FormControl<string>>([]),
 
-    // ===== Section 18 (Kariöse Zähne) =====
     cariesQ: this.fb.control<boolean | null>(null, [Validators.required]),
     cariesTeeth: this.fb.array<FormControl<string>>([]),
     cariesPermanent: this.fb.array<FormControl<string>>([]),
 
-    // ===== Section 19 (Wurzelbehandelte Zähne) =====
     rootCanalQ: this.fb.control<boolean | null>(null, [Validators.required]),
     rootCanalTeeth: this.fb.array<FormControl<string>>([]),
     rootCanalPermanent: this.fb.array<FormControl<string>>([]),
 
-    // ===== Section 20 (Behandlung Zahnarzt/KFO) =====
     dentalTreatQ: this.fb.control<boolean | null>(null, [Validators.required]),
     dentalTreatWhich: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
 
-    // ===== Section 22 =====
     remarks: this.fb.control<string>('', {
       nonNullable: true,
       validators: [Validators.required],
@@ -483,7 +466,6 @@ private setActiveFirstInvalid12(step: number) {
     this.disableOpsDetails();
     this.disableOpsBItems();
 
-    // start state: notes disabled
     this.form.controls.teethConditionNote.disable({ emitEvent: false });
     this.form.controls.hygieneNote.disable({ emitEvent: false });
     this.form.controls.crownsNote.disable({ emitEvent: false });
@@ -493,13 +475,11 @@ private setActiveFirstInvalid12(step: number) {
     this.form.controls.jawNote.disable({ emitEvent: false });
     this.form.controls.futureTeethDiseaseNote.disable({ emitEvent: false });
 
-    // section 20 start disabled + no validators
     this.form.controls.dentalTreatWhich.disable({ emitEvent: false });
     this.form.controls.dentalTreatWhich.clearValidators();
     this.form.controls.dentalTreatWhich.updateValueAndValidity({ emitEvent: false });
   }
 
-  // ========================= DATE PICKER (Section 21) =========================
   openDatePicker(input: HTMLInputElement) {
     if (!input) return;
     const anyInput = input as any;
@@ -510,7 +490,6 @@ private setActiveFirstInvalid12(step: number) {
     }
   }
 
-  // ========================= GETTERS =========================
   get illnessesMed(): FormArray<IllnessForm> {
     return this.form.controls.illnessesMed;
   }
@@ -521,7 +500,6 @@ private setActiveFirstInvalid12(step: number) {
     return this.form.controls.opsBItems;
   }
 
-  // ========================= ACTIVE HELPERS =========================
   setActive(key: ActiveKey) {
     this.activeKey.set(key);
   }
@@ -529,7 +507,6 @@ private setActiveFirstInvalid12(step: number) {
     return this.activeKey() === key;
   }
 
-  // Helpers (needed by template)
   hasValue(ctrl: { value: any } | null | undefined): boolean {
     const v = ctrl?.value;
     return v !== null && v !== undefined;
@@ -541,14 +518,12 @@ private setActiveFirstInvalid12(step: number) {
     return String(v).trim().length > 0;
   }
 
-  // ========================= UX HELPERS =========================
   autoResize(event: Event) {
     const textarea = event.target as HTMLTextAreaElement;
     textarea.style.height = 'auto';
     textarea.style.height = textarea.scrollHeight + 'px';
   }
 
-  // ========================= VALIDATION HELPERS =========================
   private showInvalid(ctrl: AbstractControl | null | undefined, attempt = false) {
     return !!ctrl && ctrl.enabled && ctrl.invalid && (ctrl.touched || this.submitted() || attempt);
   }
@@ -666,7 +641,6 @@ private setActiveFirstInvalid12(step: number) {
     if (section === 'opsB') this.addAttemptOpsB.set(false);
   }
 
-  // ========================= ILLNESS GROUP =========================
   private createIllnessGroup(): IllnessForm {
     return this.fb.group({
       desc: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
@@ -724,14 +698,30 @@ private setActiveFirstInvalid12(step: number) {
   }
 
   private removeIllnessGeneric(arr: FormArray<IllnessForm>, i: number) {
-    if (arr.length === 1) {
-      this.resetIllnessArrayToOne(arr);
-      return;
-    }
-    arr.removeAt(i);
+  this.submitted.set(false);
+  this.addAttemptMed.set(false);
+  this.addAttemptIll.set(false);
+  this.addAttemptOpsB.set(false);
+  this.activeKey.set(null);
+
+  if (arr.length === 1) {
+    this.resetIllnessArrayToOne(arr);
+    return;
   }
 
-  // ========================= ACTIVE KEYS (arrays) =========================
+  arr.removeAt(i);
+  arr.updateValueAndValidity({ emitEvent: false });
+
+  const idxToClean = Math.min(i, arr.length - 1);
+  const g = arr.at(idxToClean);
+
+  this.markGroupPristineUntouched(g);
+
+  requestAnimationFrame(() => {
+  });
+}
+ 
+  //arrays
   medActiveKey(i: number, field: any): ActiveKey {
     return `med.${i}.${field}` as ActiveKey;
   }
@@ -752,7 +742,6 @@ private setActiveFirstInvalid12(step: number) {
     return this.activeKey() === this.opsBActiveKey(i, field);
   }
 
-  // ========================= FIRST INVALID -> ACTIVE =========================
   private firstInvalidFieldInGroup(g: IllnessForm): keyof IllnessForm['controls'] | null {
     const order: (keyof IllnessForm['controls'])[] = [
       'desc',
@@ -798,7 +787,6 @@ private setActiveFirstInvalid12(step: number) {
     this.setActive(key);
   }
 
-  // ========================= PROVIDER VALIDATORS =========================
   private applyProviderValidatorsToGroup(g: IllnessForm, required: boolean) {
     const providerControls = [
       g.controls.docFirstName,
@@ -820,7 +808,6 @@ private setActiveFirstInvalid12(step: number) {
     arr.updateValueAndValidity({ emitEvent: false });
   }
 
-  // ========================= SECTION 7-15: DENTAL NOTES =========================
   setTeethCondition(value: 'gut' | 'mangelhaft' | 'schlecht') {
     this.form.controls.teethCondition.setValue(value);
     this.setActive('teethCondition');
@@ -949,7 +936,6 @@ private setActiveFirstInvalid12(step: number) {
     note.updateValueAndValidity({ emitEvent: false });
   }
 
-  // ========================= SECTION 16: MISSING TEETH =========================
   readonly teethTop = ['55', '54', '53', '52', '51'] as const;
   readonly teethBottom = ['85', '84', '83', '82', '81'] as const;
 
@@ -1010,7 +996,6 @@ private setActiveFirstInvalid12(step: number) {
     this.missingPermanentArr.updateValueAndValidity({ emitEvent: false });
   }
 
-  // ========================= SECTION 17: FILLINGS =========================
   get fillingsTeethArr(): FormArray<FormControl<string>> {
     return this.form.controls.fillingsTeeth;
   }
@@ -1058,7 +1043,6 @@ private setActiveFirstInvalid12(step: number) {
     this.fillingsPermanentArr.updateValueAndValidity({ emitEvent: false });
   }
 
-  // ========================= SECTION 18: CARIES =========================
   get cariesTeethArr(): FormArray<FormControl<string>> {
     return this.form.controls.cariesTeeth;
   }
@@ -1106,7 +1090,6 @@ private setActiveFirstInvalid12(step: number) {
     this.cariesPermanentArr.updateValueAndValidity({ emitEvent: false });
   }
 
-  // ========================= SECTION 19: ROOT CANAL =========================
   get rootTeethArr(): FormArray<FormControl<string>> {
     return this.form.controls.rootCanalTeeth;
   }
@@ -1154,7 +1137,6 @@ private setActiveFirstInvalid12(step: number) {
     this.rootPermanentArr.updateValueAndValidity({ emitEvent: false });
   }
 
-  // ========================= SECTION 20: TREATMENT =========================
   setDentalTreatQ(val: boolean) {
     this.form.controls.dentalTreatQ.setValue(val);
     this.setActive('dentalTreatQ');
@@ -1177,7 +1159,6 @@ private setActiveFirstInvalid12(step: number) {
     which.updateValueAndValidity({ emitEvent: false });
   }
 
-  // ========================= SECTION 2: MEDIKAMENTE =========================
   showMedicationDetails(): boolean {
     return this.form.controls.medication.value === true;
   }
@@ -1261,7 +1242,6 @@ private setActiveFirstInvalid12(step: number) {
     c.updateValueAndValidity({ emitEvent: false });
   }
 
-  // ========================= SECTION 3: KRANKHEITEN =========================
   showIllnessDetails(): boolean {
     return this.form.controls.illnessQ.value === true;
   }
@@ -1321,7 +1301,6 @@ private setActiveFirstInvalid12(step: number) {
     c.updateValueAndValidity({ emitEvent: false });
   }
 
-  // ========================= SECTION 4: OPS =========================
   showOpsDetails(): boolean {
     return this.form.controls.opsQ.value === true;
   }
@@ -1461,7 +1440,6 @@ private setActiveFirstInvalid12(step: number) {
   note.updateValueAndValidity({ emitEvent: false });
 }
 
-  // ========================= GENERIC ADD (med/ill) =========================
   private addIllnessGeneric(arr: FormArray<IllnessForm>, kind: 'med' | 'ill') {
     const lastIndex = arr.length - 1;
     const last = arr.at(lastIndex);
@@ -1487,7 +1465,6 @@ private setActiveFirstInvalid12(step: number) {
     });
   }
 
-  // ========================= ADD OPS-B =========================
   private addOpsBGeneric() {
     const arr = this.opsBItems;
     const lastIndex = arr.length - 1;
@@ -1509,7 +1486,6 @@ private setActiveFirstInvalid12(step: number) {
     requestAnimationFrame(() => this.setActive(this.opsBActiveKey(i, 'desc')));
   }
 
-  // ========================= SECTION 6: UPLOAD HANDLERS =========================
   private isPdfFile(file: File) {
     return file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
   }
@@ -1558,8 +1534,7 @@ private setActiveFirstInvalid12(step: number) {
     this.form.controls.reportFile.markAsPristine();
     this.form.controls.reportFile.markAsUntouched();
   }
-
-  // ========================= ✅ CONSOLE FORMAT FOR BACKEND (ARRAY OF {code,value}) =========================
+   //arrays per backend
   private buildAnswersArray(raw: any): Array<{ code: string; value: any }> {
     const answers: Array<{ code: string; value: any }> = [];
 
@@ -1571,7 +1546,6 @@ private setActiveFirstInvalid12(step: number) {
       answers.push({ code, value });
     };
 
-    // arrays (teeth selections)
     push('missingTeeth', raw?.missingTeeth ?? []);
     push('missingPermanent', raw?.missingPermanent ?? []);
     push('fillingsTeeth', raw?.fillingsTeeth ?? []);
@@ -1581,7 +1555,6 @@ private setActiveFirstInvalid12(step: number) {
     push('rootCanalTeeth', raw?.rootCanalTeeth ?? []);
     push('rootCanalPermanent', raw?.rootCanalPermanent ?? []);
 
-    // form arrays with objects
     push('illnessesMed', raw?.illnessesMed ?? []);
     push('illnessesIll', raw?.illnessesIll ?? []);
     push('opsBItems', raw?.opsBItems ?? []);
@@ -1599,7 +1572,6 @@ private setActiveFirstInvalid12(step: number) {
     );
   }
 
-// ========================= SUBMIT / WEITER =========================
 onWeiter() {
   this.submitted.set(true);
 
@@ -1639,7 +1611,6 @@ scrollToFirstError() {
 }
 
 
-  // ========================= TEMPLATE HELPERS for attempts =========================
   attemptMed() {
     return this.addAttemptMed();
   }

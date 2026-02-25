@@ -13,7 +13,6 @@ $radius-input: 12px;
 
 $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
 
-/* MIXINS */
 @mixin control-surface {
   border: 1px solid $border;
   background: #fff;
@@ -43,7 +42,6 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
 .home {
   font-family: $font;
 
-  /* CARD */
   &.card {
     background-color: #fbfbfb;
     border-radius: $radius-card;
@@ -69,6 +67,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     font-size: 12px;
     line-height: 10px;
     text-align: left;
+    color: #706C73;
   }
 
   &__subtitle {
@@ -81,7 +80,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     font-size: 12px;
     line-height: 14px;
     font-weight: 400;
-    color: #959595;
+    color: #706C73;
   }
 
   &__note {
@@ -103,9 +102,20 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
   }
+
+.grid-2.dates {
+  align-items: flex-start;
+}
+
+
 .grid-2.dates .field {
+  align-self: start;
   position: relative;
-  padding-bottom: 14px;
+  padding-bottom: 0; 
+}
+
+.grid-2.dates .field.has-error {
+  padding-bottom: 14px; 
 }
 
 .grid-2.dates .field > .error {
@@ -117,12 +127,6 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
   line-height: 14px;
 }
 
-  .grid-street {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 12px;
-  }
-
   .field {
     display: grid;
     gap: 8px;
@@ -133,8 +137,8 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     margin: 8px 0 2px 0;
     font-size: 12px;
     line-height: 14px;
-    color: #6f6f6f;
-    font-weight: 500;
+    color: #706C73;
+    font-weight: 400;
   }
 
   .error {
@@ -148,7 +152,6 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     }
   }
 
-  /* BOX (inputs) */
   .box {
     height: 44px;
     padding: 0 12px;
@@ -157,6 +160,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     align-items: center;
     gap: 8px;
     position: relative;
+    margin:0;
 
     @include control-surface;
 
@@ -235,7 +239,6 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     }
   }
 
-  /* SEG (Nein / Ja) */
   .seg {
     position: relative;
     display: flex;
@@ -285,7 +288,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
 
       &.is-selected {
         background: #ffffff;
-        color: $text;
+        color: #000000;
         font-weight: 400;
         border-radius: 4px;
         outline: 1px solid rgba($accent, 0.35);
@@ -329,7 +332,6 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     }
   }
 
-  /* BUTTONS */
  
   .btn-add {
     width: 100%;
@@ -403,8 +405,6 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     }
   }
 
-  /* ILLNESS BLOCK */
-
   .illness {
     margin-top: 10px;
 
@@ -445,7 +445,6 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     }
   }
 
-  /* ICONS / DATE */
 
   .icon-cal {
     position: absolute;
@@ -525,7 +524,6 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     }
   }
 
-  /* PROVIDER */
   .provider {
     margin-top: 12px;
 
@@ -578,8 +576,6 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
       margin: 0;
     }
   }
-
-  /* UPLOAD (Section 6) */
 
   .upload {
   height: 66px;
@@ -640,8 +636,6 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
   }
 }
 
-  /* DENTAL NOTE BOX */
-
   .box--dental-note {
     min-height: 38px;
     height: auto;
@@ -685,11 +679,9 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     font-family: $font;
     font-size: 12px;
     line-height: 14px;
-    font-weight: 500;
-    color: #8a8a8a;
+    color: #706C73;
   }
 
-  /* TEETH – PRIMARY */
 
   .teeth {
     margin-top: 10px;
@@ -728,7 +720,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
   .teethbar {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    height: 44px;
+    height: 40px;
 
     border: 1px solid $accent;
     border-radius: 10px;
@@ -746,6 +738,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     background: transparent;
     padding: 0;
     cursor: pointer;
+    
 
     &:not(:first-child) {
       border-left: 1px solid rgba($accent, 0.35);
@@ -778,7 +771,6 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     }
   }
 
-  /* TEETH – PERMANENT */
   
   .teethperm {
     margin-top: 14px;
@@ -817,7 +809,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
       position: relative;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      height: 44px;
+      height: 40px;
 
       &--bottom {
         margin-top: 10px;
@@ -827,7 +819,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     &__half {
       display: grid;
       grid-template-columns: repeat(8, 1fr);
-      height: 44px;
+      height: 40px;
 
       border: 1px solid $accent;
       background: rgba($accent, 0.08);
@@ -921,82 +913,98 @@ form.card.home {
 
 .nav {
   display: flex;
-  justify-content: center;  
-  margin-top: 12px;
-}
-
-.nav .btn-next {
-  width: 160px;          
-  height: 34px;          
-  border-radius: 12px;
-  font-size: 13px;
-  font-weight: 600;
-  border: 1px solid #f68229;
-  cursor: pointer;
-
-  display: inline-flex;
-  align-items: center;
   justify-content: center;
+  margin-top: 12px;
 
-  background: #f68229;
-  color: #ffffff;
-}
+  .btn-next {
+    width: 160px;
+    height: 34px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid $accent;
+    cursor: pointer;
 
-.nav .btn-next:hover {
-  filter: brightness(0.97);
-}
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
-.nav .btn-back {
-  display: none;
+    background: $accent;
+    color: #ffffff;
+
+    &:hover {
+      filter: brightness(0.97);
+    }
+  }
+
+  .btn-back {
+    display: none;
+  }
 }
 .card.home {
   padding-bottom: 90px; 
 }
 
 
-.finish-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.25);
-  display: grid;
-  place-items: center;
-  z-index: 1000;
-}
+.finish {
+  &-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.25);
+    display: grid;
+    place-items: center;
+    z-index: 1000;
+  }
 
-.finish-card {
-  width: min(420px, calc(100% - 32px));
-  background: #fff;
-  border-radius: 14px;
-  padding: 18px 16px;
-  text-align: center;
-}
+  &-card {
+    width: min(420px, calc(100% - 32px));
+    background: #fff;
+    border-radius: 14px;
+    padding: 18px 16px;
+    text-align: center;
+  }
 
-.finish-btn {
-  margin-top: 12px;
-  width: 100%;
-  height: 44px;
-  border-radius: 12px;
-  border: 1px solid #e6e8ef;
-  background: #fff;
-  font-weight: 600;
-  cursor: pointer;
+  &-btn {
+    margin-top: 12px;
+    width: 100%;
+    height: 44px;
+    border-radius: 12px;
+    border: 1px solid $border;
+    background: #fff;
+    font-weight: 600;
+    cursor: pointer;
+  }
 }
 
 mat-expansion-panel {
-  margin-bottom: 16px; 
+  margin-bottom: 16px;
 }
 
-.mat-expansion-panel-header.mat-expanded {
+.mat-expansion-panel-header {
+  &.mat-expanded {
     height: 50px !important;
     padding: 0;
-} 
-.mat-expansion-panel:not([class*=mat-elevation-z])
- {
+  }
+}
+
+.mat-expansion-panel {
+  &:not([class*="mat-elevation-z"]) {
     box-shadow: none !important;
+  }
 }
 
 ::ng-deep{
   .mat-expansion-panel-body {
     padding: 0 0 16px !important;
 }
+
+.mat-expansion-panel-animations-enabled .mat-expansion-panel-header{
+  border-radius: 10px;
+  padding: 0 10px;
+}
+}
+
+.mat-expansion-panel-header-title, .mat-expansion-panel-header-description{
+  margin: 12px 0 0 0;
+  
 }
