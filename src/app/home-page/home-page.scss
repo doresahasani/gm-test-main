@@ -1,6 +1,7 @@
 :host {
   display: block;
 }
+
 $accent: #f68229;
 $border: #e6e8ef;
 $muted: #959595;
@@ -74,7 +75,8 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     color: $muted;
     margin-bottom: 12px;
   }
-   .home__subtitle {
+
+  .home__subtitle {
     margin: 10px 0 8px 0;
     font-family: $font;
     font-size: 12px;
@@ -103,29 +105,29 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     gap: 12px;
   }
 
-.grid-2.dates {
-  align-items: flex-start;
-}
+  .grid-2.dates {
+    align-items: flex-start;
+  }
 
 
-.grid-2.dates .field {
-  align-self: start;
-  position: relative;
-  padding-bottom: 0;
-}
+  .grid-2.dates .field {
+    align-self: start;
+    position: relative;
+    padding-bottom: 0;
+  }
 
-.grid-2.dates .field.has-error {
-  padding-bottom: 14px;
-}
+  .grid-2.dates .field.has-error {
+    padding-bottom: 14px;
+  }
 
-.grid-2.dates .field > .error {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  margin: 0;
-  line-height: 14px;
-}
+  .grid-2.dates .field > .error {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    line-height: 14px;
+  }
 
   .field {
     display: grid;
@@ -160,7 +162,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     align-items: center;
     gap: 8px;
     position: relative;
-    margin:0;
+    margin: 0;
 
     @include control-surface;
 
@@ -578,63 +580,64 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
   }
 
   .upload {
-  height: 66px;
-  margin: 12px auto 0 auto;
+    height: 66px;
+    margin: 12px auto 0 auto;
 
-  border: 1px dashed #F2EBEB;
-  border-radius: 10px;
-  background: #FFFFFF;
+    border: 1px dashed #F2EBEB;
+    border-radius: 10px;
+    background: #FFFFFF;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &.upload--active {
-    border-color: $accent;
-    background: #fff7ed;
-  }
-
-  &--dragover {
-    background: #fff2e2;
-    border-color: $accent;
-  }
-  &.is-invalid {
-    border-color: #ef4444;
-    background: #fff5f5;
-  }
-
-  &__inner {
     display: flex;
     align-items: center;
-    gap: 10px;
-  }
+    justify-content: center;
 
-  &__icon {
-    width: 22px;
-    height: 22px;
-    color: #F2EBEB;
-    transition: 0.2s;
-  }
+    cursor: pointer;
+    transition: all 0.2s ease;
 
-  &__name {
-    font-family: $font;
-    font-size: 14px;
-    font-weight: 500;
-    color: #6B7280;
-    transition: 0.2s;
-  }
+    &.upload--active {
+      border-color: $accent;
+      background: #fff7ed;
+    }
 
-  &.upload--active &__name {
-    color: $accent;
-  }
+    &--dragover {
+      background: #fff2e2;
+      border-color: $accent;
+    }
 
-  &__input {
-    display: none !important;
+    &.is-invalid {
+      border-color: #ef4444;
+      background: #fff5f5;
+    }
+
+    &__inner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    &__icon {
+      width: 22px;
+      height: 22px;
+      color: #F2EBEB;
+      transition: 0.2s;
+    }
+
+    &__name {
+      font-family: $font;
+      font-size: 14px;
+      font-weight: 500;
+      color: #6B7280;
+      transition: 0.2s;
+    }
+
+    &.upload--active &__name {
+      color: $accent;
+    }
+
+    &__input {
+      display: none !important;
+    }
   }
-}
 
   .box--dental-note {
     min-height: 38px;
@@ -941,6 +944,7 @@ form.card.home {
     display: none;
   }
 }
+
 .card.home {
   padding-bottom: 90px;
 }
@@ -993,18 +997,18 @@ mat-expansion-panel {
   }
 }
 
-::ng-deep{
+::ng-deep {
   .mat-expansion-panel-body {
     padding: 0 0 16px !important;
+  }
+
+  .mat-expansion-panel-animations-enabled .mat-expansion-panel-header {
+    border-radius: 10px;
+    padding: 0 10px;
+  }
 }
 
-.mat-expansion-panel-animations-enabled .mat-expansion-panel-header{
-  border-radius: 10px;
-  padding: 0 10px;
-}
-}
-
-.mat-expansion-panel-header-title, .mat-expansion-panel-header-description{
+.mat-expansion-panel-header-title, .mat-expansion-panel-header-description {
   margin: 12px 0 0 0;
 
 }

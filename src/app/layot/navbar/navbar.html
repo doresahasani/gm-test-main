@@ -13,29 +13,29 @@
 
     <div class="menu">
       <button
-        class="menu__btn"
-        type="button"
         (click)="toggleMenu()"
         [attr.aria-expanded]="menuOpen()"
         aria-haspopup="menu"
         aria-label="Menü öffnen"
+        class="menu__btn"
+        type="button"
       >
         <img
-          src="/Icon-menu-alt-3.svg"
           alt=""
-          width="20"
           height="20"
+          src="/Icon-menu-alt-3.svg"
+          width="20"
         />
       </button>
 
-      <div class="dropdown" [class.open]="menuOpen()" role="menu">
-        <a role="menuitem" (click)="goTo(1)">Allgemein</a>
-        <a role="menuitem" (click)="goTo(2)">Medizinisch</a>
-        <a role="menuitem" (click)="goTo(3)">Dental</a>
+      <div [class.open]="menuOpen()" class="dropdown" role="menu">
+        <a (click)="goTo(1)" role="menuitem">Allgemein</a>
+        <a (click)="goTo(2)" role="menuitem">Medizinisch</a>
+        <a (click)="goTo(3)" role="menuitem">Dental</a>
 
         <div class="dropdown__divider"></div>
 
-        <a role="menuitem" (click)="goTo(4)">Überprüfung &amp; Absenden</a>
+        <a (click)="goTo(4)" role="menuitem">Überprüfung &amp; Absenden</a>
       </div>
     </div>
   </div>
