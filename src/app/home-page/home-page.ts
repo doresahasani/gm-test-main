@@ -1465,6 +1465,8 @@ export class HomeComponent {
     arr.push(g);
     this.markGroupPristineUntouched(g);
 
+    this.submitted.set(false);
+
     const i = arr.length - 1;
     requestAnimationFrame(() => {
       const key = kind === 'med' ? this.medActiveKey(i, 'desc') : this.illActiveKey(i, 'desc');

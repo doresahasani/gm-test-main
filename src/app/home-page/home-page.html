@@ -136,7 +136,7 @@
           </p>
 
           <div (click)="setActive(medActiveKey(i,'desc'))"
-            [class.is-active]="isMedActive(i,'desc') || hasText(illnessCtrl(illnessesMed, i,'desc'))"
+            [class.is-active]="hasText(illnessCtrl(illnessesMed, i,'desc'))"
             [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'desc'))" class="box box--textarea">
             <textarea (focus)="setActive(medActiveKey(i,'desc'))" (input)="autoResize($event)" formControlName="desc"
               placeholder="Hier eingeben..."></textarea>
@@ -375,7 +375,7 @@
           </p>
 
           <div (click)="setActive(illActiveKey(i,'desc'))"
-            [class.is-active]="isIllActive(i,'desc') || hasText(illnessCtrl(illnessesIll, i,'desc'))"
+            [class.is-active]="hasText(illnessCtrl(illnessesIll, i,'desc'))"
             [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'desc'))" class="box box--textarea">
             <textarea (focus)="setActive(illActiveKey(i,'desc'))" (input)="autoResize($event)" formControlName="desc"
               placeholder="Hier eingeben..."></textarea>
@@ -391,7 +391,7 @@
               <label class="label">Begindatum</label>
 
               <div class="box" (click)="setActive(illActiveKey(i,'start'))"
-                [class.is-active]="isIllActive(i,'start') || hasText(illnessCtrl(illnessesIll, i,'startDate'))"
+                [class.is-active]="hasText(illnessCtrl(illnessesIll, i,'startDate'))"
                 [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'startDate'))">
                 <input type="date" formControlName="startDate" (focus)="setActive(illActiveKey(i,'start'))" />
 
@@ -409,7 +409,7 @@
               <label class="label">Enddatum</label>
 
               <div class="box" (click)="setActive(illActiveKey(i,'end'))"
-                [class.is-active]="isIllActive(i,'end') || hasText(illnessCtrl(illnessesIll, i,'endDate'))"
+                [class.is-active]="hasText(illnessCtrl(illnessesIll, i,'endDate'))"
                 [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'endDate'))">
                 <input type="date" formControlName="endDate" (focus)="setActive(illActiveKey(i,'end'))" />
 
@@ -427,7 +427,7 @@
           <div class="field">
             <label class="label">Operiert?</label>
             <div (click)="setActive(illActiveKey(i,'operated'))"
-              [class.is-active]="isIllActive(i,'operated') || hasValue(illnessCtrl(illnessesIll, i,'operated'))"
+              [class.is-active]="hasValue(illnessCtrl(illnessesIll, i,'operated'))"
               [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'operated'))" class="seg">
               <button (click)="$event.stopPropagation(); setIllBool(i,'operated',false)"
                 [class.is-selected]="illnessCtrl(illnessesIll, i,'operated').value === false" class="seg__btn"
@@ -449,7 +449,7 @@
           <div class="field">
             <label class="label">Behandlung beendet, genesen ohne Folgen</label>
             <div (click)="setActive(illActiveKey(i,'treatmentDone'))"
-              [class.is-active]="isIllActive(i,'treatmentDone') || hasValue(illnessCtrl(illnessesIll, i,'treatmentDone'))"
+              [class.is-active]="hasValue(illnessCtrl(illnessesIll, i,'treatmentDone'))"
               [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'treatmentDone'))" class="seg">
               <button (click)="$event.stopPropagation(); setIllBool(i,'treatmentDone',false)"
                 [class.is-selected]="illnessCtrl(illnessesIll, i,'treatmentDone').value === false" class="seg__btn"
@@ -489,7 +489,7 @@
 
               <div class="field">
                 <div (click)="setActive(illActiveKey(i,'docLastName'))"
-                  [class.is-active]="isIllActive(i,'docLastName') || hasText(illnessCtrl(illnessesIll, i,'docLastName'))"
+                  [class.is-active]="hasText(illnessCtrl(illnessesIll, i,'docLastName'))"
                   [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docLastName'))"
                   class="box provider__box">
                   <input (focus)="setActive(illActiveKey(i,'docLastName'))" formControlName="docLastName"
@@ -504,7 +504,7 @@
             <div class="provider__grid provider__grid--street">
               <div class="field">
                 <div (click)="setActive(illActiveKey(i,'docStreet'))"
-                  [class.is-active]="isIllActive(i,'docStreet') || hasText(illnessCtrl(illnessesIll, i,'docStreet'))"
+                  [class.is-active]="hasText(illnessCtrl(illnessesIll, i,'docStreet'))"
                   [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docStreet'))"
                   class="box provider__box">
                   <input (focus)="setActive(illActiveKey(i,'docStreet'))" formControlName="docStreet"
@@ -517,7 +517,7 @@
 
               <div class="field">
                 <div (click)="setActive(illActiveKey(i,'docNr'))"
-                  [class.is-active]="isIllActive(i,'docNr') || hasText(illnessCtrl(illnessesIll, i,'docNr'))"
+                  [class.is-active]="hasText(illnessCtrl(illnessesIll, i,'docNr'))"
                   [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docNr'))" class="box provider__box">
                   <input (focus)="setActive(illActiveKey(i,'docNr'))" formControlName="docNr" placeholder="Nr."
                     type="text" />
@@ -531,7 +531,7 @@
             <div class="provider__grid provider__grid--zip">
               <div class="field">
                 <div (click)="setActive(illActiveKey(i,'docZipCity'))"
-                  [class.is-active]="isIllActive(i,'docZipCity') || hasText(illnessCtrl(illnessesIll, i,'docZipCity'))"
+                  [class.is-active]="hasText(illnessCtrl(illnessesIll, i,'docZipCity'))"
                   [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docZipCity'))"
                   class="box provider__box">
                   <input (focus)="setActive(illActiveKey(i,'docZipCity'))" formControlName="docZipCity"
@@ -674,8 +674,8 @@
                   <input type="date" formControlName="startDate" (focus)="setActive(opsBActiveKey(i,'start'))" />
 
                   <img alt="" aria-hidden="true" class="calendar-icon" [src]="hasText(illnessCtrl(opsBItems, i,'startDate'))
-                     ? './Icon.jpg'
-                     : './Icon.svg'" />
+                        ? './Icon.jpg'
+                        : './Icon.svg'" />
                 </div>
 
                 @if (isInvalidCtrl(illnessCtrl(opsBItems, i, 'startDate'))) {
@@ -692,8 +692,8 @@
                   <input type="date" formControlName="endDate" (focus)="setActive(opsBActiveKey(i,'end'))" />
 
                   <img alt="" aria-hidden="true" class="calendar-icon" [src]="hasText(illnessCtrl(opsBItems, i,'endDate'))
-                    ? './Icon.jpg'
-                    : './Icon.svg'" />
+                        ? './Icon.jpg'
+                        : './Icon.svg'" />
                 </div>
 
                 @if (isInvalidCtrl(illnessCtrl(opsBItems, i, 'endDate'))) {
@@ -876,12 +876,12 @@
         }
       </div>
       }
+
       <div class="nav">
         <button (click)="onNext()" class="btn-next" type="button">Next</button>
       </div>
     </mat-expansion-panel>
     }
-
     <!-- 5. Arzt -->
     @if (maxStepReached() >= 5) {
     <mat-expansion-panel (opened)="goToStep(5)" [expanded]="currentStep() === 5" hideToggle>
