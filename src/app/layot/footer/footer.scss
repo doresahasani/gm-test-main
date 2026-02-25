@@ -7,9 +7,9 @@
 
   &__btn {
     width: 100%;
-    max-width: 366px;  
-    height: 40px;      
-    border-radius: 8px; 
+    max-width: 366px;
+    height: 40px;
+    border-radius: 8px;
 
     font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     font-size: 14px;
@@ -19,11 +19,12 @@
     background: #F68229;
     color: #fff;
 
-    cursor: pointer;
+  cursor: pointer;
 
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
 
     &:disabled {
       opacity: 0.5;

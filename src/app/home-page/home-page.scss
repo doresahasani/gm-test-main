@@ -111,11 +111,11 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
 .grid-2.dates .field {
   align-self: start;
   position: relative;
-  padding-bottom: 0; 
+  padding-bottom: 0;
 }
 
 .grid-2.dates .field.has-error {
-  padding-bottom: 14px; 
+  padding-bottom: 14px;
 }
 
 .grid-2.dates .field > .error {
@@ -332,7 +332,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     }
   }
 
- 
+
   .btn-add {
     width: 100%;
     height: 44px;
@@ -508,8 +508,8 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
         height: 44px;
         cursor: pointer;
       }
-      
-      
+
+
     }
 
     .calendar-icon {
@@ -581,9 +581,9 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
   height: 66px;
   margin: 12px auto 0 auto;
 
-  border: 1px dashed #F2EBEB;  
+  border: 1px dashed #F2EBEB;
   border-radius: 10px;
-  background: #FFFFFF;         
+  background: #FFFFFF;
 
   display: flex;
   align-items: center;
@@ -623,7 +623,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     font-family: $font;
     font-size: 14px;
     font-weight: 500;
-    color: #6B7280; 
+    color: #6B7280;
     transition: 0.2s;
   }
 
@@ -738,7 +738,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     background: transparent;
     padding: 0;
     cursor: pointer;
-    
+
 
     &:not(:first-child) {
       border-left: 1px solid rgba($accent, 0.35);
@@ -771,7 +771,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     }
   }
 
-  
+
   .teethperm {
     margin-top: 14px;
 
@@ -942,7 +942,7 @@ form.card.home {
   }
 }
 .card.home {
-  padding-bottom: 90px; 
+  padding-bottom: 90px;
 }
 
 
@@ -1006,5 +1006,5 @@ mat-expansion-panel {
 
 .mat-expansion-panel-header-title, .mat-expansion-panel-header-description{
   margin: 12px 0 0 0;
-  
+
 }

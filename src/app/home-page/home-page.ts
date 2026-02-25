@@ -213,7 +213,7 @@ private getControlsForStep12(step: number): AbstractControl[] {
         this.form.controls.opsC,
         this.form.controls.opsD,
         this.form.controls.opsBItems
-      ]; 
+      ];
     case 5:
       return [
         this.form.controls.doctorFirstName,
@@ -225,87 +225,87 @@ private getControlsForStep12(step: number): AbstractControl[] {
     case 6:
       return [
         this.form.controls.reportFile,
-      ]; 
+      ];
     case 7:
       return [
         this.form.controls.teethCondition,
         this.form.controls.teethConditionNote,
-      ]; 
+      ];
     case 8:
       return [
         this.form.controls.hygiene,
-      ]; 
+      ];
     case 9:
       return [
         this.form.controls.occlusion,
-      ]; 
+      ];
     case 10:
       return [
         this.form.controls.crownsCondition,
         this.form.controls.crownsNote,
-      ]; 
+      ];
     case 11:
       return [
         this.form.controls.bridgesCondition,
         this.form.controls.bridgesNote,
-      ]; 
+      ];
     case 12:
       return [
         this.form.controls.partialDenturesCondition,
         this.form.controls.partialDenturesNote,
-      ]; 
+      ];
     case 13:
       return [
         this.form.controls.dentition,
         this.form.controls.dentitionNote,
-      ]; 
+      ];
     case 14:
       return [
         this.form.controls.jaw,
         this.form.controls.jawNote,
-      ]; 
+      ];
     case 15:
       return [
         this.form.controls.futureTeethDisease,
         this.form.controls.futureTeethDiseaseNote,
-      ];    
+      ];
     case 16:
       return [
         this.form.controls.missingTeethQ,
         this.form.controls.missingTeeth,
         this.form.controls.missingPermanent,
-      ]; 
+      ];
     case 17:
       return [
         this.form.controls.fillingsQ,
         this.form.controls.fillingsTeeth,
         this.form.controls.fillingsPermanent,
-      ]; 
+      ];
     case 18:
       return [
         this.form.controls.cariesQ,
         this.form.controls.cariesTeeth,
         this.form.controls.cariesPermanent,
-      ]; 
+      ];
     case 19:
       return [
         this.form.controls.rootCanalQ,
         this.form.controls.rootCanalTeeth,
         this.form.controls.rootCanalPermanent,
-      ]; 
+      ];
     case 20:
       return [
         this.form.controls.dentalTreatQ,
         this.form.controls.dentalTreatWhich
-      ];  
+      ];
     case 21:
       return [
         this.form.controls.lastRadiographyDate,
-      ];  
+      ];
     case 22:
       return [
         this.form.controls.remarks,
-      ];                       
+      ];
 
     default:
       return [];
@@ -355,7 +355,7 @@ private setActiveFirstInvalid12(step: number) {
   addAttemptMed = signal(false);
   addAttemptIll = signal(false);
   addAttemptOpsB = signal(false);
-  
+
 
   selectedReportName = signal<string>('');
   isReportDragOver = signal(false);
@@ -720,7 +720,7 @@ private setActiveFirstInvalid12(step: number) {
   requestAnimationFrame(() => {
   });
 }
- 
+
   //arrays
   medActiveKey(i: number, field: any): ActiveKey {
     return `med.${i}.${field}` as ActiveKey;
@@ -828,7 +828,7 @@ private setActiveFirstInvalid12(step: number) {
     note.updateValueAndValidity({ emitEvent: false });
   }
 
-  
+
   setHygiene(value: 'gut' | 'mangelhaft' | 'schlecht') {
   this.form.controls.hygiene.setValue(value);
   this.setActive('hygiene');
@@ -1600,7 +1600,7 @@ scrollToFirstError() {
         '.is-invalid input, ' +
         '.is-invalid textarea, ' +
         '.is-invalid button, ' +
-        '.upload.is-invalid'   
+        '.upload.is-invalid'
       );
 
     if (firstInvalid) {

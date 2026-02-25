@@ -18,3 +18,4 @@ export class App {
     this.footerActions.triggerNext();
   };
 }
+
