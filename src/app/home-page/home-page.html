@@ -1,7 +1,7 @@
 <form (submit)="$event.preventDefault()" [formGroup]="form" class="card home">
   <mat-accordion [multi]="false">
     <!-- 1. Grösse und Gewicht -->
-    <mat-expansion-panel (opened)="goToStep(1)" [expanded]="currentStep() === 1" hideToggle>
+    <mat-expansion-panel  (opened)="goToStep(1); scrollToStepBody(1)" [expanded]="currentStep() === 1" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -10,6 +10,7 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
 
+      <div [attr.data-step-body]="1"></div>
       <p class="p home__subtitle">
         Welches sind Ihre Körpermasse?
       </p>
@@ -51,20 +52,25 @@
         - Falls Sie schwanger sind, geben Sie bitte Ihr Gewicht zu Beginn der Schwangerschaft an.
       </p>
 
-      <div class="nav">
-        <button (click)="onNext()" class="btn-next" type="button">Next</button>
-      </div>
+      @if (!isStepCompleted(1)) {
+        <div class="nav">
+          <button (click)="onNext()" class="btn-next" type="button">Next</button>
+        </div>
+      }
     </mat-expansion-panel>
 
 
     <!-- 2. Medikamente oder Hilfsmittel -->
     @if (maxStepReached() >= 2) {
-    <mat-expansion-panel (opened)="goToStep(2)" [expanded]="currentStep() === 2" hideToggle>
+    <mat-expansion-panel  (opened)="goToStep(2); scrollToStepBody(2)" [expanded]="currentStep() === 2" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">2. Medikamente oder Hilfsmittel</h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
+
+      <div [attr.data-step-body]="2"></div>
+
       <div (click)="setActive('medication')"
         [class.is-active]="isActive('medication') || hasValue(form.controls.medication)"
         [class.is-invalid]="isInvalid('medication')" class="seg">
@@ -157,9 +163,14 @@
                 [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'startDate'))">
                 <input type="date" formControlName="startDate" (focus)="setActive(medActiveKey(i,'start'))" />
 
-                <img alt="" aria-hidden="true" class="calendar-icon" [src]="hasText(illnessCtrl(illnessesMed, i,'startDate'))
-                ? './data-orange-icon.svg'
-                : './data-grey-icon.svg'" />
+                <img
+                    alt=""
+                    aria-hidden="true"
+                    class="calendar-icon"
+                    [src]="hasText(illnessCtrl(illnessesMed, i, 'startDate'))
+                      ? 'assets/data.svg'
+                      : 'assets/data-grey-icon.svg'"
+                  />
               </div>
 
               @if (isInvalidCtrl(illnessCtrl(illnessesMed, i, 'startDate'))) {
@@ -175,9 +186,14 @@
                 [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'endDate'))">
                 <input type="date" formControlName="endDate" (focus)="setActive(medActiveKey(i,'end'))" />
 
-                <img alt="" aria-hidden="true" class="calendar-icon" [src]="hasText(illnessCtrl(illnessesMed, i,'endDate'))
-                ? './data-orange-icon.svg'
-                : './data-grey-icon.svg\''" />
+                <img
+                    alt=""
+                    aria-hidden="true"
+                    class="calendar-icon"
+                    [src]="hasText(illnessCtrl(illnessesMed, i, 'endDate'))
+                      ? 'assets/data.svg'
+                      : 'assets/data-grey-icon.svg'"
+                  />
               </div>
 
               @if (isInvalidCtrl(illnessCtrl(illnessesMed, i, 'endDate'))) {
@@ -315,22 +331,27 @@
       </button>
       }
 
-      <div class="nav">
-        <button (click)="onNext()" class="btn-next" type="button">Next</button>
-      </div>
+      @if (!isStepCompleted(2)) {
+        <div class="nav">
+          <button (click)="onNext()" class="btn-next" type="button">Next</button>
+        </div>
+      }
     </mat-expansion-panel>
     }
 
     <!-- 3. Krankheiten oder Beschwerden -->
     @if (maxStepReached() >= 3) {
-    <mat-expansion-panel (opened)="goToStep(3)" [expanded]="currentStep() === 3" hideToggle>
+    <mat-expansion-panel  (opened)="goToStep(3); scrollToStepBody(3)" [expanded]="currentStep() === 3" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
+
           <h2 class="h2">
             3. Krankheiten oder Beschwerden
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
+      <div [attr.data-step-body]="3"></div>
+
       <div (click)="setActive('illnessQ')" [class.is-active]="isActive('illnessQ') || hasValue(form.controls.illnessQ)"
         [class.is-invalid]="isInvalid('illnessQ')" class="seg">
         <button (click)="$event.stopPropagation(); setIllnessQ(false)"
@@ -395,9 +416,14 @@
                 [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'startDate'))">
                 <input type="date" formControlName="startDate" (focus)="setActive(illActiveKey(i,'start'))" />
 
-                <img alt="" aria-hidden="true" class="calendar-icon" [src]="hasText(illnessCtrl(illnessesIll, i,'startDate'))
-                 ? './data-orange-icon.svg'
-                : './data-grey-icon.svg'" />
+                     <img
+                      alt=""
+                      aria-hidden="true"
+                      class="calendar-icon"
+                      [src]="hasText(illnessCtrl(illnessesIll, i, 'startDate'))
+                        ? 'assets/data.svg'
+                        : 'assets/data-grey-icon.svg'"
+                    />
               </div>
 
               @if (isInvalidCtrl(illnessCtrl(illnessesIll, i, 'startDate'))) {
@@ -413,9 +439,14 @@
                 [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'endDate'))">
                 <input type="date" formControlName="endDate" (focus)="setActive(illActiveKey(i,'end'))" />
 
-                <img alt="" aria-hidden="true" class="calendar-icon" [src]="hasText(illnessCtrl(illnessesIll, i,'endDate'))
-                 ? './data-field-icon.svg'
-                 : './Icon.svg'" />
+                <img
+                      alt=""
+                      aria-hidden="true"
+                      class="calendar-icon"
+                      [src]="hasText(illnessCtrl(illnessesIll, i, 'endDate'))
+                        ? 'assets/data.svg'
+                        : 'assets/data-grey-icon.svg'"
+                    />
               </div>
 
               @if (isInvalidCtrl(illnessCtrl(illnessesIll, i, 'endDate'))) {
@@ -552,15 +583,17 @@
         + Krankheit erfassen
       </button>
       }
-      <div class="nav">
-        <button (click)="onNext()" class="btn-next" type="button">Next</button>
-      </div>
+      @if (!isStepCompleted(3)) {
+          <div class="nav">
+            <button (click)="onNext()" class="btn-next" type="button">Next</button>
+          </div>
+        }
     </mat-expansion-panel>
     }
 
     <!-- 4. Behandlungen -->
     @if (maxStepReached() >= 4) {
-    <mat-expansion-panel (opened)="goToStep(4)" [expanded]="currentStep() === 4" hideToggle>
+    <mat-expansion-panel  (opened)="goToStep(4); scrollToStepBody(4)" [expanded]="currentStep() === 4" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -568,6 +601,8 @@
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
+
+       <div [attr.data-step-body]="4"></div>
 
       <div (click)="setActive('opsQ')" [class.is-active]="isActive('opsQ') || hasValue(form.controls.opsQ)"
         [class.is-invalid]="isInvalid('opsQ')" class="seg">
@@ -673,9 +708,14 @@
                   [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'startDate'))">
                   <input type="date" formControlName="startDate" (focus)="setActive(opsBActiveKey(i,'start'))" />
 
-                  <img alt="" aria-hidden="true" class="calendar-icon" [src]="hasText(illnessCtrl(opsBItems, i,'startDate'))
-                        ? './data-field-icon.svg'
-                        : './Icon.svg'" />
+                 <img
+                    alt=""
+                    aria-hidden="true"
+                    class="calendar-icon"
+                    [src]="hasText(illnessCtrl(opsBItems, i, 'startDate'))
+                      ? 'assets/data.svg'
+                      : 'assets/data-grey-icon.svg'"
+                  />
                 </div>
 
                 @if (isInvalidCtrl(illnessCtrl(opsBItems, i, 'startDate'))) {
@@ -691,9 +731,14 @@
                   [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'endDate'))">
                   <input type="date" formControlName="endDate" (focus)="setActive(opsBActiveKey(i,'end'))" />
 
-                  <img alt="" aria-hidden="true" class="calendar-icon" [src]="hasText(illnessCtrl(opsBItems, i,'endDate'))
-                        ? './data-field-icon.svg'
-                        : './Icon.svg'" />
+                  <img
+                    alt=""
+                    aria-hidden="true"
+                    class="calendar-icon"
+                    [src]="hasText(illnessCtrl(opsBItems, i, 'endDate'))
+                       ? 'assets/data.svg'
+                      : 'assets/data-grey-icon.svg'"
+                  />
                 </div>
 
                 @if (isInvalidCtrl(illnessCtrl(opsBItems, i, 'endDate'))) {
@@ -877,14 +922,16 @@
       </div>
       }
 
-      <div class="nav">
-        <button (click)="onNext()" class="btn-next" type="button">Next</button>
-      </div>
+      @if (!isStepCompleted(4)) {
+          <div class="nav">
+            <button (click)="onNext()" class="btn-next" type="button">Next</button>
+          </div>
+        }
     </mat-expansion-panel>
     }
     <!-- 5. Arzt -->
     @if (maxStepReached() >= 5) {
-    <mat-expansion-panel (opened)="goToStep(5)" [expanded]="currentStep() === 5" hideToggle>
+    <mat-expansion-panel (opened)="goToStep(5); scrollToStepBody(5)"[expanded]="currentStep() === 5" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -892,6 +939,7 @@
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
+       <div [attr.data-step-body]="5"></div>
 
       <p class="p home__subtitle">Name und Adresse des Arztes, den Sie gewöhnlich aufsuchen:</p>
 
@@ -961,9 +1009,11 @@
         <p class="error">Bitte ausfullen!</p>
         }
       </div>
-      <div class="nav">
-        <button (click)="onNext()" class="btn-next" type="button">Next</button>
-      </div>
+      @if (!isStepCompleted(5)) {
+          <div class="nav">
+            <button (click)="onNext()" class="btn-next" type="button">Next</button>
+          </div>
+        }
     </mat-expansion-panel>
     }
 
@@ -986,11 +1036,11 @@
         [class.upload--dragover]="isReportDragOver()" [class.upload--inactive]="!selectedReportName()">
         <div class="upload__inner">
           <img alt="" class="upload__icon" [src]="selectedReportName()
-            ? './upload.svg'
-            : './upload-grey.svg'" />
+            ? 'assets/upload.svg'
+            : 'assets/upload-grey.svg'" />
 
           <div class="upload__name">
-            {{ selectedReportName() || 'Upload' }}
+            <p>{{ selectedReportName() || 'Upload' }}</p>
           </div>
         </div>
 
@@ -1004,9 +1054,11 @@
 
       <button class="pill-btn" type="button">Dental Fragen</button>
 
-      <div class="nav">
-        <button (click)="onNext()" class="btn-next" type="button">Next</button>
-      </div>
+      @if (!isStepCompleted(6)) {
+          <div class="nav">
+            <button (click)="onNext()" class="btn-next" type="button">Next</button>
+          </div>
+        }
     </mat-expansion-panel>
     }
 
@@ -1057,9 +1109,11 @@
       <p class="error">Bitte ausfüllen.</p>
       }
       }
-      <div class="nav">
-        <button (click)="onNext()" class="btn-next" type="button">Next</button>
-      </div>
+      @if (!isStepCompleted(7)) {
+          <div class="nav">
+            <button (click)="onNext()" class="btn-next" type="button">Next</button>
+          </div>
+        }
     </mat-expansion-panel>
     }
 
@@ -1093,9 +1147,11 @@
       <p class="error">Bitte wählen.</p>
       }
 
-      <div class="nav">
-        <button (click)="onNext()" class="btn-next" type="button">Next</button>
-      </div>
+      @if (!isStepCompleted(8)) {
+          <div class="nav">
+            <button (click)="onNext()" class="btn-next" type="button">Next</button>
+          </div>
+        }
     </mat-expansion-panel>
     }
 
@@ -1131,9 +1187,11 @@
       @if (isInvalid('occlusion')) {
       <p class="error">Bitte wählen Sie eine Option.</p>
       }
-      <div class="nav">
-        <button (click)="onNext()" class="btn-next" type="button">Next</button>
-      </div>
+      @if (!isStepCompleted(9)) {
+          <div class="nav">
+            <button (click)="onNext()" class="btn-next" type="button">Next</button>
+          </div>
+        }
     </mat-expansion-panel>
     }
 
@@ -1188,9 +1246,11 @@
       <p class="error">Bitte ausfüllen.</p>
       }
       }
-      <div class="nav">
-        <button (click)="onNext()" class="btn-next" type="button">Next</button>
-      </div>
+      @if (!isStepCompleted(10)) {
+          <div class="nav">
+            <button (click)="onNext()" class="btn-next" type="button">Next</button>
+          </div>
+        }
     </mat-expansion-panel>
     }
 
@@ -1245,9 +1305,11 @@
       <p class="error">Bitte ausfüllen.</p>
       }
       }
-      <div class="nav">
-        <button (click)="onNext()" class="btn-next" type="button">Next</button>
-      </div>
+      @if (!isStepCompleted(11)) {
+          <div class="nav">
+            <button (click)="onNext()" class="btn-next" type="button">Next</button>
+          </div>
+        }
     </mat-expansion-panel>
     }
 
@@ -1304,9 +1366,11 @@
       <p class="error">Bitte ausfüllen.</p>
       }
       }
-      <div class="nav">
-        <button (click)="onNext()" class="btn-next" type="button">Next</button>
-      </div>
+      @if (!isStepCompleted(12)) {
+          <div class="nav">
+            <button (click)="onNext()" class="btn-next" type="button">Next</button>
+          </div>
+        }
     </mat-expansion-panel>
     }
 
@@ -1352,9 +1416,11 @@
       <p class="error">Bitte ausfüllen.</p>
       }
       }
-      <div class="nav">
-        <button (click)="onNext()" class="btn-next" type="button">Next</button>
-      </div>
+      @if (!isStepCompleted(13)) {
+          <div class="nav">
+            <button (click)="onNext()" class="btn-next" type="button">Next</button>
+          </div>
+        }
     </mat-expansion-panel>
     }
 
@@ -1399,9 +1465,11 @@
       <p class="error">Bitte ausfüllen.</p>
       }
       }
-      <div class="nav">
-        <button (click)="onNext()" class="btn-next" type="button">Next</button>
-      </div>
+     @if (!isStepCompleted(14)) {
+          <div class="nav">
+            <button (click)="onNext()" class="btn-next" type="button">Next</button>
+          </div>
+        }
     </mat-expansion-panel>
     }
 
@@ -1447,9 +1515,11 @@
       <p class="error">Bitte ausfüllen.</p>
       }
       }
-      <div class="nav">
-        <button (click)="onNext()" class="btn-next" type="button">Next</button>
-      </div>
+      @if (!isStepCompleted(15)) {
+          <div class="nav">
+            <button (click)="onNext()" class="btn-next" type="button">Next</button>
+          </div>
+        }
     </mat-expansion-panel>
     }
 
@@ -1644,9 +1714,11 @@
 
       </div>
       }
-      <div class="nav">
-        <button (click)="onNext()" class="btn-next" type="button">Next</button>
-      </div>
+      @if (!isStepCompleted(16)) {
+          <div class="nav">
+            <button (click)="onNext()" class="btn-next" type="button">Next</button>
+          </div>
+        }
     </mat-expansion-panel>
     }
 
@@ -1843,9 +1915,11 @@
 
       </div>
       }
-      <div class="nav">
-        <button (click)="onNext()" class="btn-next" type="button">Next</button>
-      </div>
+      @if (!isStepCompleted(17)) {
+          <div class="nav">
+            <button (click)="onNext()" class="btn-next" type="button">Next</button>
+          </div>
+        }
     </mat-expansion-panel>
     }
 
@@ -2039,9 +2113,11 @@
         </div>
       </div>
       }
-      <div class="nav">
-        <button (click)="onNext()" class="btn-next" type="button">Next</button>
-      </div>
+      @if (!isStepCompleted(18)) {
+          <div class="nav">
+            <button (click)="onNext()" class="btn-next" type="button">Next</button>
+          </div>
+        }
     </mat-expansion-panel>
     }
 
@@ -2235,9 +2311,11 @@
         </div>
       </div>
       }
-      <div class="nav">
-        <button (click)="onNext()" class="btn-next" type="button">Next</button>
-      </div>
+     @if (!isStepCompleted(19)) {
+          <div class="nav">
+            <button (click)="onNext()" class="btn-next" type="button">Next</button>
+          </div>
+        }
     </mat-expansion-panel>
     }
 
@@ -2285,9 +2363,11 @@
       <p class="error">Bitte ausfüllen.</p>
       }
       }
-      <div class="nav">
-        <button (click)="onNext()" class="btn-next" type="button">Next</button>
-      </div>
+      @if (!isStepCompleted(20)) {
+          <div class="nav">
+            <button (click)="onNext()" class="btn-next" type="button">Next</button>
+          </div>
+        }
     </mat-expansion-panel>
     }
 
@@ -2311,17 +2391,19 @@
 
         <img alt="" aria-hidden="true" class="calendar-icon"
           (click)="$event.stopPropagation(); setActive('lastRadiographyDate'); openDatePicker(radioDate)" [src]="hasText(form.controls.lastRadiographyDate)
-          ? './data-orange-icon.svg'
-          : './data-grey-icon.svg'" />
+            ? 'assets/data.svg'
+            : 'assets/data-grey-icon.svg'"/>
       </div>
 
       @if (isInvalid('lastRadiographyDate')) {
       <p class="error">Bitte wählen Sie ein Datum.</p>
       }
 
-      <div class="nav">
-        <button (click)="onNext()" class="btn-next" type="button">Next</button>
-      </div>
+      @if (!isStepCompleted(21)) {
+          <div class="nav">
+            <button (click)="onNext()" class="btn-next" type="button">Next</button>
+          </div>
+        }
     </mat-expansion-panel>
     }
 
@@ -2352,13 +2434,13 @@
 
 
   @if (isFinished()) {
-  <div (click)="isFinished.set(false)" class="finish-overlay">
-    <div (click)="$event.stopPropagation()" class="finish-card">
-      <h2 class="h2">Danke! 🎉</h2>
-      <p class="p">Der Fragebogen wurde erfolgreich ausgefüllt.</p>
-      <button (click)="isFinished.set(false)" class="finish-btn" type="button">
-        OK
-      </button>
+ <div (click)="onDankeOk()" class="finish-overlay">
+  <div (click)="$event.stopPropagation()" class="finish-card">
+    <h2 class="h2">Danke! 🎉</h2>
+    <p class="p">Der Fragebogen wurde erfolgreich ausgefüllt.</p>
+    <button (click)="onDankeOk()" class="finish-btn" type="button">
+      OK
+    </button>
     </div>
   </div>
   }

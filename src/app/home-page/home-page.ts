@@ -121,6 +121,51 @@ export class HomeComponent {
   private footerActions = inject(FooterActionsService);
   private destroy$ = new Subject<void>();
   isFinished = signal(false);
+  private pendingScrollStep: number | null = null;
+  private finishReturnStep: number | null = null;
+
+
+ private findFirstInvalidStep(): number | null {
+  for (let s = 1; s <= this.TOTAL_STEPS; s++) {
+    const controls = this.getControlsForStep12(s);
+    controls.forEach((c) => c.updateValueAndValidity({ emitEvent: false }));
+    if (!this.isStepValid12(s)) return s;
+  }
+  return null;
+}
+private nextUncompletedStep(from: number): number | null {
+  const done = this.completedSteps();
+  for (let s = from; s <= this.TOTAL_STEPS; s++) {
+    if (!done.has(s)) return s;
+  }
+  return null;
+}
+
+private jumpToInvalidStep(step: number) {
+  this.pendingScrollStep = step;
+  this.setStep(step);
+
+  setTimeout(() => {
+    const controls = this.getControlsForStep12(step);
+    controls.forEach((c) => this.markEnabledAsTouched(c));
+    controls.forEach((c) => c.updateValueAndValidity({ emitEvent: false }));
+    this.form.updateValueAndValidity({ emitEvent: false });
+
+    this.setActiveFirstInvalid12(step);
+    this.scrollToFirstError();
+  }, 0);
+}
+completedSteps = signal<Set<number>>(new Set());
+
+isStepCompleted(step: number) {
+  return this.completedSteps().has(step);
+}
+
+private markStepCompleted(step: number) {
+  const s = new Set(this.completedSteps());
+  s.add(step);
+  this.completedSteps.set(s);
+} 
 
   ngOnInit() {
     this.footerActions.nextClick$
@@ -133,6 +178,12 @@ export class HomeComponent {
     this.destroy$.complete();
   }
 
+  onPanelOpened(step: number) {
+  if (this.pendingScrollStep !== step) return;
+
+  this.pendingScrollStep = null;
+  this.scrollToStepBody(step);
+}
 
   currentStep = signal<number>(1);
   maxStepReached = signal<number>(1);
@@ -150,44 +201,124 @@ export class HomeComponent {
 
   goToStep(step: number) {
     this.setStep(step);
+     if (!this.isStepValid12(step)) {
+    this.unmarkStepCompleted(step);
   }
+  }
+ private unmarkStepCompleted(step: number) {
+  const s = new Set(this.completedSteps());
+  s.delete(step);
+  this.completedSteps.set(s);
+}
 
   onBack() {
     const step = this.currentStep();
     if (step > 1) this.setStep(step - 1);
   }
 
-  onNext() {
-    this.submitted.set(true);
+onNext() {
+  this.submitted.set(true);
 
-    const step = this.currentStep();
-    const controls = this.getControlsForStep12(step);
+  const step = this.currentStep();
+  const controls = this.getControlsForStep12(step);
 
-    controls.forEach((c) => this.markEnabledAsTouched(c));
-    controls.forEach((c) => c.updateValueAndValidity({ emitEvent: false }));
-    this.form.updateValueAndValidity({ emitEvent: false });
+  controls.forEach((c) => this.markEnabledAsTouched(c));
+  controls.forEach((c) => c.updateValueAndValidity({ emitEvent: false }));
+  this.form.updateValueAndValidity({ emitEvent: false });
 
-    if (!this.isStepValid12(step)) {
-      this.setActiveFirstInvalid12(step);
-      this.scrollToFirstError();
-      return;
-    }
-
-    if (step === this.TOTAL_STEPS) {
-      const raw = this.form.getRawValue();
-      const payload = {
-        ...raw,
-        reportFile: raw.reportFile ? raw.reportFile.name : null,
-      };
-
-      console.log('FINAL FORM VALUE:', payload);
-      this.isFinished.set(true);
-      return;
-    }
-
-    this.setStep(step + 1);
+  if (!this.isStepValid12(step)) {
+    this.setActiveFirstInvalid12(step);
+    this.scrollToFirstError();
+    return;
   }
 
+  this.markStepCompleted(step);
+
+  if (this.finishReturnStep !== null && step !== this.finishReturnStep) {
+    const backTo = this.finishReturnStep;
+    this.pendingScrollStep = backTo;
+    this.setStep(backTo);
+
+    setTimeout(() => this.onNext(), 0);
+    return;
+  }
+
+  if (step === this.TOTAL_STEPS) {
+    const firstInvalid = this.findFirstInvalidStep();
+
+    if (firstInvalid !== null) {
+      this.finishReturnStep = step;
+      this.jumpToInvalidStep(firstInvalid);
+      return;
+    }
+
+    this.finishReturnStep = null;
+
+    const raw = this.form.getRawValue();
+    const payload = {
+      ...raw,
+      reportFile: raw.reportFile ? raw.reportFile.name : null,
+    };
+
+    console.log('FINAL FORM VALUE:', payload);
+    this.isFinished.set(true);
+    return;
+  }
+
+  const next = this.nextUncompletedStep(step + 1);
+
+  if (next === null) {
+    this.pendingScrollStep = this.TOTAL_STEPS;
+    this.setStep(this.TOTAL_STEPS);
+
+    setTimeout(() => this.onNext(), 0);
+    return;
+  }
+
+  this.pendingScrollStep = next;
+  this.setStep(next);
+}
+
+onDankeOk() {
+  this.isFinished.set(false);
+
+  this.form.reset(undefined, { emitEvent: false });
+
+  this.resetIllnessArrayToOne(this.illnessesMed);
+  this.resetIllnessArrayToOne(this.illnessesIll);
+  this.resetIllnessArrayToOne(this.opsBItems);
+
+  while (this.missingTeethArr.length) this.missingTeethArr.removeAt(0);
+  while (this.missingPermanentArr.length) this.missingPermanentArr.removeAt(0);
+
+  while (this.fillingsTeethArr.length) this.fillingsTeethArr.removeAt(0);
+  while (this.fillingsPermanentArr.length) this.fillingsPermanentArr.removeAt(0);
+
+  while (this.cariesTeethArr.length) this.cariesTeethArr.removeAt(0);
+  while (this.cariesPermanentArr.length) this.cariesPermanentArr.removeAt(0);
+
+  while (this.rootTeethArr.length) this.rootTeethArr.removeAt(0);
+  while (this.rootPermanentArr.length) this.rootPermanentArr.removeAt(0);
+  this.disableMedicationDetails();
+  this.disableIllnessDetails();
+  this.disableOpsDetails();
+  this.disableOpsBItems();
+
+  this.submitted.set(false);
+  this.activeKey.set(null);
+  this.addAttemptMed.set(false);
+  this.addAttemptIll.set(false);
+  this.addAttemptOpsB.set(false);
+  this.selectedReportName.set('');
+  this.isReportDragOver.set(false);
+  this.pendingScrollStep = null;
+  this.finishReturnStep = null;
+
+  this.currentStep.set(1);
+  this.maxStepReached.set(1);
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
   private getControlsForStep12(step: number): AbstractControl[] {
     switch (step) {
       case 1:
@@ -1582,44 +1713,78 @@ export class HomeComponent {
     );
   }
 
-  onWeiter() {
-    this.submitted.set(true);
+onWeiter() {
+  this.submitted.set(true);
 
-    this.markEnabledAsTouched(this.form);
-    this.form.updateValueAndValidity({ emitEvent: false });
-    const raw = this.form.getRawValue();
+  this.markEnabledAsTouched(this.form);
+  this.form.updateValueAndValidity({ emitEvent: false });
 
-    const payload = {
-      ...raw,
-      reportFile: raw.reportFile ? raw.reportFile.name : null,
-    };
+  const raw = this.form.getRawValue();
+  const payload = {
+    ...raw,
+    reportFile: raw.reportFile ? raw.reportFile.name : null,
+  };
+  console.log('default values', payload);
 
-    console.log('default values', payload);
-
-    if (this.form.invalid) {
-      this.scrollToFirstError();
-      return;
-    }
-
+  if (this.form.invalid) {
+    this.scrollToFirstError();
+    return;
   }
 
-  scrollToFirstError() {
-    setTimeout(() => {
-      const firstInvalid: HTMLElement | null =
-        document.querySelector(
-          '.is-invalid input, ' +
-          '.is-invalid textarea, ' +
-          '.is-invalid button, ' +
-          '.upload.is-invalid'
-        );
+  const step = this.currentStep();
 
-      if (firstInvalid) {
-        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        firstInvalid.focus?.();
-      }
+  if (step < this.TOTAL_STEPS) {
+    const next = step + 1;
+
+    this.pendingScrollStep = next;
+
+    this.goToStep(next);
+    return;
+  }
+
+  this.isFinished.set(true);
+}
+
+scrollToFirstError() {
+  setTimeout(() => {
+    const el = document.querySelector(
+      '.is-invalid input, ' +
+        '.is-invalid textarea, ' +
+        '.is-invalid button, ' +
+        '.upload.is-invalid input, ' +
+        '.upload.is-invalid button, ' +
+        '[aria-invalid="true"]'
+    ) as HTMLElement | null;
+
+    if (!el) return;
+
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    const focusTarget =
+      el.matches('input,textarea,button')
+        ? el
+        : (el.querySelector('input,textarea,button') as HTMLElement | null);
+
+    focusTarget?.focus();
+  }, 0);
+}
+
+scrollToStepBody(step: number) {
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const el = document.querySelector(
+        `[data-step-body="${step}"]`
+      ) as HTMLElement | null;
+
+      if (!el) return;
+
+      const headerOffset = 80;
+      const y = el.getBoundingClientRect().top + window.scrollY - headerOffset;
+
+      window.scrollTo({ top: y, behavior: 'smooth' });
     });
-  }
-
+  });
+}
 
   attemptMed() {
     return this.addAttemptMed();

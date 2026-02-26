@@ -1,5 +1,6 @@
 :host {
   display: block;
+ 
 }
 
 $accent: #f68229;
@@ -44,9 +45,9 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
   font-family: $font;
 
   &.card {
-    background-color: #fbfbfb;
-    border-radius: $radius-card;
-    padding: 18px 16px;
+    // background-color: #fbfbfb;
+    //border-radius: $radius-card;
+    padding: 18px 0;
   }
 
   &__section + &__section {
@@ -222,7 +223,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     }
 
     &--remarks {
-      border: 1px solid $accent;
+      //border: 1px solid $accent;
       background: transparent;
       border-radius: 12px;
       padding: 10px 12px;
@@ -252,6 +253,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     border: 1px solid $border;
     background: #ffffff;
     gap: 0;
+    margin-top: 12px;
 
     transition: border-color 0.08s ease, background 0.08s ease;
 
@@ -580,7 +582,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
   }
 
   .upload {
-    height: 66px;
+    min-height: 66px;
     margin: 12px auto 0 auto;
 
     border: 1px dashed #F2EBEB;
@@ -613,6 +615,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
       display: flex;
       align-items: center;
       gap: 10px;
+      padding: 12px;
     }
 
     &__icon {
@@ -628,6 +631,11 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
       font-weight: 500;
       color: #6B7280;
       transition: 0.2s;
+        p{
+          min-height: 100%;
+          overflow-wrap: anywhere;
+          margin: 0;
+        }
     }
 
     &.upload--active &__name {
@@ -911,7 +919,6 @@ form.card.home {
   height: auto !important;
   overflow: visible !important;
   padding-bottom: 96px;
-  border: 1px solid #f7f7f7;
 }
 
 
@@ -988,7 +995,7 @@ mat-expansion-panel {
 .mat-expansion-panel-header {
   &.mat-expanded {
     height: 50px !important;
-    padding: 0;
+    padding: 0 10px;
   }
 }
 
@@ -1001,6 +1008,7 @@ mat-expansion-panel {
 ::ng-deep {
   .mat-expansion-panel-body {
     padding: 0 0 16px !important;
+    background-color: white;
   }
 
   .mat-expansion-panel-animations-enabled .mat-expansion-panel-header {
