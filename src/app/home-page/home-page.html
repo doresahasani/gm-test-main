@@ -158,8 +158,8 @@
                 <input type="date" formControlName="startDate" (focus)="setActive(medActiveKey(i,'start'))" />
 
                 <img alt="" aria-hidden="true" class="calendar-icon" [src]="hasText(illnessCtrl(illnessesMed, i,'startDate'))
-                ? './Icon.jpg'
-                : './Icon.svg'" />
+                ? './data-orange-icon.svg'
+                : './data-grey-icon.svg'" />
               </div>
 
               @if (isInvalidCtrl(illnessCtrl(illnessesMed, i, 'startDate'))) {
@@ -176,8 +176,8 @@
                 <input type="date" formControlName="endDate" (focus)="setActive(medActiveKey(i,'end'))" />
 
                 <img alt="" aria-hidden="true" class="calendar-icon" [src]="hasText(illnessCtrl(illnessesMed, i,'endDate'))
-                ? './Icon.jpg'
-                : './Icon.svg'" />
+                ? './data-orange-icon.svg'
+                : './data-grey-icon.svg\''" />
               </div>
 
               @if (isInvalidCtrl(illnessCtrl(illnessesMed, i, 'endDate'))) {
@@ -396,8 +396,8 @@
                 <input type="date" formControlName="startDate" (focus)="setActive(illActiveKey(i,'start'))" />
 
                 <img alt="" aria-hidden="true" class="calendar-icon" [src]="hasText(illnessCtrl(illnessesIll, i,'startDate'))
-                 ? './Icon.jpg'
-                : './Icon.svg'" />
+                 ? './data-orange-icon.svg'
+                : './data-grey-icon.svg'" />
               </div>
 
               @if (isInvalidCtrl(illnessCtrl(illnessesIll, i, 'startDate'))) {
@@ -414,7 +414,7 @@
                 <input type="date" formControlName="endDate" (focus)="setActive(illActiveKey(i,'end'))" />
 
                 <img alt="" aria-hidden="true" class="calendar-icon" [src]="hasText(illnessCtrl(illnessesIll, i,'endDate'))
-                 ? './Icon.jpg'
+                 ? './data-field-icon.svg'
                  : './Icon.svg'" />
               </div>
 
@@ -674,7 +674,7 @@
                   <input type="date" formControlName="startDate" (focus)="setActive(opsBActiveKey(i,'start'))" />
 
                   <img alt="" aria-hidden="true" class="calendar-icon" [src]="hasText(illnessCtrl(opsBItems, i,'startDate'))
-                        ? './Icon.jpg'
+                        ? './data-field-icon.svg'
                         : './Icon.svg'" />
                 </div>
 
@@ -692,7 +692,7 @@
                   <input type="date" formControlName="endDate" (focus)="setActive(opsBActiveKey(i,'end'))" />
 
                   <img alt="" aria-hidden="true" class="calendar-icon" [src]="hasText(illnessCtrl(opsBItems, i,'endDate'))
-                        ? './Icon.jpg'
+                        ? './data-field-icon.svg'
                         : './Icon.svg'" />
                 </div>
 
@@ -986,8 +986,8 @@
         [class.upload--dragover]="isReportDragOver()" [class.upload--inactive]="!selectedReportName()">
         <div class="upload__inner">
           <img alt="" class="upload__icon" [src]="selectedReportName()
-            ? './dow.d.svg'
-            : './dow.png.svg'" />
+            ? './upload.svg'
+            : './upload-grey.svg'" />
 
           <div class="upload__name">
             {{ selectedReportName() || 'Upload' }}
@@ -2311,8 +2311,8 @@
 
         <img alt="" aria-hidden="true" class="calendar-icon"
           (click)="$event.stopPropagation(); setActive('lastRadiographyDate'); openDatePicker(radioDate)" [src]="hasText(form.controls.lastRadiographyDate)
-          ? './Icon.jpg'
-          : './Icon.svg'" />
+          ? './data-orange-icon.svg'
+          : './data-grey-icon.svg'" />
       </div>
 
       @if (isInvalid('lastRadiographyDate')) {
