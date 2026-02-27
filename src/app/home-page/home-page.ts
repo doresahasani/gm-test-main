@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { FooterActionsService } from '../layot/footer/footer-actions.service';
+import { LocationService } from '../_service/location.service';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import {
   AbstractControl,
   FormArray,
@@ -12,6 +14,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
+import { MatAutocomplete } from '@angular/material/autocomplete';
+import { MatInputModule } from '@angular/material/input';
+import { MatOptionModule } from '@angular/material/core';
 
 type IllnessForm = FormGroup<{
   desc: FormControl<string>;
@@ -113,7 +118,7 @@ type ActiveKey =
 @Component({
   selector: 'app-home-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatExpansionModule,],
+  imports: [CommonModule, ReactiveFormsModule, MatExpansionModule,MatInputModule, MatOptionModule, MatAutocompleteModule,],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
 })
@@ -123,7 +128,36 @@ export class HomeComponent {
   isFinished = signal(false);
   private pendingScrollStep: number | null = null;
   private finishReturnStep: number | null = null;
+  private locationService = inject(LocationService);
 
+  zipOptions: string[] = [];
+zipLoading = false;
+
+onZipCityInput(event: Event) {
+  const value = (event.target as HTMLInputElement).value?.trim();
+
+  if (!value || value.length < 2) {
+    this.zipOptions = [];
+    return;
+  }
+
+  this.zipLoading = true;
+
+  this.locationService.fetchDataByPlz(value).subscribe({
+    next: (data: any) => {
+      console.log('RAW API:', data);
+
+      this.zipOptions = this.locationService.extractAutocompleteData(data);
+
+      console.log('FORMATTED:', this.zipOptions);
+      this.zipLoading = false;
+    },
+    error: (err: any) => {
+      console.error('API ERROR:', err);
+      this.zipLoading = false;
+    }
+  });
+}
 
   private findFirstInvalidStep(): number | null {
     for (let s = 1; s <= this.TOTAL_STEPS; s++) {
@@ -270,7 +304,6 @@ export class HomeComponent {
 
       const payload = {
         ...raw,
-        // ✅ reportFile si ARRAY me metadata (jo string)
         reportFile: raw.reportFile
           ? [
             {
@@ -638,6 +671,11 @@ export class HomeComponent {
     this.form.controls.dentalTreatWhich.disable({ emitEvent: false });
     this.form.controls.dentalTreatWhich.clearValidators();
     this.form.controls.dentalTreatWhich.updateValueAndValidity({ emitEvent: false });
+
+    this.locationService.fetchDataByPlz('8000').subscribe({
+    next: (data: any) => console.log('RAW API DATA:', data),
+    error: (err: any) => console.error('API ERROR:', err),
+  });
   }
 
   openDatePicker(input: HTMLInputElement) {
