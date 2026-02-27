@@ -1,6 +1,6 @@
 :host {
   display: block;
- 
+
 }
 
 $accent: #f68229;
@@ -44,13 +44,54 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
 .home {
   font-family: $font;
 
+  .field:has(> .error) {
+    position: relative;
+    padding-bottom: 14px;
+  }
+
+  .field>.error {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    line-height: 14px;
+  }
+
+  .illness__card>.field:has(> .error) {
+    position: static;
+    padding-bottom: 0;
+  }
+
+  .illness__card>.field>.error {
+    position: static;
+  }
+
+  .illness__card .grid-2>.field:has(> .error),
+  .illness__card .grid-2.dates .field:has(> .error),
+  .illness__card .provider .field:has(> .error) {
+    position: relative;
+    padding-bottom: 14px;
+  }
+
+  .illness__card .grid-2>.field>.error,
+  .illness__card .grid-2.dates .field>.error,
+  .illness__card .provider .field>.error {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    line-height: 14px;
+  }
+
   &.card {
     // background-color: #fbfbfb;
     //border-radius: $radius-card;
     padding: 18px 0;
   }
 
-  &__section + &__section {
+  &__section+&__section {
     margin-top: 18px;
   }
 
@@ -121,7 +162,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     padding-bottom: 14px;
   }
 
-  .grid-2.dates .field > .error {
+  .grid-2.dates .field>.error {
     position: absolute;
     left: 0;
     right: 0;
@@ -153,6 +194,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
       margin: 6px 0 0 0;
       font-family: $font;
     }
+
   }
 
   .box {
@@ -304,7 +346,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
         transform: translateY(1px);
       }
 
-      + .seg__btn {
+      +.seg__btn {
         position: relative;
 
         &::before {
@@ -323,7 +365,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     }
 
     &:has(.seg__btn.is-selected) {
-      .seg__btn + .seg__btn::before {
+      .seg__btn+.seg__btn::before {
         opacity: 0;
       }
     }
@@ -366,7 +408,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
   }
 
   .pill-btn {
-    margin-top: 14px;
+    margin: 8px 0 20px 0;
     height: 34px;
     padding: 0 16px;
 
@@ -631,11 +673,12 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
       font-weight: 500;
       color: #6B7280;
       transition: 0.2s;
-        p{
-          min-height: 100%;
-          overflow-wrap: anywhere;
-          margin: 0;
-        }
+
+      p {
+        min-height: 100%;
+        overflow-wrap: anywhere;
+        margin: 0;
+      }
     }
 
     &.upload--active &__name {
@@ -738,7 +781,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     background: rgba($accent, 0.08);
     overflow: hidden;
 
-    + .teethbar {
+    +.teethbar {
       margin-top: 10px;
     }
   }
@@ -1017,7 +1060,8 @@ mat-expansion-panel {
   }
 }
 
-.mat-expansion-panel-header-title, .mat-expansion-panel-header-description {
+.mat-expansion-panel-header-title,
+.mat-expansion-panel-header-description {
   margin: 12px 0 0 0;
 
 }
