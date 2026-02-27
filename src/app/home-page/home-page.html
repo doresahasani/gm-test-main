@@ -302,9 +302,16 @@
                   [class.is-active]="isMedActive(i,'docZipCity') || hasText(illnessCtrl(illnessesMed, i,'docZipCity'))"
                   [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docZipCity'))"
                   class="box provider__box">
-                  <input (focus)="setActive(medActiveKey(i,'docZipCity'))" formControlName="docZipCity"
-                    placeholder="PLZ, Ort" type="text" />
+                  <input matInput (focus)="setActive(medActiveKey(i,'docZipCity'))" formControlName="docZipCity"
+                    placeholder="PLZ, Ort" type="text" [matAutocomplete]="autoLocMed" />
+
+                  <mat-autocomplete autoActiveFirstOption #autoLocMed="matAutocomplete">
+                    @for (opt of locationOptions$('illnessesMed', i) | async; track opt) {
+                    <mat-option [value]="opt">{{ opt }}</mat-option>
+                    }
+                  </mat-autocomplete>
                 </div>
+
                 @if (isInvalidCtrl(illnessCtrl(illnessesMed, i, 'docZipCity'))) {
                 <p class="error">Bitte ausfüllen.</p>
                 }
@@ -545,9 +552,16 @@
                   [class.is-active]="hasText(illnessCtrl(illnessesIll, i,'docZipCity'))"
                   [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docZipCity'))"
                   class="box provider__box">
-                  <input (focus)="setActive(illActiveKey(i,'docZipCity'))" formControlName="docZipCity"
-                    placeholder="PLZ, Ort" type="text" />
+                  <input matInput (focus)="setActive(illActiveKey(i,'docZipCity'))" formControlName="docZipCity"
+                    placeholder="PLZ, Ort" type="text" [matAutocomplete]="autoLocIll" />
+
+                  <mat-autocomplete autoActiveFirstOption #autoLocIll="matAutocomplete">
+                    @for (opt of locationOptions$('illnessesIll', i) | async; track opt) {
+                    <mat-option [value]="opt">{{ opt }}</mat-option>
+                    }
+                  </mat-autocomplete>
                 </div>
+
                 @if (isInvalidCtrl(illnessCtrl(illnessesIll, i, 'docZipCity'))) {
                 <p class="error">Bitte ausfüllen.</p>
                 }
@@ -826,9 +840,16 @@
                     [class.is-active]="isOpsBActive(i,'docZipCity') || hasText(illnessCtrl(opsBItems, i,'docZipCity'))"
                     [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'docZipCity'))"
                     class="box provider__box">
-                    <input (focus)="setActive(opsBActiveKey(i,'docZipCity'))" formControlName="docZipCity"
-                      placeholder="PLZ, Ort" type="text" />
+                    <input matInput (focus)="setActive(opsBActiveKey(i,'docZipCity'))" formControlName="docZipCity"
+                      placeholder="PLZ, Ort" type="text" [matAutocomplete]="autoLocOpsB" />
+
+                    <mat-autocomplete autoActiveFirstOption #autoLocOpsB="matAutocomplete">
+                      @for (opt of locationOptions$('opsBItems', i) | async; track opt) {
+                      <mat-option [value]="opt">{{ opt }}</mat-option>
+                      }
+                    </mat-autocomplete>
                   </div>
+
                   @if (isInvalidCtrl(illnessCtrl(opsBItems, i, 'docZipCity'))) {
                   <p class="error">Bitte ausfüllen.</p>
                   }
