@@ -69,17 +69,17 @@
   right: 0;
   top: calc(100% + 10px);
 
-  width: 240px;
+  width: 180px;
   background: #fff;
-  border: 1px solid var(--border);
   border-radius: 14px;
   padding: 8px;
 
   display: none;
   z-index: 50;
-
+  border: 1px solid #f3f3f3;
   &.open {
-    display: block;
+    display: flex;
+    flex-direction: column;
   }
 
 }

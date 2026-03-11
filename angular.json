@@ -65,6 +65,7 @@
             "production": {
               "buildTarget": "gm-test:build:production"
             },
+            
             "development": {
               "buildTarget": "gm-test:build:development"
             }
