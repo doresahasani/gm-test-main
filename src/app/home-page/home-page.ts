@@ -1,9 +1,12 @@
 import { CommonModule } from '@angular/common';
+import { MedicalFormService } from '../_service/medical-form.service';
 import { Component, inject, signal } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { FooterActionsService } from '../layot/footer/footer-actions.service';
 import { LocationService } from '../_service/location.service';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { PreviewFormService } from '../_service/preview-form.service';
+import { Router } from '@angular/router';
 import {
   AbstractControl,
   FormArray,
@@ -128,7 +131,10 @@ export class HomeComponent {
   private pendingScrollStep: number | null = null;
   private finishReturnStep: number | null = null;
   private locationService = inject(LocationService);
-
+ private medicalFormService = inject(MedicalFormService);
+ private previewFormService = inject(PreviewFormService);
+ private router = inject(Router);
+ 
   zipOptions: string[] = [];
 zipLoading = false;
 
@@ -157,7 +163,6 @@ onZipCityInput(event: Event) {
     }
   });
 }
-
   private findFirstInvalidStep(): number | null {
     for (let s = 1; s <= this.TOTAL_STEPS; s++) {
       const controls = this.getControlsForStep12(s);
@@ -185,6 +190,146 @@ onZipCityInput(event: Event) {
       { key: 'webkitRelativePath', value: (file as any).webkitRelativePath ?? '' },
     ];
   }
+  private fileToUploadArray(file: File | null) {
+  if (!file) return [];
+
+  return [
+    {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      lastModified: file.lastModified,
+      lastModifiedDate: new Date(file.lastModified).toString(),
+      webkitRelativePath: (file as any).webkitRelativePath ?? '',
+    },
+  ];
+}
+
+private buildHealthDeclarationPayload() {
+  const raw = this.form.getRawValue();
+
+  return {
+    healthDeclarationQuestions: {
+      step1: {
+        heightCm: raw.heightCm,
+        weightKg: raw.weightKg,
+      },
+
+      step2: {
+        medication: raw.medication,
+        medName: raw.medName,
+        medReason: raw.medReason,
+        illnessesMed: raw.illnessesMed,
+      },
+
+      step3: {
+        illnessQ: raw.illnessQ,
+        illnessesIll: raw.illnessesIll,
+      },
+
+      step4: {
+        opsQ: raw.opsQ,
+        opsA: raw.opsA,
+        opsB: raw.opsB,
+        opsC: raw.opsC,
+        opsD: raw.opsD,
+        opsBItems: raw.opsBItems,
+      },
+
+      step5: {
+        doctorFirstName: raw.doctorFirstName,
+        doctorLastName: raw.doctorLastName,
+        doctorStreet: raw.doctorStreet,
+        doctorNumber: raw.doctorNumber,
+        doctorCity: raw.doctorCity,
+      },
+
+      step6: {
+        reportFile: this.fileToUploadArray(raw.reportFile),
+      },
+
+      step7: {
+        teethCondition: raw.teethCondition,
+        teethConditionNote: raw.teethConditionNote,
+      },
+
+      step8: {
+        hygiene: raw.hygiene,
+      },
+
+      step9: {
+        occlusion: raw.occlusion,
+      },
+
+      step10: {
+        crownsCondition: raw.crownsCondition,
+        crownsNote: raw.crownsNote,
+      },
+
+      step11: {
+        bridgesCondition: raw.bridgesCondition,
+        bridgesNote: raw.bridgesNote,
+      },
+
+      step12: {
+        partialDenturesCondition: raw.partialDenturesCondition,
+        partialDenturesNote: raw.partialDenturesNote,
+      },
+
+      step13: {
+        dentition: raw.dentition,
+        dentitionNote: raw.dentitionNote,
+      },
+
+      step14: {
+        jaw: raw.jaw,
+        jawNote: raw.jawNote,
+      },
+
+      step15: {
+        futureTeethDisease: raw.futureTeethDisease,
+        futureTeethDiseaseNote: raw.futureTeethDiseaseNote,
+      },
+
+      step16: {
+        missingTeethQ: raw.missingTeethQ,
+        missingTeeth: raw.missingTeeth,
+        missingPermanent: raw.missingPermanent,
+      },
+
+      step17: {
+        fillingsQ: raw.fillingsQ,
+        fillingsTeeth: raw.fillingsTeeth,
+        fillingsPermanent: raw.fillingsPermanent,
+      },
+
+      step18: {
+        cariesQ: raw.cariesQ,
+        cariesTeeth: raw.cariesTeeth,
+        cariesPermanent: raw.cariesPermanent,
+      },
+
+      step19: {
+        rootCanalQ: raw.rootCanalQ,
+        rootCanalTeeth: raw.rootCanalTeeth,
+        rootCanalPermanent: raw.rootCanalPermanent,
+      },
+
+      step20: {
+        dentalTreatQ: raw.dentalTreatQ,
+        dentalTreatWhich: raw.dentalTreatWhich,
+      },
+
+      step21: {
+        lastRadiographyDate: raw.lastRadiographyDate,
+      },
+
+      step22: {
+        remarks: raw.remarks,
+      },
+    },
+  };
+}
 
   private jumpToInvalidStep(step: number) {
     this.pendingScrollStep = step;
@@ -261,85 +406,79 @@ onZipCityInput(event: Event) {
     if (step > 1) this.setStep(step - 1);
   }
 
-  onNext() {
-    this.submitted.set(true);
+ onNext() {
+  this.submitted.set(true);
 
-    const step = this.currentStep();
-    const controls = this.getControlsForStep12(step);
+  const step = this.currentStep();
+  const controls = this.getControlsForStep12(step);
 
-    controls.forEach((c) => this.markEnabledAsTouched(c));
-    controls.forEach((c) => c.updateValueAndValidity({ emitEvent: false }));
-    this.form.updateValueAndValidity({ emitEvent: false });
+  controls.forEach((c) => this.markEnabledAsTouched(c));
+  controls.forEach((c) => c.updateValueAndValidity({ emitEvent: false }));
+  this.form.updateValueAndValidity({ emitEvent: false });
 
-    if (!this.isStepValid12(step)) {
-      this.setActiveFirstInvalid12(step);
-      this.scrollToFirstError();
-      return;
-    }
-
-    this.markStepCompleted(step);
-
-    if (this.finishReturnStep !== null && step !== this.finishReturnStep) {
-      const backTo = this.finishReturnStep;
-      this.pendingScrollStep = backTo;
-      this.setStep(backTo);
-
-      setTimeout(() => this.onNext(), 0);
-      return;
-    }
-
-    if (step === this.TOTAL_STEPS) {
-      const firstInvalid = this.findFirstInvalidStep();
-
-      if (firstInvalid !== null) {
-        this.finishReturnStep = step;
-        this.jumpToInvalidStep(firstInvalid);
-        return;
-      }
-
-      this.finishReturnStep = null;
-
-      const raw = this.form.getRawValue();
-
-      const payload = {
-        ...raw,
-        reportFile: raw.reportFile
-          ? [
-            {
-              name: raw.reportFile.name,
-              size: raw.reportFile.size,
-              type: raw.reportFile.type,
-              lastModified: raw.reportFile.lastModified,
-              lastModifiedDate: new Date(raw.reportFile.lastModified).toString(),
-              webkitRelativePath: (raw.reportFile as any).webkitRelativePath ?? '',
-            },
-          ]
-          : [],
-      };
-
-      console.log('FINAL FORM VALUE (snapshot):', structuredClone(payload));
-
-
-      this.isFinished.set(true);
-      return;
-    }
-
-    const next = this.nextUncompletedStep(step + 1);
-
-    if (next === null) {
-      this.pendingScrollStep = this.TOTAL_STEPS;
-      this.setStep(this.TOTAL_STEPS);
-
-      setTimeout(() => this.onNext(), 0);
-      return;
-    }
-
-    this.pendingScrollStep = next;
-    this.setStep(next);
-
-    setTimeout(() => this.scrollToStepBody(next), 0);
+  if (!this.isStepValid12(step)) {
+    this.setActiveFirstInvalid12(step);
+    this.scrollToFirstError();
+    return;
   }
 
+  this.markStepCompleted(step);
+
+  if (this.finishReturnStep !== null && step !== this.finishReturnStep) {
+    const backTo = this.finishReturnStep;
+    this.pendingScrollStep = backTo;
+    this.setStep(backTo);
+
+    setTimeout(() => this.onNext(), 0);
+    return;
+  }
+
+  if (step === this.TOTAL_STEPS) {
+    const firstInvalid = this.findFirstInvalidStep();
+
+    if (firstInvalid !== null) {
+      this.finishReturnStep = step;
+      this.jumpToInvalidStep(firstInvalid);
+      return;
+    }
+
+    this.finishReturnStep = null;
+
+    const finalData = this.form.getRawValue();
+  this.previewFormService.setFinalPreviewData(finalData);
+
+    const payload = this.buildHealthDeclarationPayload();
+      console.log('FINAL JSON PAYLOAD:', structuredClone(payload));
+
+      this.medicalFormService.addMedicalForm(payload).subscribe({
+        next: (response) => {
+          console.log('Saved successfully:', response);
+          this.isFinished.set(true);
+        },
+        error: (error) => {
+          console.error('Save failed:', error);
+        }
+      });
+
+      return;
+  }
+
+  const next = this.nextUncompletedStep(step + 1);
+
+  if (next === null) {
+    this.pendingScrollStep = this.TOTAL_STEPS;
+    this.setStep(this.TOTAL_STEPS);
+
+    setTimeout(() => this.onNext(), 0);
+    return;
+  }
+
+  this.pendingScrollStep = next;
+  this.setStep(next);
+
+  setTimeout(() => this.scrollToStepBody(next), 0);
+}
+     
   onDankeOk() {
     this.isFinished.set(false);
 
@@ -652,7 +791,7 @@ onZipCityInput(event: Event) {
     }),
   });
 
-  constructor() {
+ constructor() {
     this.disableMedicationDetails();
     this.disableIllnessDetails();
     this.disableOpsDetails();
@@ -672,9 +811,15 @@ onZipCityInput(event: Event) {
     this.form.controls.dentalTreatWhich.updateValueAndValidity({ emitEvent: false });
 
     this.locationService.fetchDataByPlz('8000').subscribe({
-    next: (data: any) => console.log('RAW API DATA:', data),
-    error: (err: any) => console.error('API ERROR:', err),
-  });
+      next: (data: any) => console.log('RAW API DATA:', data),
+      error: (err: any) => console.error('API ERROR:', err),
+    });
+
+    this.previewFormService.setPreviewData(this.form.getRawValue());
+
+    this.form.valueChanges.subscribe(() => {
+      this.previewFormService.setPreviewData(this.form.getRawValue());
+    });
   }
 
   openDatePicker(input: HTMLInputElement) {
@@ -1787,51 +1932,26 @@ onZipCityInput(event: Event) {
     );
   }
 
-  onWeiter() {
-    this.submitted.set(true);
+    onWeiter() {
+      this.submitted.set(true);
 
-    this.markEnabledAsTouched(this.form);
-    this.form.updateValueAndValidity({ emitEvent: false });
+      this.markEnabledAsTouched(this.form);
+      this.form.updateValueAndValidity({ emitEvent: false });
 
-    const raw = this.form.getRawValue();
-    console.log('reportFile array:', this.fileToArray(raw.reportFile));
-    console.table(this.fileToArray(raw.reportFile));
-    const payload = {
-      ...raw,
-      reportFile: raw.reportFile
-        ? [
-          {
-            name: raw.reportFile.name,
-            size: raw.reportFile.size,
-            type: raw.reportFile.type,
-            lastModified: raw.reportFile.lastModified,
-            lastModifiedDate: new Date(raw.reportFile.lastModified).toString(),
-            webkitRelativePath: (raw.reportFile as any).webkitRelativePath ?? '',
-          },
-        ]
-        : [],
-    };
-    console.log('default values snapshot:', structuredClone(payload));
-    console.log('default values snapshot:', JSON.parse(JSON.stringify(payload)));
+      if (this.form.invalid) {
+        this.scrollToFirstError();
+        return;
+      }
 
-    if (this.form.invalid) {
-      this.scrollToFirstError();
-      return;
+      const payload = this.buildHealthDeclarationPayload();
+      console.log('FINAL JSON PAYLOAD:', structuredClone(payload));
+
+      this.isFinished.set(true);
     }
-
-    const step = this.currentStep();
-
-    if (step < this.TOTAL_STEPS) {
-      const next = step + 1;
-
-      this.pendingScrollStep = next;
-
-      this.goToStep(next);
-      return;
+    onWeiterClick() {
+      this.previewFormService.setPreviewData(this.form.getRawValue());
+      this.router.navigate(['/preview']);
     }
-
-    this.isFinished.set(true);
-  }
 
   scrollToFirstError() {
     setTimeout(() => {

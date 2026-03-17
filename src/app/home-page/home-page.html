@@ -1146,8 +1146,6 @@
       <p class="error">Bitte lade eine PDF-Datei hoch.</p>
       }
 
-      <button class="pill-btn" type="button">Dental Fragen</button>
-
       @if (!isStepCompleted(6)) {
           <div class="nav">
             <button (click)="onNext()" class="btn-next" type="button">Next</button>
@@ -1156,6 +1154,11 @@
     </mat-expansion-panel>
     }
 
+    <!-- DENTAL FRAGEN -->
+      @if (isStepCompleted(6) && maxStepReached() >= 7) {
+       <button class="pill-btn" type="button">Dental Fragen</button>
+      }
+     
     <!-- 7. Zustand des Zahnbetts -->
     @if (maxStepReached() >= 7) {
     <mat-expansion-panel (opened)="goToStep(7)" [expanded]="currentStep() === 7" hideToggle>
