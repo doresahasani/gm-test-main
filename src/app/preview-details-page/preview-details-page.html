@@ -1,0 +1,94 @@
+<div class="preview-wrapper">
+  <div class="preview-form-card">
+    <div class="preview-header">
+      <div>
+        <div class="preview-badge">Record Details</div>
+        <h1>Health Form #{{ form?.id }}</h1>
+        <p>Complete form view for the selected record only.</p>
+      </div>
+
+      <button type="button" class="back-btn" (click)="goBack()">
+        ← Back
+      </button>
+    </div>
+
+    <div *ngIf="error" class="error-box">
+      {{ error }}
+    </div>
+
+    <ng-container *ngIf="!error && form">
+      <div class="details-meta" *ngIf="hasDisplayValue(form?.createdAt) || hasDisplayValue(form?.updatedAt)">
+        <div class="meta-item" *ngIf="hasDisplayValue(form?.createdAt)">
+          <span>Created</span>
+          <strong>{{ formatDateTime(form?.createdAt) }}</strong>
+        </div>
+
+        <div class="meta-item" *ngIf="hasDisplayValue(form?.updatedAt)">
+          <span>Updated</span>
+          <strong>{{ formatDateTime(form?.updatedAt) }}</strong>
+        </div>
+      </div>
+
+      <div *ngIf="buildPreviewSections().length > 0" class="section-list">
+        <div
+          class="section-card"
+          *ngFor="let section of buildPreviewSections(); trackBy: trackBySection"
+        >
+          <h3>{{ section.title }}</h3>
+
+          <div class="fields-grid">
+            <div
+              class="field-box"
+              *ngFor="let item of section.items; trackBy: trackByItem"
+            >
+              <span class="field-label">{{ item.label }}</span>
+
+              <div *ngIf="isSimpleValue(item.value)" class="field-value">
+                {{ formatValue(item.value) }}
+              </div>
+
+              <div *ngIf="isArrayValue(item.value)" class="array-clean-list">
+                <div
+                  class="array-clean-item"
+                  *ngFor="let arrayItem of getArrayItems(item.value); let i = index; trackBy: trackByArrayItem"
+                >
+                  <div class="array-clean-header">Item {{ i + 1 }}</div>
+
+                  <ng-container *ngIf="isSimpleValue(arrayItem)">
+                    <div class="array-clean-text">
+                      {{ formatValue(arrayItem) }}
+                    </div>
+                  </ng-container>
+
+                  <ng-container *ngIf="isObjectValue(arrayItem)">
+                    <div class="array-clean-grid">
+                      <div
+                        class="array-clean-field"
+                        *ngFor="let entry of getObjectEntries(arrayItem); trackBy: trackByObjectEntry"
+                      >
+                        <span class="array-clean-label">{{ formatKey(entry.key) }}</span>
+                        <div class="array-clean-value">{{ formatValue(entry.value) }}</div>
+                      </div>
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+
+              <div *ngIf="isObjectValue(item.value)" class="object-clean-card">
+                <div class="array-clean-grid">
+                  <div
+                    class="array-clean-field"
+                    *ngFor="let entry of getObjectEntries(item.value); trackBy: trackByObjectEntry"
+                  >
+                    <span class="array-clean-label">{{ formatKey(entry.key) }}</span>
+                    <div class="array-clean-value">{{ formatValue(entry.value) }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>

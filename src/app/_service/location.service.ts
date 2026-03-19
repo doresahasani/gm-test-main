@@ -1,6 +1,6 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {Observable} from "rxjs";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -8,8 +8,7 @@ import {Observable} from "rxjs";
 export class LocationService {
   private apiUrl = 'https://api.hoi-versicherung.ch/api/Location/filterLocation';
 
-  constructor(private http: HttpClient) {
-  }
+  constructor(private http: HttpClient) {}
 
   fetchDataByPlz(searchTerm: string): Observable<any> {
     const url = `${this.apiUrl}?searchTerm=${searchTerm}`;
@@ -17,9 +16,10 @@ export class LocationService {
   }
 
   extractAutocompleteData(data: any): string[] {
-    return data
-      .map((place: any) => {
-        return `${place.ZipCode} ${place.City} [${place.Community}]`;
-      });
+    if (!Array.isArray(data)) return [];
+
+    return data.map((place: any) =>
+      `${place.ZipCode} ${place.City} [${place.Community}]`
+    );
   }
 }

@@ -1,112 +1,86 @@
-<div class="preview-shell">
-  <div class="preview-box">
-    <div class="preview-head">
-      <div class="col id-col">#</div>
-      <div class="col provider-col">Versicherungs-anbieter</div>
-      <div class="col price-col">Gesamtpreis</div>
-      <div class="col date-col">Zuletzt geändert</div>
-      <div class="col action-col">✎</div>
+<div class="preview-wrapper">
+  <div class="preview-form-card">
+    <div class="preview-header">
+      <div>
+        <div class="preview-badge">Gesundheitsdeklaration</div>
+        <h1>Health Records</h1>
+        <p>Select one record to open its full form in a separate page.</p>
+      </div>
+
+      <button type="button" class="back-btn" (click)="goBack()">
+        ← Back
+      </button>
     </div>
 
-    @if (loading) {
-      <div class="state-box">Lade Daten...</div>
-    }
+    <div *ngIf="error" class="error-box">
+      {{ error }}
+    </div>
 
-    @if (error) {
-      <div class="state-box error-text">{{ error }}</div>
-    }
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChange()"
+        placeholder="Search by ID, provider or date"
+      />
+    </div>
 
-    @if (!loading && forms.length === 0) {
-      <div class="state-box">Keine gespeicherten Formulare vorhanden.</div>
-    }
+    <div *ngIf="filteredForms.length === 0" class="state-box">
+      No records found.
+    </div>
 
-    @for (form of forms; track form.id) {
-      <div class="preview-row">
-        @if (editingId !== form.id) {
-          <>
-            <div class="cell id-col">{{ form.id }}</div>
-            <div class="cell provider-col">{{ getProvider(form) }}</div>
-            <div class="cell price-col">{{ getPrice(form) }}</div>
-            <div class="cell date-col">{{ getChangedDate(form) }}</div>
+    <div *ngIf="filteredForms.length > 0" class="records-list">
+      <div class="records-head">
+        <div>ID</div>
+        <div>Provider</div>
+        <div>Date</div>
+        <div></div>
+      </div>
 
-            <div class="cell action-col action-cell">
-              <button
-                class="menu-btn"
-                type="button"
-                (click)="toggleMenu(form.id, $event)">
-                ⋮
+      <div
+        class="record-item"
+        *ngFor="let form of filteredForms; trackBy: trackByForm"
+      >
+        <div class="record-summary">
+          <div class="record-id">#{{ form.id }}</div>
+          <div class="record-provider">{{ getProvider(form) }}</div>
+          <div class="record-date">{{ formatDateOnly(form.createdAt) }}</div>
+
+          <div class="menu-wrap" (click)="onMenuClick($event)">
+            <button
+              type="button"
+              class="menu-btn"
+              (click)="toggleMenu($event, form.id)"
+              title="Open menu"
+            >
+              ⋮
+            </button>
+
+            <div *ngIf="openMenuId === form.id" class="action-menu">
+              <button type="button" class="action-item" (click)="viewRecord(form, $event)">
+                <span class="action-icon">👁</span>
+                <span>View</span>
               </button>
 
-              @if (openMenuId === form.id) {
-                <div class="menu-dropdown" (click)="$event.stopPropagation()">
-                  <button type="button" (click)="startEdit(form)">Edit</button>
-                  <button type="button" (click)="deleteForm(form.id)">Delete</button>
-                </div>
-              }
-            </div>
-          />
-        } @else {
-          <div class="edit-card">
-            <div class="edit-title">Formular ID {{ editableForm.id }}</div>
+              <button type="button" class="action-item" (click)="editRecord(form, $event)">
+                <span class="action-icon">✎</span>
+                <span>Edit</span>
+              </button>
 
-            <div class="edit-grid">
-              <div class="edit-field">
-                <label>Grösse</label>
-                <input
-                  type="number"
-                  [(ngModel)]="editableForm.healthDeclarationQuestions.step1.heightCm" />
-              </div>
-
-              <div class="edit-field">
-                <label>Gewicht</label>
-                <input
-                  type="number"
-                  [(ngModel)]="editableForm.healthDeclarationQuestions.step1.weightKg" />
-              </div>
-
-              <div class="edit-field">
-                <label>Medikament</label>
-                <input
-                  type="text"
-                  [(ngModel)]="editableForm.healthDeclarationQuestions.step2.medName" />
-              </div>
-
-              <div class="edit-field">
-                <label>Grund</label>
-                <input
-                  type="text"
-                  [(ngModel)]="editableForm.healthDeclarationQuestions.step2.medReason" />
-              </div>
-
-              <div class="edit-field">
-                <label>Arzt Vorname</label>
-                <input
-                  type="text"
-                  [(ngModel)]="editableForm.healthDeclarationQuestions.step5.doctorFirstName" />
-              </div>
-
-              <div class="edit-field">
-                <label>Arzt Nachname</label>
-                <input
-                  type="text"
-                  [(ngModel)]="editableForm.healthDeclarationQuestions.step5.doctorLastName" />
-              </div>
-
-              <div class="edit-field full">
-                <label>Bemerkungen</label>
-                <textarea
-                  rows="4"
-                  [(ngModel)]="editableForm.healthDeclarationQuestions.step22.remarks"></textarea>
-              </div>
-            </div>
-
-            <div class="edit-actions">
-              <button class="btn-cancel" type="button" (click)="cancelEdit()">Cancel</button>
-              <button class="btn-save" type="button" (click)="saveEdit()">Save</button>
+              <button
+                type="button"
+                class="action-item action-item--danger"
+                (click)="deleteRecord(form, $event)"
+                [disabled]="deletingId === form.id"
+              >
+                <span class="action-icon">🗑</span>
+                <span>{{ deletingId === form.id ? 'Deleting...' : 'Delete' }}</span>
+              </button>
             </div>
           </div>
-        }
+        </div>
       </div>
-    }
+    </div>
   </div>
 </div>

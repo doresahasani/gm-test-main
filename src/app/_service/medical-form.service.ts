@@ -25,6 +25,7 @@ export class MedicalFormService {
   updateMedicalForm(id: number, data: any): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/${id}`, data);
   }
+
   deleteMedicalForm(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }

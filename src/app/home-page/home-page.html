@@ -1,7 +1,8 @@
 <form (submit)="$event.preventDefault()" [formGroup]="form" class="card home">
   <mat-accordion [multi]="false">
     <!-- 1. Grösse und Gewicht -->
-    <mat-expansion-panel  (opened)="goToStep(1); scrollToStepBody(1)" [expanded]="currentStep() === 1" hideToggle>
+    <mat-expansion-panel  
+      (opened)="goToStep(1); scrollToStepBody(1)" [expanded]="currentStep() === 1" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -199,6 +200,12 @@
               @if (isInvalidCtrl(illnessCtrl(illnessesMed, i, 'endDate'))) {
               <p class="error">Bitte Datum wählen.</p>
               }
+               @if (
+                    illnessesMed.at(i).errors?.['endBeforeStart'] &&
+                    (illnessesMed.at(i).touched || submitted())
+                  ) {
+                    <p class="error">Enddatum darf nicht vor dem Startdatum liegen.</p>
+                  }
             </div>
           </div>
 
@@ -475,6 +482,12 @@
 
               @if (isInvalidCtrl(illnessCtrl(illnessesIll, i, 'endDate'))) {
               <p class="error">Bitte Datum wählen.</p>
+              }
+              @if (
+                illnessesIll.at(i).errors?.['endBeforeStart'] &&
+                (illnessesIll.at(i).touched || submitted())
+              ) {
+                <p class="error">Enddatum darf nicht vor dem Startdatum liegen.</p>
               }
             </div>
           </div>
@@ -792,6 +805,12 @@
                 @if (isInvalidCtrl(illnessCtrl(opsBItems, i, 'endDate'))) {
                 <p class="error">Bitte Datum wählen.</p>
                 }
+                @if (
+                    opsBItems.at(i).errors?.['endBeforeStart'] &&
+                    (opsBItems.at(i).touched || submitted())
+                  ) {
+                    <p class="error">Enddatum darf nicht vor dem Startdatum liegen.</p>
+                  }
               </div>
             </div>
 
@@ -1002,7 +1021,7 @@
     }
     <!-- 5. Arzt -->
     @if (maxStepReached() >= 5) {
-    <mat-expansion-panel (opened)="goToStep(5); scrollToStepBody(5)"[expanded]="currentStep() === 5" hideToggle>
+    <mat-expansion-panel (opened)="goToStep(5); scrollToStepBody(5)" [expanded]="currentStep() === 5" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1070,50 +1089,51 @@
       </div>
 
       <div class="field">
-            <div
-              (click)="setActive('doctorCity')"
-              [class.is-active]="isActive('doctorCity') || hasText(form.controls.doctorCity)"
-              [class.is-invalid]="isInvalid('doctorCity')"
-              class="box"
-            >
-              <input
-                (focus)="setActive('doctorCity')"
-                (input)="onZipCityInput($event)"
-                formControlName="doctorCity"
-                placeholder="PLZ, Ort"
-                type="text"
-                autocomplete="off"
-              />
-            </div>
+        <div
+          class="box"
+          (click)="setActive('doctorCity')"
+          [class.is-active]="isActive('doctorCity') || hasText(form.controls.doctorCity)"
+          [class.is-invalid]="isInvalid('doctorCity')"
+        >
+          <input
+            matInput
+            type="text"
+            formControlName="doctorCity"
+            placeholder="PLZ, Ort"
+            autocomplete="off"
+            [matAutocomplete]="autoDoctorCity"
+            (focus)="setActive('doctorCity')"
+            (input)="onZipCityInput($event)"
+          />
+        </div>
 
-            @if (zipOptions.length > 0) {
-              <div class="zip-dd__panel" (mousedown)="$event.preventDefault()">
-                @for (opt of zipOptions; track opt) {
-                  <div
-                    class="zip-dd__row"
-                    (click)="form.controls.doctorCity.setValue(opt); zipOptions = []"
-                  >
-                    {{ opt }}
-                  </div>
-                }
-              </div>
-            }
+        <mat-autocomplete
+          #autoDoctorCity="matAutocomplete"
+          autoActiveFirstOption
+          (optionSelected)="onDoctorCitySelected($event.option.value)"
+        >
+          @for (option of zipOptions; track option) {
+            <mat-option [value]="option">
+              {{ option }}
+            </mat-option>
+          }
+        </mat-autocomplete>
 
-            @if (isInvalid('doctorCity')) {
-              <p class="error">Bitte ausfüllen!</p>
-            }
-          </div>
-      @if (!isStepCompleted(5)) {
-          <div class="nav">
-            <button (click)="onNext()" class="btn-next" type="button">Next</button>
-          </div>
+        @if (isInvalid('doctorCity')) {
+          <p class="error">Bitte ausfüllen!</p>
         }
-    </mat-expansion-panel>
-    }
+      </div>
+            @if (!isStepCompleted(5)) {
+                <div class="nav">
+                  <button (click)="onNext()" class="btn-next" type="button">Next</button>
+                </div>
+              }
+          </mat-expansion-panel>
+          }
 
     <!-- ===================== 6. BERICHTE UPLOAD ===================== -->
     @if (maxStepReached() >= 6) {
-    <mat-expansion-panel (opened)="goToStep(6)" [expanded]="currentStep() === 6" hideToggle>
+    <mat-expansion-panel (opened)="goToStep(6); scrollToStepBody(6)" [expanded]="currentStep() === 6" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1122,6 +1142,7 @@
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
+      <div [attr.data-step-body]="6"></div>
 
       <div class="upload" role="button" tabindex="0" (click)="reportInput.click()"
         (dragleave)="onReportDragLeave($event)" (dragover)="onReportDragOver($event)" (drop)="onReportDrop($event)"
@@ -1161,7 +1182,7 @@
      
     <!-- 7. Zustand des Zahnbetts -->
     @if (maxStepReached() >= 7) {
-    <mat-expansion-panel (opened)="goToStep(7)" [expanded]="currentStep() === 7" hideToggle>
+    <mat-expansion-panel (opened)="goToStep(7); scrollToStepBody(7)" [expanded]="currentStep() === 7" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1169,6 +1190,7 @@
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
+      <div [attr.data-step-body]="7"></div>
 
       <div [class.is-invalid]="isInvalid('teethCondition')"
         [class.seg--dental-active]="hasValue(form.controls.teethCondition)" class="seg seg--dental seg--triple">
@@ -1216,12 +1238,13 @@
 
     <!-- 8. Hygiene -->
     @if (maxStepReached() >= 8) {
-    <mat-expansion-panel (opened)="goToStep(8)" [expanded]="currentStep() === 8" hideToggle>
+    <mat-expansion-panel (opened)="goToStep(8); scrollToStepBody(8)" [expanded]="currentStep() === 8" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">8. Hygiene:</h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
+      <div [attr.data-step-body]="8"></div>
       <div [class.is-invalid]="isInvalid('hygiene')" [class.seg--dental-active]="hasValue(form.controls.hygiene)"
         class="seg seg--dental seg--triple">
         <button (click)="$event.stopPropagation(); setHygiene('gut')"
@@ -1255,7 +1278,7 @@
 
     <!-- 9. Okklusion -->
     @if (maxStepReached() >= 9) {
-    <mat-expansion-panel (opened)="goToStep(9)" [expanded]="currentStep() === 9" hideToggle>
+    <mat-expansion-panel (opened)="goToStep(9); scrollToStepBody(9)" [expanded]="currentStep() === 9" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1263,6 +1286,7 @@
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
+      <div [attr.data-step-body]="9"></div>
 
       <div [class.seg--dental-active]="hasValue(form.controls.occlusion)" class="seg seg--dental seg--triple">
         <button (click)="setOcclusion('klasse1')" [class.is-selected]="form.controls.occlusion.value === 'klasse1'"
@@ -1294,7 +1318,7 @@
 
     <!-- 10. Zustand der Kronen -->
     @if (maxStepReached() >= 10) {
-    <mat-expansion-panel (opened)="goToStep(10)" [expanded]="currentStep() === 10" hideToggle>
+    <mat-expansion-panel (opened)="goToStep(10); scrollToStepBody(10)" [expanded]="currentStep() === 10" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1302,6 +1326,7 @@
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
+      <div [attr.data-step-body]="10"></div>
 
       <div [class.seg--dental-active]="hasValue(form.controls.crownsCondition)" class="seg seg--dental seg--quad">
         <button (click)="setCrownsCondition('keine')"
@@ -1353,7 +1378,7 @@
 
     <!-- 11. Zustand der Brücken -->
     @if (maxStepReached() >= 11) {
-    <mat-expansion-panel (opened)="goToStep(11)" [expanded]="currentStep() === 11" hideToggle>
+    <mat-expansion-panel (opened)="goToStep(11); scrollToStepBody(11)" [expanded]="currentStep() === 11" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1361,6 +1386,7 @@
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
+      <div [attr.data-step-body]="11"></div>
 
       <div [class.seg--dental-active]="hasValue(form.controls.bridgesCondition)" class="seg seg--dental seg--quad">
         <button (click)="setBridgesCondition('keine')"
@@ -1412,7 +1438,7 @@
 
     <!-- 12. Zustand der Teilprothesen -->
     @if (maxStepReached() >= 12) {
-    <mat-expansion-panel (opened)="goToStep(12)" [expanded]="currentStep() === 12" hideToggle>
+    <mat-expansion-panel (opened)="goToStep(12); scrollToStepBody(12)" [expanded]="currentStep() === 12" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1420,6 +1446,8 @@
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
+      <div [attr.data-step-body]="12"></div>
+
       <div [class.seg--dental-active]="hasValue(form.controls.partialDenturesCondition)"
         class="seg seg--dental seg--quad">
         <button (click)="setPartialDenturesCondition('keine')"
@@ -1473,7 +1501,7 @@
 
     <!-- 13. Dentition -->
     @if (maxStepReached() >= 13) {
-    <mat-expansion-panel (opened)="goToStep(13)" [expanded]="currentStep() === 13" hideToggle>
+    <mat-expansion-panel (opened)="goToStep(13); scrollToStepBody(13)" [expanded]="currentStep() === 13" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1481,6 +1509,7 @@
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
+      <div [attr.data-step-body]="13"></div>
 
       <div (click)="setActive('dentition')" [class.is-invalid]="isInvalid('dentition')"
         [class.seg--dental-active]="hasValue(form.controls.dentition)" class="seg seg--dental seg--binary">
@@ -1523,7 +1552,7 @@
 
     <!-- 14. Kiefer -->
     @if (maxStepReached() >= 14) {
-    <mat-expansion-panel (opened)="goToStep(14)" [expanded]="currentStep() === 14" hideToggle>
+    <mat-expansion-panel (opened)="goToStep(14); scrollToStepBody(14)" [expanded]="currentStep() === 14" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1531,6 +1560,7 @@
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
+      <div [attr.data-step-body]="14"></div>
 
       <div (click)="setActive('jaw')" [class.is-invalid]="isInvalid('jaw')"
         [class.seg--dental-active]="hasValue(form.controls.jaw)" class="seg seg--dental seg--binary">
@@ -1572,7 +1602,7 @@
 
     <!-- 15. Zukunft -->
     @if (maxStepReached() >= 15) {
-    <mat-expansion-panel (opened)="goToStep(15)" [expanded]="currentStep() === 15" hideToggle>
+    <mat-expansion-panel (opened)="goToStep(15); scrollToStepBody(15)" [expanded]="currentStep() === 15" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1580,6 +1610,7 @@
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
+      <div [attr.data-step-body]="15"></div>
 
       <div (click)="setActive('futureTeethDisease')" [class.is-invalid]="isInvalid('futureTeethDisease')"
         [class.seg--dental-active]="hasValue(form.controls.futureTeethDisease)" class="seg seg--dental seg--binary">
@@ -1622,7 +1653,7 @@
 
     <!-- 16. Fehlende, nicht ersetzte Zähne -->
     @if (maxStepReached() >= 16) {
-    <mat-expansion-panel (opened)="goToStep(16)" [expanded]="currentStep() === 16" hideToggle>
+    <mat-expansion-panel (opened)="goToStep(16); scrollToStepBody(16)" [expanded]="currentStep() === 16" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1630,6 +1661,7 @@
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
+      <div [attr.data-step-body]="16"></div>
 
       <div (click)="setActive('missingTeethQ')"
         [class.is-active]="isActive('missingTeethQ') || form.controls.missingTeethQ.value !== null"
@@ -1645,11 +1677,7 @@
         </button>
       </div>
 
-      @if (isInvalid('missingTeethQ')) {
-      <p class="error">Bitte wählen Sie einen Option.</p>
-      }
-
-      @if (form.controls.missingTeethQ.value === true) {
+     @if (form.controls.missingTeethQ.value === true) {
       <div class="teeth">
 
         <div class="teeth__nums teeth__nums--top">
@@ -1808,6 +1836,12 @@
           <div [class.is-hot]="isToothSelected(t)" class="teeth__num">{{ t }}</div>
           }
         </div>
+      @if (
+      form.controls.missingTeethQ.value === true &&
+          (isInvalid('missingTeeth') || isInvalid('missingPermanent'))
+        ) {
+          <p class="error">Bitte wählen Sie mindestens einen Zahn.</p>
+        }
 
       </div>
       }
@@ -1822,7 +1856,7 @@
 
     <!-- 17. Schadhafte Zahnfüllungen -->
     @if (maxStepReached() >= 17) {
-    <mat-expansion-panel (opened)="goToStep(17)" [expanded]="currentStep() === 17" hideToggle>
+    <mat-expansion-panel (opened)="goToStep(17); scrollToStepBody(17)" [expanded]="currentStep() === 17" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1830,6 +1864,7 @@
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
+      <div [attr.data-step-body]="17"></div>
 
       <div (click)="setActive('fillingsQ')"
         [class.is-active]="isActive('fillingsQ') || form.controls.fillingsQ.value !== null"
@@ -2009,6 +2044,12 @@
           <div [class.is-hot]="isFillingSelected(t)" class="teeth__num">{{ t }}</div>
           }
         </div>
+        @if (
+       form.controls.fillingsQ.value === true &&
+          (isInvalid('fillingsTeeth') || isInvalid('fillingsPermanent'))
+        ) {
+          <p class="error">Bitte wählen Sie mindestens einen Zahn.</p>
+        }
 
       </div>
       }
@@ -2022,7 +2063,7 @@
 
     <!-- 18. Kariöse Zähne -->
     @if (maxStepReached() >= 18) {
-    <mat-expansion-panel (opened)="goToStep(18)" [expanded]="currentStep() === 18" hideToggle>
+    <mat-expansion-panel (opened)="goToStep(18); scrollToStepBody(18)" [expanded]="currentStep() === 18" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -2030,6 +2071,7 @@
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
+      <div [attr.data-step-body]="18"></div>
 
       <div (click)="setActive('cariesQ')"
         [class.is-active]="isActive('cariesQ') || form.controls.cariesQ.value !== null"
@@ -2209,6 +2251,12 @@
           }
         </div>
       </div>
+      @if (
+        form.controls.cariesQ.value === true &&
+              (isInvalid('cariesTeeth') || isInvalid('cariesPermanent'))
+            ) {
+              <p class="error">Bitte wählen Sie mindestens einen Zahn.</p>
+            }
       }
       @if (!isStepCompleted(18)) {
           <div class="nav">
@@ -2220,7 +2268,7 @@
 
     <!-- 19. Wurzelbehandelte Zähne -->
     @if (maxStepReached() >= 19) {
-    <mat-expansion-panel (opened)="goToStep(19)" [expanded]="currentStep() === 19" hideToggle>
+    <mat-expansion-panel (opened)="goToStep(19); scrollToStepBody(19)" [expanded]="currentStep() === 19" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -2228,6 +2276,8 @@
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
+      <div [attr.data-step-body]="19"></div>
+
       <div (click)="setActive('rootCanalQ')"
         [class.is-active]="isActive('rootCanalQ') || form.controls.rootCanalQ.value !== null"
         [class.is-invalid]="isInvalid('rootCanalQ')" class="seg">
@@ -2407,6 +2457,12 @@
           }
         </div>
       </div>
+      @if (
+       form.controls.rootCanalQ.value === true &&
+          (isInvalid('rootCanalTeeth') || isInvalid('rootCanalPermanent'))
+        ) {
+          <p class="error">Bitte wählen Sie mindestens einen Zahn.</p>
+        }
       }
      @if (!isStepCompleted(19)) {
           <div class="nav">
@@ -2418,7 +2474,7 @@
 
     <!--20-->
     @if (maxStepReached() >= 20) {
-    <mat-expansion-panel (opened)="goToStep(20)" [expanded]="currentStep() === 20" hideToggle>
+    <mat-expansion-panel (opened)="goToStep(20); scrollToStepBody(20)" [expanded]="currentStep() === 20" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -2427,6 +2483,7 @@
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
+      <div [attr.data-step-body]="20"></div>
 
       <div (click)="setActive('dentalTreatQ')"
         [class.is-active]="isActive('dentalTreatQ') || form.controls.dentalTreatQ.value !== null"
@@ -2471,7 +2528,7 @@
 
     <!-- 21. Datum der letzten Radiographie -->
     @if (maxStepReached() >= 21) {
-    <mat-expansion-panel (opened)="goToStep(21)" [expanded]="currentStep() === 21" hideToggle>
+    <mat-expansion-panel (opened)="goToStep(21); scrollToStepBody(21)" [expanded]="currentStep() === 21" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -2479,6 +2536,7 @@
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
+      <div [attr.data-step-body]="21"></div>
 
       <div class="datebox" (click)="setActive('lastRadiographyDate'); openDatePicker(radioDate)"
         [class.is-active]="isActive('lastRadiographyDate') || hasText(form.controls.lastRadiographyDate)"
@@ -2506,7 +2564,7 @@
 
     <!-- 22. Bemerkungen -->
     @if (maxStepReached() >= 22) {
-    <mat-expansion-panel (opened)="goToStep(22)" [expanded]="currentStep() === 22" hideToggle>
+    <mat-expansion-panel (opened)="goToStep(22); scrollToStepBody(22)" [expanded]="currentStep() === 22" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -2514,6 +2572,7 @@
           </h2>
         </mat-panel-title>
       </mat-expansion-panel-header>
+      <div [attr.data-step-body]="22"></div>
 
       <div [class.is-active]="isActive('remarks') || form.controls.remarks.touched"
         [class.is-invalid]="isInvalid('remarks')" class="box box--textarea">

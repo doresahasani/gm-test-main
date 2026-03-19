@@ -240,6 +240,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
       min-height: 38px;
       padding: 6px 10px;
       align-items: stretch;
+      margin-top: 14px;
 
       textarea {
         width: 100%;
@@ -526,6 +527,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     position: relative;
     height: 44px;
     padding: 0 44px 0 12px;
+    margin-top: 14px;
 
     display: flex;
     align-items: center;
@@ -1038,7 +1040,6 @@ mat-expansion-panel {
 
 .mat-expansion-panel-header {
   &.mat-expanded {
-    height: 50px !important;
     padding: 0 10px;
   }
 }
