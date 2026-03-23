@@ -19,6 +19,26 @@ import {
 import { Subject, takeUntil } from 'rxjs';
 import { MatInputModule } from '@angular/material/input';
 import { MatOptionModule } from '@angular/material/core';
+import {
+  ValidationErrors,
+  ValidatorFn
+} from '@angular/forms';
+
+export function requiredTrimmed(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = control.value;
+
+    if (value === null || value === undefined) {
+      return { required: true };
+    }
+
+    if (typeof value === 'string' && value.trim().length === 0) {
+      return { required: true };
+    }
+
+    return null;
+  };
+}
 
 type IllnessForm = FormGroup<{
   desc: FormControl<string>;
@@ -33,6 +53,7 @@ type IllnessForm = FormGroup<{
   docNr: FormControl<string>;
   docZipCity: FormControl<string>;
 }>;
+
 
 type ActiveKey =
   | null
@@ -145,7 +166,7 @@ export class HomeComponent {
 onZipCityInput(event: Event): void {
   const value = (event.target as HTMLInputElement).value?.trim() ?? '';
 
-  if (value.length < 2) {
+  if (value.length < 1) {
     this.zipOptions = [];
     return;
   }
@@ -175,6 +196,29 @@ onDoctorCitySelected(value: string): void {
   this.form.controls.doctorCity.markAsDirty();
   this.form.controls.doctorCity.markAsTouched();
   this.form.controls.doctorCity.updateValueAndValidity({ emitEvent: false });
+}
+onMedZipCitySelected(index: number, value: string): void {
+  const control = this.illnessCtrl(this.illnessesMed, index, 'docZipCity');
+  control.setValue(value);
+  control.markAsDirty();
+  control.markAsTouched();
+  control.updateValueAndValidity({ emitEvent: false });
+}
+
+onIllZipCitySelected(index: number, value: string): void {
+  const control = this.illnessCtrl(this.illnessesIll, index, 'docZipCity');
+  control.setValue(value);
+  control.markAsDirty();
+  control.markAsTouched();
+  control.updateValueAndValidity({ emitEvent: false });
+}
+
+onOpsBZipCitySelected(index: number, value: string): void {
+  const control = this.illnessCtrl(this.opsBItems, index, 'docZipCity');
+  control.setValue(value);
+  control.markAsDirty();
+  control.markAsTouched();
+  control.updateValueAndValidity({ emitEvent: false });
 }
   private findFirstInvalidStep(): number | null {
     for (let s = 1; s <= this.TOTAL_STEPS; s++) {
@@ -478,14 +522,19 @@ private buildHealthDeclarationPayload() {
 request$.subscribe({
   next: (response) => {
     console.log(this.isEditMode ? 'Updated successfully:' : 'Saved successfully:', response);
+
     this.editFormState.clear();
-    this.router.navigate(['/preview']);
+
+    this.isFinished.set(true);
+
+    setTimeout(() => {
+      this.router.navigate(['/preview']);
+    }, 3000);
   },
   error: (error) => {
     console.error(this.isEditMode ? 'Update failed:' : 'Save failed:', error);
   }
 });
-
   return;
 }
 
@@ -553,6 +602,9 @@ request$.subscribe({
         return [this.form.controls.heightCm, this.form.controls.weightKg];
 
       case 2:
+         if (this.form.controls.medication.value === false) {
+        return [this.form.controls.medication];
+      }
         return [
           this.form.controls.medication,
           this.form.controls.medName,
@@ -560,19 +612,32 @@ request$.subscribe({
           this.form.controls.illnessesMed,
         ];
       case 3:
+         if (this.form.controls.illnessQ.value === false) {
+        return [this.form.controls.illnessQ];
+      }
         return [
           this.form.controls.illnessQ,
           this.form.controls.illnessesIll
         ];
-      case 4:
-        return [
-          this.form.controls.opsQ,
-          this.form.controls.opsA,
-          this.form.controls.opsB,
-          this.form.controls.opsC,
-          this.form.controls.opsD,
-          this.form.controls.opsBItems
-        ];
+       case 4:
+      if (this.form.controls.opsQ.value === false) {
+        return [this.form.controls.opsQ];
+      }
+
+      const controls: AbstractControl[] = [
+        this.form.controls.opsQ,
+        this.form.controls.opsA,
+        this.form.controls.opsB,
+        this.form.controls.opsC,
+        this.form.controls.opsD,
+      ];
+
+      if (this.form.controls.opsB.value === true) {
+        controls.push(this.form.controls.opsBItems);
+      }
+
+      return controls;
+
       case 5:
         return [
           this.form.controls.doctorFirstName,
@@ -721,101 +786,101 @@ request$.subscribe({
 
   form = this.fb.group({
     heightCm: this.fb.control<number | null>(null, [
-      Validators.required,
+      requiredTrimmed(),
       Validators.min(0),
       Validators.max(350),
     ]),
     weightKg: this.fb.control<number | null>(null, [
-      Validators.required,
+      requiredTrimmed(),
       Validators.min(0),
       Validators.max(600),
     ]),
 
-    medication: this.fb.control<boolean | null>(null, [Validators.required]),
-    medName: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
-    medReason: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
+    medication: this.fb.control<boolean | null>(null, [requiredTrimmed()]),
+    medName: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true, validators: [requiredTrimmed()] }),
+    medReason: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true, validators: [requiredTrimmed()] }),
     illnessesMed: this.fb.array<IllnessForm>([this.createIllnessGroup()]),
 
-    illnessQ: this.fb.control<boolean | null>(null, [Validators.required]),
+    illnessQ: this.fb.control<boolean | null>(null, [requiredTrimmed()]),
     illnessesIll: this.fb.array<IllnessForm>([this.createIllnessGroup()]),
 
-    opsQ: this.fb.control<boolean | null>(null, [Validators.required]),
+    opsQ: this.fb.control<boolean | null>(null, [requiredTrimmed()]),
     opsA: this.fb.control<boolean | null>({ value: null, disabled: true }),
     opsB: this.fb.control<boolean | null>({ value: null, disabled: true }),
     opsC: this.fb.control<boolean | null>({ value: null, disabled: true }),
     opsD: this.fb.control<boolean | null>({ value: null, disabled: true }),
     opsBItems: this.fb.array<IllnessForm>([this.createIllnessGroup()]),
 
-    doctorFirstName: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
-    doctorLastName: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
-    doctorStreet: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
-    doctorNumber: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
-    doctorCity: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
+    doctorFirstName: this.fb.control('', { nonNullable: true, validators: [requiredTrimmed()] }),
+    doctorLastName: this.fb.control('', { nonNullable: true, validators: [requiredTrimmed()]  }),
+    doctorStreet: this.fb.control('', { nonNullable: true, validators: [requiredTrimmed()] }),
+    doctorNumber: this.fb.control('', { nonNullable: true, validators: [requiredTrimmed()]  }),
+    doctorCity: this.fb.control('', { nonNullable: true, validators: [requiredTrimmed()] }),
 
-    reportFile: this.fb.control<File | null>(null, [Validators.required]),
+    reportFile: this.fb.control<File | null>(null, [requiredTrimmed()]),
 
     teethCondition: this.fb.control<'gut' | 'mangelhaft' | 'schlecht' | null>(null, [
-      Validators.required,
+      requiredTrimmed(),
     ]),
-    teethConditionNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
+    teethConditionNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true ,validators:requiredTrimmed() }),
 
-    hygiene: this.fb.control<'gut' | 'mangelhaft' | 'schlecht' | null>(null, [Validators.required]),
-    hygieneNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
+    hygiene: this.fb.control<'gut' | 'mangelhaft' | 'schlecht' | null>(null, [requiredTrimmed()]),
+    hygieneNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true, validators: [requiredTrimmed()] }),
 
-    occlusion: this.fb.control<'klasse1' | 'klasse2' | 'klasse3' | null>(null, [Validators.required]),
+    occlusion: this.fb.control<'klasse1' | 'klasse2' | 'klasse3' | null>(null, [requiredTrimmed()]),
 
     crownsCondition: this.fb.control<'keine' | 'gut' | 'mangelhaft' | 'schlecht' | null>(null, [
-      Validators.required,
+      requiredTrimmed(),
     ]),
-    crownsNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
+    crownsNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true, validators: [requiredTrimmed()] }),
 
     bridgesCondition: this.fb.control<'keine' | 'gut' | 'mangelhaft' | 'schlecht' | null>(null, [
-      Validators.required,
+      requiredTrimmed(),
     ]),
-    bridgesNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
+    bridgesNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true, validators: [requiredTrimmed()] }),
 
     partialDenturesCondition: this.fb.control<'keine' | 'gut' | 'mangelhaft' | 'schlecht' | null>(
       null,
-      [Validators.required]
+      [requiredTrimmed()]
     ),
-    partialDenturesNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
+    partialDenturesNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true, validators: [requiredTrimmed()]}),
 
-    dentition: this.fb.control<boolean | null>(null, [Validators.required]),
-    dentitionNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
+    dentition: this.fb.control<boolean | null>(null, [requiredTrimmed()]),
+    dentitionNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true, validators: [requiredTrimmed()] }),
 
-    jaw: this.fb.control<boolean | null>(null, [Validators.required]),
-    jawNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
+    jaw: this.fb.control<boolean | null>(null, [requiredTrimmed()]),
+    jawNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true, validators: [requiredTrimmed()] }),
 
-    futureTeethDisease: this.fb.control<boolean | null>(null, [Validators.required]),
-    futureTeethDiseaseNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
+    futureTeethDisease: this.fb.control<boolean | null>(null, [requiredTrimmed()]),
+    futureTeethDiseaseNote: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true, validators: [requiredTrimmed()] }),
 
     lastRadiographyDate: this.fb.control<string>('', {
       nonNullable: true,
-      validators: [Validators.required],
+      validators: [requiredTrimmed()],
     }),
 
-    missingTeethQ: this.fb.control<boolean | null>(null, [Validators.required]),
+    missingTeethQ: this.fb.control<boolean | null>(null, [requiredTrimmed()]),
     missingTeeth: this.fb.array<FormControl<string>>([]),
     missingPermanent: this.fb.array<FormControl<string>>([]),
 
-    fillingsQ: this.fb.control<boolean | null>(null, [Validators.required]),
+    fillingsQ: this.fb.control<boolean | null>(null, [requiredTrimmed()]),
     fillingsTeeth: this.fb.array<FormControl<string>>([]),
     fillingsPermanent: this.fb.array<FormControl<string>>([]),
 
-    cariesQ: this.fb.control<boolean | null>(null, [Validators.required]),
+    cariesQ: this.fb.control<boolean | null>(null, [requiredTrimmed()]),
     cariesTeeth: this.fb.array<FormControl<string>>([]),
     cariesPermanent: this.fb.array<FormControl<string>>([]),
 
-    rootCanalQ: this.fb.control<boolean | null>(null, [Validators.required]),
+    rootCanalQ: this.fb.control<boolean | null>(null, [requiredTrimmed()]),
     rootCanalTeeth: this.fb.array<FormControl<string>>([]),
     rootCanalPermanent: this.fb.array<FormControl<string>>([]),
 
-    dentalTreatQ: this.fb.control<boolean | null>(null, [Validators.required]),
-    dentalTreatWhich: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true }),
+    dentalTreatQ: this.fb.control<boolean | null>(null, [requiredTrimmed()]),
+    dentalTreatWhich: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true, validators: [requiredTrimmed()]  }),
 
     remarks: this.fb.control<string>('', {
       nonNullable: true,
-      validators: [Validators.required],
+      validators: [requiredTrimmed()],
     }),
   });
 constructor() {
@@ -923,18 +988,26 @@ this.form.controls.rootCanalPermanent.updateValueAndValidity({ emitEvent: false 
   });
 
   const editData = this.editFormState.getEditData();
-  const editId = this.editFormState.getEditId();
+const editId = this.editFormState.getEditId();
 
-  if (editData && editId) {
-    this.isEditMode = true;
-    this.editId = editId;
+if (editData && editId) {
+  this.isEditMode = true;
+  this.editId = editId;
 
-    try {
-      const parsed = editData?.healthDeclarationJson ? JSON.parse(editData.healthDeclarationJson) : null;
-      const q = parsed?.healthDeclarationQuestions;
+  try {
+    const parsed = editData?.healthDeclarationJson
+      ? JSON.parse(editData.healthDeclarationJson)
+      : null;
 
-      if (q) {
-        this.form.patchValue({
+    const q =
+      parsed?.healthDeclarationQuestions ??
+      parsed?.HealthDeclarationQuestions ??
+      parsed ??
+      null;
+
+    if (q) {
+      this.form.patchValue(
+        {
           heightCm: q.step1?.heightCm ?? null,
           weightKg: q.step1?.weightKg ?? null,
 
@@ -990,77 +1063,94 @@ this.form.controls.rootCanalPermanent.updateValueAndValidity({ emitEvent: false 
 
           lastRadiographyDate: q.step21?.lastRadiographyDate ?? '',
           remarks: q.step22?.remarks ?? ''
-        });
+        },
+        { emitEvent: false }
+      );
 
-        if (q.step2?.medication === true) {
-          this.enableMedicationDetails();
-        }
+      if (q.step2?.medication === true) this.enableMedicationDetails();
+      else this.disableMedicationDetails();
 
-        if (q.step3?.illnessQ === true) {
-          this.enableIllnessDetails();
-        }
+      if (q.step3?.illnessQ === true) this.enableIllnessDetails();
+      else this.disableIllnessDetails();
 
-        if (q.step4?.opsQ === true) {
-          this.enableOpsDetails();
-        }
+      if (q.step4?.opsQ === true) this.enableOpsDetails();
+      else this.disableOpsDetails();
 
-        if (q.step4?.opsB === true) {
-          this.enableOpsBItems();
-        }
+      if (q.step4?.opsB === true) this.enableOpsBItems();
+      else this.disableOpsBItems();
 
-        if (q.step7?.teethCondition === 'mangelhaft') {
-          this.form.controls.teethConditionNote.enable({ emitEvent: false });
-          this.form.controls.teethConditionNote.setValidators([Validators.required]);
-          this.form.controls.teethConditionNote.updateValueAndValidity({ emitEvent: false });
-        }
+     this.setIllnessArray(this.form.controls.illnessesMed, q.step2?.illnessesMed);
+      this.setIllnessArray(this.form.controls.illnessesIll, q.step3?.illnessesIll);
+      this.setIllnessArray(this.form.controls.opsBItems, q.step4?.opsBItems);
 
-        if (q.step10?.crownsCondition === 'mangelhaft') {
-          this.form.controls.crownsNote.enable({ emitEvent: false });
-          this.form.controls.crownsNote.setValidators([Validators.required]);
-          this.form.controls.crownsNote.updateValueAndValidity({ emitEvent: false });
-        }
+      this.setStringArray(this.missingTeethArr, q.step16?.missingTeeth);
+      this.setStringArray(this.missingPermanentArr, q.step16?.missingPermanent);
 
-        if (q.step11?.bridgesCondition === 'mangelhaft') {
-          this.form.controls.bridgesNote.enable({ emitEvent: false });
-          this.form.controls.bridgesNote.setValidators([Validators.required]);
-          this.form.controls.bridgesNote.updateValueAndValidity({ emitEvent: false });
-        }
+      this.setStringArray(this.fillingsTeethArr, q.step17?.fillingsTeeth);
+      this.setStringArray(this.fillingsPermanentArr, q.step17?.fillingsPermanent);
 
-        if (q.step12?.partialDenturesCondition === 'mangelhaft') {
-          this.form.controls.partialDenturesNote.enable({ emitEvent: false });
-          this.form.controls.partialDenturesNote.setValidators([Validators.required]);
-          this.form.controls.partialDenturesNote.updateValueAndValidity({ emitEvent: false });
-        }
+      this.setStringArray(this.cariesTeethArr, q.step18?.cariesTeeth);
+      this.setStringArray(this.cariesPermanentArr, q.step18?.cariesPermanent);
 
-        if (q.step13?.dentition === true) {
-          this.form.controls.dentitionNote.enable({ emitEvent: false });
-          this.form.controls.dentitionNote.setValidators([Validators.required]);
-          this.form.controls.dentitionNote.updateValueAndValidity({ emitEvent: false });
-        }
+      this.setStringArray(this.rootTeethArr, q.step19?.rootCanalTeeth);
+      this.setStringArray(this.rootPermanentArr, q.step19?.rootCanalPermanent);
 
-        if (q.step14?.jaw === true) {
-          this.form.controls.jawNote.enable({ emitEvent: false });
-          this.form.controls.jawNote.setValidators([Validators.required]);
-          this.form.controls.jawNote.updateValueAndValidity({ emitEvent: false });
-        }
-
-        if (q.step15?.futureTeethDisease === true) {
-          this.form.controls.futureTeethDiseaseNote.enable({ emitEvent: false });
-          this.form.controls.futureTeethDiseaseNote.setValidators([Validators.required]);
-          this.form.controls.futureTeethDiseaseNote.updateValueAndValidity({ emitEvent: false });
-        }
-
-        if (q.step20?.dentalTreatQ === true) {
-          this.form.controls.dentalTreatWhich.enable({ emitEvent: false });
-          this.form.controls.dentalTreatWhich.setValidators([Validators.required]);
-          this.form.controls.dentalTreatWhich.updateValueAndValidity({ emitEvent: false });
-        }
+      if (q.step7?.teethCondition === 'mangelhaft') {
+        this.form.controls.teethConditionNote.enable({ emitEvent: false });
+        this.form.controls.teethConditionNote.setValidators([requiredTrimmed()]);
+        this.form.controls.teethConditionNote.updateValueAndValidity({ emitEvent: false });
       }
-    } catch (e) {
-      console.error('Edit parse error:', e);
+
+      if (q.step10?.crownsCondition === 'mangelhaft') {
+        this.form.controls.crownsNote.enable({ emitEvent: false });
+        this.form.controls.crownsNote.setValidators([requiredTrimmed()]);
+        this.form.controls.crownsNote.updateValueAndValidity({ emitEvent: false });
+      }
+
+      if (q.step11?.bridgesCondition === 'mangelhaft') {
+        this.form.controls.bridgesNote.enable({ emitEvent: false });
+        this.form.controls.bridgesNote.setValidators([requiredTrimmed()]);
+        this.form.controls.bridgesNote.updateValueAndValidity({ emitEvent: false });
+      }
+
+      if (q.step12?.partialDenturesCondition === 'mangelhaft') {
+        this.form.controls.partialDenturesNote.enable({ emitEvent: false });
+        this.form.controls.partialDenturesNote.setValidators([requiredTrimmed()]);
+        this.form.controls.partialDenturesNote.updateValueAndValidity({ emitEvent: false });
+      }
+
+      if (q.step13?.dentition === true) {
+        this.form.controls.dentitionNote.enable({ emitEvent: false });
+        this.form.controls.dentitionNote.setValidators([requiredTrimmed()]);
+        this.form.controls.dentitionNote.updateValueAndValidity({ emitEvent: false });
+      }
+
+      if (q.step14?.jaw === true) {
+        this.form.controls.jawNote.enable({ emitEvent: false });
+        this.form.controls.jawNote.setValidators([requiredTrimmed()]);
+        this.form.controls.jawNote.updateValueAndValidity({ emitEvent: false });
+      }
+
+      if (q.step15?.futureTeethDisease === true) {
+        this.form.controls.futureTeethDiseaseNote.enable({ emitEvent: false });
+        this.form.controls.futureTeethDiseaseNote.setValidators([requiredTrimmed()]);
+        this.form.controls.futureTeethDiseaseNote.updateValueAndValidity({ emitEvent: false });
+      }
+
+      if (q.step20?.dentalTreatQ === true) {
+        this.form.controls.dentalTreatWhich.enable({ emitEvent: false });
+        this.form.controls.dentalTreatWhich.setValidators([requiredTrimmed()]);
+        this.form.controls.dentalTreatWhich.updateValueAndValidity({ emitEvent: false });
+      }
+      
+
+      this.form.updateValueAndValidity({ emitEvent: false });
     }
+  } catch (e) {
+    console.error('Edit parse error:', e);
   }
-  }
+}
+}
 
   openDatePicker(input: HTMLInputElement) {
     if (!input) return;
@@ -1229,11 +1319,11 @@ this.form.controls.rootCanalPermanent.updateValueAndValidity({ emitEvent: false 
     private createIllnessGroup(): IllnessForm {
       const group = this.fb.group(
         {
-          desc: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
-          startDate: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
-          endDate: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
-          operated: this.fb.control<boolean | null>(null, { validators: [Validators.required] }),
-          treatmentDone: this.fb.control<boolean | null>(null, { validators: [Validators.required] }),
+          desc: this.fb.control('', { nonNullable: true, validators: [requiredTrimmed()] }),
+          startDate: this.fb.control('', { nonNullable: true, validators: [requiredTrimmed()] }),
+          endDate: this.fb.control('', { nonNullable: true, validators: [requiredTrimmed()] }),
+          operated: this.fb.control<boolean | null>(null, { validators: [requiredTrimmed()] }),
+          treatmentDone: this.fb.control<boolean | null>(null, { validators: [requiredTrimmed()] }),
 
           docFirstName: this.fb.control('', { nonNullable: true }),
           docLastName: this.fb.control('', { nonNullable: true }),
@@ -1357,7 +1447,58 @@ this.form.controls.rootCanalPermanent.updateValueAndValidity({ emitEvent: false 
     ];
     return order.find((k) => g.controls[k].enabled && g.controls[k].invalid) ?? null;
   }
+  private setStringArray(
+  arr: FormArray<FormControl<string>>,
+  items: string[] | undefined | null
+): void {
+  while (arr.length > 0) {
+    arr.removeAt(0);
+  }
+  const source = Array.isArray(items) ? items : [];
 
+  source.forEach((item) => {
+    arr.push(new FormControl(item ?? '', { nonNullable: true }));
+  });
+
+  arr.updateValueAndValidity({ emitEvent: false });
+}
+private setIllnessArray(arr: FormArray<IllnessForm>, items: any[] | undefined | null): void {
+  while (arr.length > 0) {
+    arr.removeAt(0);
+  }
+
+  const source = Array.isArray(items) ? items : [];
+
+  if (source.length === 0) {
+    arr.push(this.createIllnessGroup());
+    arr.updateValueAndValidity({ emitEvent: false });
+    return;
+  }
+
+  source.forEach((item) => {
+    const group = this.createIllnessGroup();
+
+    group.patchValue(
+      {
+        desc: item?.desc ?? '',
+        startDate: item?.startDate ?? '',
+        endDate: item?.endDate ?? '',
+        operated: item?.operated ?? null,
+        treatmentDone: item?.treatmentDone ?? null,
+        docFirstName: item?.docFirstName ?? '',
+        docLastName: item?.docLastName ?? '',
+        docStreet: item?.docStreet ?? '',
+        docNr: item?.docNr ?? '',
+        docZipCity: item?.docZipCity ?? ''
+      },
+      { emitEvent: false }
+    );
+
+    arr.push(group);
+  });
+
+  arr.updateValueAndValidity({ emitEvent: false });
+}
   private setActiveToFirstInvalidInArray(kind: 'med' | 'ill' | 'opsB', index: number, g: IllnessForm) {
     const first = this.firstInvalidFieldInGroup(g);
     if (!first) return;
@@ -1416,7 +1557,7 @@ this.form.controls.rootCanalPermanent.updateValueAndValidity({ emitEvent: false 
     ];
 
     providerControls.forEach((c) => {
-      if (required) c.setValidators([Validators.required]);
+      if (required) c.setValidators([requiredTrimmed()]);
       else c.clearValidators();
       c.updateValueAndValidity({ emitEvent: false });
     });
@@ -1427,27 +1568,31 @@ this.form.controls.rootCanalPermanent.updateValueAndValidity({ emitEvent: false 
     arr.updateValueAndValidity({ emitEvent: false });
   }
 
-  setTeethCondition(value: 'gut' | 'mangelhaft' | 'schlecht') {
-    this.form.controls.teethCondition.setValue(value);
-    this.setActive('teethCondition');
+setTeethCondition(value: 'gut' | 'mangelhaft' | 'schlecht') {
+  this.form.controls.teethCondition.setValue(value);
+  this.form.controls.teethCondition.markAsDirty();
+  this.form.controls.teethCondition.markAsTouched();
+  this.form.controls.teethCondition.updateValueAndValidity({ emitEvent: false });
+  this.setActive('teethCondition');
 
-    const note = this.form.controls.teethConditionNote;
+  const note = this.form.controls.teethConditionNote;
 
-    if (value === 'mangelhaft') {
-      note.enable({ emitEvent: false });
-      note.setValidators([Validators.required]);
-      note.markAsPristine();
-      note.markAsUntouched();
-    } else {
-      note.reset('', { emitEvent: false });
-      note.clearValidators();
-      note.disable({ emitEvent: false });
-      note.markAsPristine();
-      note.markAsUntouched();
-    }
-
-    note.updateValueAndValidity({ emitEvent: false });
+  if (value === 'mangelhaft') {
+    note.enable({ emitEvent: false });
+    note.setValidators([requiredTrimmed()]);
+    note.markAsPristine();
+    note.markAsUntouched();
+  } else {
+    note.reset('', { emitEvent: false });
+    note.clearValidators();
+    note.disable({ emitEvent: false });
+    note.markAsPristine();
+    note.markAsUntouched();
   }
+
+  note.updateValueAndValidity({ emitEvent: false });
+  this.submitted.set(false);
+}
 
 
   setHygiene(value: 'gut' | 'mangelhaft' | 'schlecht') {
@@ -1460,108 +1605,135 @@ this.form.controls.rootCanalPermanent.updateValueAndValidity({ emitEvent: false 
     this.setActive('occlusion');
   }
 
-  setCrownsCondition(value: 'keine' | 'gut' | 'mangelhaft' | 'schlecht') {
-    this.form.controls.crownsCondition.setValue(value);
-    this.setActive('crownsCondition');
+setCrownsCondition(value: 'keine' | 'gut' | 'mangelhaft' | 'schlecht') {
+  this.form.controls.crownsCondition.setValue(value);
+  this.form.controls.crownsCondition.markAsDirty();
+  this.form.controls.crownsCondition.markAsTouched();
+  this.form.controls.crownsCondition.updateValueAndValidity({ emitEvent: false });
+  this.setActive('crownsCondition');
 
-    const note = this.form.controls.crownsNote;
-    if (value === 'mangelhaft') {
-      note.enable({ emitEvent: false });
-      note.setValidators([Validators.required]);
-      note.markAsPristine();
-      note.markAsUntouched();
-    } else {
-      note.reset('', { emitEvent: false });
-      note.clearValidators();
-      note.disable({ emitEvent: false });
-      note.markAsPristine();
-      note.markAsUntouched();
-    }
+  const note = this.form.controls.crownsNote;
 
-    note.updateValueAndValidity({ emitEvent: false });
+  if (value === 'mangelhaft') {
+    note.enable({ emitEvent: false });
+    note.setValidators([requiredTrimmed()]);
+    note.markAsPristine();
+    note.markAsUntouched();
+  } else {
+    note.reset('', { emitEvent: false });
+    note.clearValidators();
+    note.disable({ emitEvent: false });
+    note.markAsPristine();
+    note.markAsUntouched();
   }
 
-  setBridgesCondition(value: 'keine' | 'gut' | 'mangelhaft' | 'schlecht') {
-    this.form.controls.bridgesCondition.setValue(value);
-    this.setActive('bridgesCondition');
+  note.updateValueAndValidity({ emitEvent: false });
+  this.submitted.set(false);
+}
 
-    const note = this.form.controls.bridgesNote;
-    if (value === 'mangelhaft') {
-      note.enable({ emitEvent: false });
-      note.setValidators([Validators.required]);
-      note.markAsPristine();
-      note.markAsUntouched();
-    } else {
-      note.reset('', { emitEvent: false });
-      note.clearValidators();
-      note.disable({ emitEvent: false });
-      note.markAsPristine();
-      note.markAsUntouched();
-    }
+setBridgesCondition(value: 'keine' | 'gut' | 'mangelhaft' | 'schlecht') {
+  this.form.controls.bridgesCondition.setValue(value);
+  this.form.controls.bridgesCondition.markAsDirty();
+  this.form.controls.bridgesCondition.markAsTouched();
+  this.form.controls.bridgesCondition.updateValueAndValidity({ emitEvent: false });
+  this.setActive('bridgesCondition');
 
-    note.updateValueAndValidity({ emitEvent: false });
+  const note = this.form.controls.bridgesNote;
+
+  if (value === 'mangelhaft') {
+    note.enable({ emitEvent: false });
+    note.setValidators([requiredTrimmed()]);
+    note.markAsPristine();
+    note.markAsUntouched();
+  } else {
+    note.reset('', { emitEvent: false });
+    note.clearValidators();
+    note.disable({ emitEvent: false });
+    note.markAsPristine();
+    note.markAsUntouched();
   }
 
-  setPartialDenturesCondition(value: 'keine' | 'gut' | 'mangelhaft' | 'schlecht') {
-    this.form.controls.partialDenturesCondition.setValue(value);
-    this.setActive('partialDenturesCondition');
+  note.updateValueAndValidity({ emitEvent: false });
+  this.submitted.set(false);
+}
 
-    const note = this.form.controls.partialDenturesNote;
-    if (value === 'mangelhaft') {
-      note.enable({ emitEvent: false });
-      note.setValidators([Validators.required]);
-      note.markAsPristine();
-      note.markAsUntouched();
-    } else {
-      note.reset('', { emitEvent: false });
-      note.clearValidators();
-      note.disable({ emitEvent: false });
-      note.markAsPristine();
-      note.markAsUntouched();
-    }
+setPartialDenturesCondition(value: 'keine' | 'gut' | 'mangelhaft' | 'schlecht') {
+  this.form.controls.partialDenturesCondition.setValue(value);
+  this.form.controls.partialDenturesCondition.markAsDirty();
+  this.form.controls.partialDenturesCondition.markAsTouched();
+  this.form.controls.partialDenturesCondition.updateValueAndValidity({ emitEvent: false });
+  this.setActive('partialDenturesCondition');
 
-    note.updateValueAndValidity({ emitEvent: false });
+  const note = this.form.controls.partialDenturesNote;
+
+  if (value === 'mangelhaft') {
+    note.enable({ emitEvent: false });
+    note.setValidators([requiredTrimmed()]);
+    note.markAsPristine();
+    note.markAsUntouched();
+  } else {
+    note.reset('', { emitEvent: false });
+    note.clearValidators();
+    note.disable({ emitEvent: false });
+    note.markAsPristine();
+    note.markAsUntouched();
   }
 
-  setDentition(value: boolean) {
-    this.form.controls.dentition.setValue(value);
-    this.setActive('dentition');
+  note.updateValueAndValidity({ emitEvent: false });
+  this.submitted.set(false);
+}
 
-    const note = this.form.controls.dentitionNote;
+setDentition(value: boolean) {
+  this.form.controls.dentition.setValue(value);
+  this.form.controls.dentition.markAsDirty();
+  this.form.controls.dentition.markAsTouched();
+  this.form.controls.dentition.updateValueAndValidity({ emitEvent: false });
+  this.setActive('dentition');
 
-    if (value === true) {
-      note.enable({ emitEvent: false });
-      note.setValidators([Validators.required]);
-      note.markAsPristine();
-      note.markAsUntouched();
-    } else {
-      note.reset('', { emitEvent: false });
-      note.clearValidators();
-      note.disable({ emitEvent: false });
-    }
+  const note = this.form.controls.dentitionNote;
 
-    note.updateValueAndValidity({ emitEvent: false });
+  if (value === true) {
+    note.enable({ emitEvent: false });
+    note.setValidators([requiredTrimmed()]);
+    note.markAsPristine();
+    note.markAsUntouched();
+  } else {
+    note.reset('', { emitEvent: false });
+    note.clearValidators();
+    note.disable({ emitEvent: false });
+    note.markAsPristine();
+    note.markAsUntouched();
   }
 
-  setJaw(value: boolean) {
-    this.form.controls.jaw.setValue(value);
-    this.setActive('jaw');
+  note.updateValueAndValidity({ emitEvent: false });
+  this.submitted.set(false);
+}
 
-    const note = this.form.controls.jawNote;
+setJaw(value: boolean) {
+  this.form.controls.jaw.setValue(value);
+  this.form.controls.jaw.markAsDirty();
+  this.form.controls.jaw.markAsTouched();
+  this.form.controls.jaw.updateValueAndValidity({ emitEvent: false });
+  this.setActive('jaw');
 
-    if (value === true) {
-      note.enable({ emitEvent: false });
-      note.setValidators([Validators.required]);
-      note.markAsPristine();
-      note.markAsUntouched();
-    } else {
-      note.reset('', { emitEvent: false });
-      note.clearValidators();
-      note.disable({ emitEvent: false });
-    }
+  const note = this.form.controls.jawNote;
 
-    note.updateValueAndValidity({ emitEvent: false });
+  if (value === true) {
+    note.enable({ emitEvent: false });
+    note.setValidators([requiredTrimmed()]);
+    note.markAsPristine();
+    note.markAsUntouched();
+  } else {
+    note.reset('', { emitEvent: false });
+    note.clearValidators();
+    note.disable({ emitEvent: false });
+    note.markAsPristine();
+    note.markAsUntouched();
   }
+
+  note.updateValueAndValidity({ emitEvent: false });
+  this.submitted.set(false);
+}
 
   readonly teethTop = ['55', '54', '53', '52', '51'] as const;
   readonly teethBottom = ['85', '84', '83', '82', '81'] as const;
@@ -1822,7 +1994,7 @@ setCariesQ(val: boolean) {
 
     if (val === true) {
       which.enable({ emitEvent: false });
-      which.setValidators([Validators.required]);
+      which.setValidators([requiredTrimmed()]);
       which.markAsPristine();
       which.markAsUntouched();
     } else {
@@ -1840,56 +2012,66 @@ setCariesQ(val: boolean) {
     return this.form.controls.medication.value === true;
   }
 
-  setMedication(value: boolean) {
-    this.form.controls.medication.setValue(value);
-    this.setActive('medication');
+ setMedication(value: boolean) {
+  this.form.controls.medication.setValue(value);
+  this.form.controls.medication.markAsTouched();
+  this.form.controls.medication.updateValueAndValidity({ emitEvent: false });
+  this.setActive('medication');
 
-    if (value) {
-      this.resetErrorsOnReopen('med');
+  if (value) {
+    this.submitted.set(false);
+    this.resetErrorsOnReopen('med');
+    this.enableMedicationDetails();
 
-      this.enableMedicationDetails();
-
-      this.clearState(this.form.controls.medName);
-      this.clearState(this.form.controls.medReason);
-      this.clearState(this.illnessesMed);
-    } else {
-      this.disableMedicationDetails();
-    }
+    this.clearState(this.form.controls.medName);
+    this.clearState(this.form.controls.medReason);
+    this.clearState(this.form.controls.illnessesMed);
+  } else {
+    this.disableMedicationDetails();
   }
 
-  private enableMedicationDetails() {
-    this.form.controls.medName.enable({ emitEvent: false });
-    this.form.controls.medReason.enable({ emitEvent: false });
-    this.illnessesMed.enable({ emitEvent: false });
+  this.form.updateValueAndValidity({ emitEvent: false });
+}
 
-    this.form.controls.medName.setValidators([Validators.required]);
-    this.form.controls.medReason.setValidators([Validators.required]);
-    this.form.controls.medName.updateValueAndValidity({ emitEvent: false });
-    this.form.controls.medReason.updateValueAndValidity({ emitEvent: false });
+private enableMedicationDetails() {
+  this.form.controls.medName.enable({ emitEvent: false });
+  this.form.controls.medReason.enable({ emitEvent: false });
+  this.illnessesMed.enable({ emitEvent: false });
 
-    this.applyProviderValidators(this.illnessesMed, true);
-  }
+  this.form.controls.medName.setValidators([requiredTrimmed()]);
+  this.form.controls.medReason.setValidators([requiredTrimmed()]);
 
-  private disableMedicationDetails() {
-    this.form.controls.medName.reset('', { emitEvent: false });
-    this.form.controls.medReason.reset('', { emitEvent: false });
+  this.applyProviderValidators(this.illnessesMed, true);
 
-    this.form.controls.medName.clearValidators();
-    this.form.controls.medReason.clearValidators();
+  this.form.controls.medName.updateValueAndValidity({ emitEvent: false });
+  this.form.controls.medReason.updateValueAndValidity({ emitEvent: false });
+  this.illnessesMed.updateValueAndValidity({ emitEvent: false });
+}
+ private disableMedicationDetails() {
+  this.form.controls.medName.reset('', { emitEvent: false });
+  this.form.controls.medReason.reset('', { emitEvent: false });
 
-    this.form.controls.medName.disable({ emitEvent: false });
-    this.form.controls.medReason.disable({ emitEvent: false });
+  this.form.controls.medName.clearValidators();
+  this.form.controls.medReason.clearValidators();
 
-    this.resetIllnessArrayToOne(this.illnessesMed);
-    this.applyProviderValidators(this.illnessesMed, false);
-    this.illnessesMed.disable({ emitEvent: false });
+  this.form.controls.medName.disable({ emitEvent: false });
+  this.form.controls.medReason.disable({ emitEvent: false });
 
-    this.form.controls.medName.updateValueAndValidity({ emitEvent: false });
-    this.form.controls.medReason.updateValueAndValidity({ emitEvent: false });
-    this.illnessesMed.updateValueAndValidity({ emitEvent: false });
+  this.resetIllnessArrayToOne(this.illnessesMed);
+  this.applyProviderValidators(this.illnessesMed, false);
+  this.illnessesMed.disable({ emitEvent: false });
 
-    this.addAttemptMed.set(false);
-  }
+  this.clearState(this.form.controls.medName);
+  this.clearState(this.form.controls.medReason);
+  this.clearState(this.form.controls.illnessesMed);
+
+  this.addAttemptMed.set(false);
+  this.submitted.set(false);
+
+  this.form.controls.medName.updateValueAndValidity({ emitEvent: false });
+  this.form.controls.medReason.updateValueAndValidity({ emitEvent: false });
+  this.illnessesMed.updateValueAndValidity({ emitEvent: false });
+}
 
   canAddMedIllness(): boolean {
     if (this.illnessesMed.disabled) return false;
@@ -1924,31 +2106,38 @@ setCariesQ(val: boolean) {
   }
 
   setIllnessQ(value: boolean) {
-    this.form.controls.illnessQ.setValue(value);
-    this.setActive('illnessQ');
+  this.form.controls.illnessQ.setValue(value, { emitEvent: false });
+  this.form.controls.illnessQ.markAsTouched();
 
-    if (value) {
-      this.resetErrorsOnReopen('ill');
-      this.enableIllnessDetails();
-      this.clearState(this.illnessesIll);
-    } else {
-      this.disableIllnessDetails();
-    }
+  if (value === true) {
+    this.enableIllnessDetails();
+  } else {
+    this.disableIllnessDetails();
   }
 
-  private enableIllnessDetails() {
-    this.illnessesIll.enable({ emitEvent: false });
-    this.applyProviderValidators(this.illnessesIll, true);
-  }
+  this.form.controls.illnessQ.updateValueAndValidity({ emitEvent: false });
+  this.form.updateValueAndValidity({ emitEvent: false });
+}
 
+ private enableIllnessDetails() {
+  this.illnessesIll.enable({ emitEvent: false });
+  this.applyProviderValidators(this.illnessesIll, true);
+
+  this.illnessesIll.updateValueAndValidity({ emitEvent: false });
+  this.form.controls.illnessQ.updateValueAndValidity({ emitEvent: false });
+  this.form.updateValueAndValidity({ emitEvent: false });
+}
   private disableIllnessDetails() {
-    this.resetIllnessArrayToOne(this.illnessesIll);
-    this.applyProviderValidators(this.illnessesIll, false);
-    this.illnessesIll.disable({ emitEvent: false });
-    this.illnessesIll.updateValueAndValidity({ emitEvent: false });
+  this.resetIllnessArrayToOne(this.illnessesIll);
+  this.applyProviderValidators(this.illnessesIll, false);
+  this.illnessesIll.disable({ emitEvent: false });
 
-    this.addAttemptIll.set(false);
-  }
+  this.illnessesIll.updateValueAndValidity({ emitEvent: false });
+  this.form.controls.illnessQ.updateValueAndValidity({ emitEvent: false });
+  this.form.updateValueAndValidity({ emitEvent: false });
+
+  this.addAttemptIll.set(false);
+}
 
   canAddIllIllness(): boolean {
     if (this.illnessesIll.disabled) return false;
@@ -2002,7 +2191,7 @@ setCariesQ(val: boolean) {
   private enableOpsDetails() {
     (['opsA', 'opsB', 'opsC', 'opsD'] as const).forEach((k) => {
       this.form.controls[k].enable({ emitEvent: false });
-      this.form.controls[k].setValidators([Validators.required]);
+      this.form.controls[k].setValidators([requiredTrimmed()]);
       this.form.controls[k].updateValueAndValidity({ emitEvent: false });
     });
 
@@ -2110,27 +2299,31 @@ setCariesQ(val: boolean) {
     c.updateValueAndValidity({ emitEvent: false });
   }
 
-  setFutureTeethDisease(value: boolean) {
-    this.form.controls.futureTeethDisease.setValue(value);
-    this.setActive('futureTeethDisease');
+setFutureTeethDisease(value: boolean) {
+  this.form.controls.futureTeethDisease.setValue(value);
+  this.form.controls.futureTeethDisease.markAsDirty();
+  this.form.controls.futureTeethDisease.markAsTouched();
+  this.form.controls.futureTeethDisease.updateValueAndValidity({ emitEvent: false });
+  this.setActive('futureTeethDisease');
 
-    const note = this.form.controls.futureTeethDiseaseNote;
+  const note = this.form.controls.futureTeethDiseaseNote;
 
-    if (value === true) {
-      note.enable({ emitEvent: false });
-      note.setValidators([Validators.required]);
-      note.markAsPristine();
-      note.markAsUntouched();
-    } else {
-      note.reset('', { emitEvent: false });
-      note.clearValidators();
-      note.disable({ emitEvent: false });
-      note.markAsPristine();
-      note.markAsUntouched();
-    }
-
-    note.updateValueAndValidity({ emitEvent: false });
+  if (value === true) {
+    note.enable({ emitEvent: false });
+    note.setValidators([requiredTrimmed()]);
+    note.markAsPristine();
+    note.markAsUntouched();
+  } else {
+    note.reset('', { emitEvent: false });
+    note.clearValidators();
+    note.disable({ emitEvent: false });
+    note.markAsPristine();
+    note.markAsUntouched();
   }
+
+  note.updateValueAndValidity({ emitEvent: false });
+  this.submitted.set(false);
+}
 
 
   private addIllnessGeneric(arr: FormArray<IllnessForm>, kind: 'med' | 'ill') {

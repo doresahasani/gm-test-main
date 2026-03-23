@@ -10,15 +10,14 @@
       Gesundheitsdeklaration
     </h4>
 
-
     <div class="menu">
       <button
-        (click)="toggleMenu()"
-        [attr.aria-expanded]="menuOpen()"
-        aria-haspopup="menu"
-        aria-label="Menü öffnen"
-        class="menu__btn"
         type="button"
+        class="menu__btn"
+        aria-label="Menü öffnen"
+        aria-haspopup="menu"
+        [attr.aria-expanded]="menuOpen()"
+        (click)="$event.stopPropagation(); toggleMenu()"
       >
         <img
           alt=""
@@ -28,15 +27,15 @@
         />
       </button>
 
-      <div [class.open]="menuOpen()" class="dropdown" role="menu">
-        <a (click)="goTo(1)" role="menuitem">Allgemein</a>
-        <a (click)="goTo(2)" role="menuitem">Medizinisch</a>
-        <a (click)="goTo(3)" role="menuitem">Dental</a>
-
-        <div class="dropdown__divider"></div>
-
-        <a (click)="goTo(4)" role="menuitem">Überprüfung &amp; Absenden</a>
-        <button routerLink="/preview" class="nav-btn">Preview</button>
+      <div
+        class="dropdown"
+        role="menu"
+        [class.open]="menuOpen()"
+        (click)="$event.stopPropagation()"
+      >
+        <button routerLink="/preview" class="nav-btn" (click)="closeMenu()">
+          Preview
+        </button>
       </div>
     </div>
   </div>

@@ -314,43 +314,42 @@
             </div>
 
             <div class="provider__grid provider__grid--zip">
-                  <div class="field">
-                    <div
-                      (click)="setActive(medActiveKey(i,'docZipCity'))"
-                      [class.is-active]="isMedActive(i,'docZipCity') || hasText(illnessCtrl(illnessesMed, i,'docZipCity'))"
-                      [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docZipCity'))"
-                      class="box provider__box"
-                    >
-                      <input
-                        (focus)="setActive(medActiveKey(i,'docZipCity'))"
-                        (input)="onZipCityInput($event)"
-                        formControlName="docZipCity"
-                        placeholder="PLZ, Ort"
-                        type="text"
-                        autocomplete="off"
-                      />
-                  </div>
-
-                 @if (zipOptions.length > 0) {
-                        <div class="zip-dd__panel" (mousedown)="$event.preventDefault()">
-                          @for (opt of zipOptions; track opt) {
-                            <div
-                              class="zip-dd__row"
-                              role="button"
-                              tabindex="0"
-                              (click)="illnessCtrl(illnessesMed, i,'docZipCity').setValue(opt); zipOptions = []"
-                            >
-                              {{ opt }}
-                            </div>
-                          }
-                        </div>
-                      }
-
-                  @if (isInvalidCtrl(illnessCtrl(illnessesMed, i, 'docZipCity'))) {
-                    <p class="error">Bitte ausfüllen.</p>
-                  }
+              <div class="field">
+                <div
+                  (click)="setActive(medActiveKey(i,'docZipCity'))"
+                  [class.is-active]="isMedActive(i,'docZipCity') || hasText(illnessCtrl(illnessesMed, i,'docZipCity'))"
+                  [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesMed, i,'docZipCity'))"
+                  class="box provider__box"
+                >
+                  <input
+                    matInput
+                    (focus)="setActive(medActiveKey(i,'docZipCity'))"
+                    (input)="onZipCityInput($event)"
+                    formControlName="docZipCity"
+                    placeholder="PLZ, Ort"
+                    type="text"
+                    autocomplete="off"
+                    [matAutocomplete]="autoMedZipCity"
+                  />
                 </div>
+
+                <mat-autocomplete
+                  #autoMedZipCity="matAutocomplete"
+                  autoActiveFirstOption
+                  (optionSelected)="onMedZipCitySelected(i, $event.option.value)"
+                >
+                  @for (option of zipOptions; track option) {
+                    <mat-option [value]="option">
+                      {{ option }}
+                    </mat-option>
+                  }
+                </mat-autocomplete>
+
+                @if (isInvalidCtrl(illnessCtrl(illnessesMed, i, 'docZipCity'))) {
+                  <p class="error">Bitte ausfüllen.</p>
+                }
               </div>
+            </div>
           </div>
         </div>
         }
@@ -596,44 +595,43 @@
               </div>
             </div>
 
-           <div class="provider__grid provider__grid--zip">
-                <div class="field">
-                  <div
-                    (click)="setActive(illActiveKey(i,'docZipCity'))"
-                    [class.is-active]="hasText(illnessCtrl(illnessesIll, i,'docZipCity'))"
-                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docZipCity'))"
-                    class="box provider__box"
-                  >
-                    <input
-                      (focus)="setActive(illActiveKey(i,'docZipCity'))"
-                      (input)="onZipCityInput($event)"
-                      formControlName="docZipCity"
-                      placeholder="PLZ, Ort"
-                      type="text"
-                      autocomplete="off"
-                    />
-                  </div>
-
-                  @if (zipOptions.length > 0) {
-                      <div class="zip-dd__panel" (mousedown)="$event.preventDefault()">
-                        @for (opt of zipOptions; track opt) {
-                          <div
-                            class="zip-dd__row"
-                            role="button"
-                            tabindex="0"
-                            (click)="illnessCtrl(illnessesIll, i,'docZipCity').setValue(opt); zipOptions = []"
-                          >
-                            {{ opt }}
-                          </div>
-                        }
-                      </div>
-                    }
-
-                  @if (isInvalidCtrl(illnessCtrl(illnessesIll, i, 'docZipCity'))) {
-                    <p class="error">Bitte ausfüllen.</p>
-                  }
-                </div>
+          <div class="provider__grid provider__grid--zip">
+            <div class="field">
+              <div
+                (click)="setActive(illActiveKey(i,'docZipCity'))"
+                [class.is-active]="isIllActive(i,'docZipCity') || hasText(illnessCtrl(illnessesIll, i,'docZipCity'))"
+                [class.is-invalid]="isInvalidCtrl(illnessCtrl(illnessesIll, i,'docZipCity'))"
+                class="box provider__box"
+              >
+                <input
+                  matInput
+                  (focus)="setActive(illActiveKey(i,'docZipCity'))"
+                  (input)="onZipCityInput($event)"
+                  formControlName="docZipCity"
+                  placeholder="PLZ, Ort"
+                  type="text"
+                  autocomplete="off"
+                  [matAutocomplete]="autoIllZipCity"
+                />
               </div>
+
+              <mat-autocomplete
+                #autoIllZipCity="matAutocomplete"
+                autoActiveFirstOption
+                (optionSelected)="onIllZipCitySelected(i, $event.option.value)"
+              >
+                @for (option of zipOptions; track option) {
+                  <mat-option [value]="option">
+                    {{ option }}
+                  </mat-option>
+                }
+              </mat-autocomplete>
+
+              @if (isInvalidCtrl(illnessCtrl(illnessesIll, i, 'docZipCity'))) {
+                <p class="error">Bitte ausfüllen.</p>
+              }
+            </div>
+          </div>
           </div>
         </div>
         }
@@ -917,43 +915,43 @@
                 </div>
               </div>
 
-              <div class="provider__grid provider__grid--zip">
-                  <div class="field">
-                    <div
-                      (click)="setActive(opsBActiveKey(i,'docZipCity'))"
-                      [class.is-active]="isOpsBActive(i,'docZipCity') || hasText(illnessCtrl(opsBItems, i,'docZipCity'))"
-                      [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'docZipCity'))"
-                      class="box provider__box"
-                    >
-                      <input
-                        (focus)="setActive(opsBActiveKey(i,'docZipCity'))"
-                        (input)="onZipCityInput($event)"
-                        formControlName="docZipCity"
-                        placeholder="PLZ, Ort"
-                        type="text"
-                        autocomplete="off"
-                      />
-                    </div>
-                          @if (zipOptions.length > 0) {
-                            <div class="zip-dd__panel" (mousedown)="$event.preventDefault()">
-                              @for (opt of zipOptions; track opt) {
-                                <div
-                                  class="zip-dd__row"
-                                  role="button"
-                                  tabindex="0"
-                                  (click)="illnessCtrl(opsBItems, i,'docZipCity').setValue(opt); zipOptions = []"
-                                >
-                                  {{ opt }}
-                                </div>
-                              }
-                            </div>
-                          }
-
-                    @if (isInvalidCtrl(illnessCtrl(opsBItems, i, 'docZipCity'))) {
-                      <p class="error">Bitte ausfüllen.</p>
-                    }
+             <div class="provider__grid provider__grid--zip">
+                <div class="field">
+                  <div
+                    (click)="setActive(opsBActiveKey(i,'docZipCity'))"
+                    [class.is-active]="isOpsBActive(i,'docZipCity') || hasText(illnessCtrl(opsBItems, i,'docZipCity'))"
+                    [class.is-invalid]="isInvalidCtrl(illnessCtrl(opsBItems, i,'docZipCity'))"
+                    class="box provider__box"
+                  >
+                    <input
+                      matInput
+                      (focus)="setActive(opsBActiveKey(i,'docZipCity'))"
+                      (input)="onZipCityInput($event)"
+                      formControlName="docZipCity"
+                      placeholder="PLZ, Ort"
+                      type="text"
+                      autocomplete="off"
+                      [matAutocomplete]="autoOpsBZipCity"
+                    />
                   </div>
+
+                  <mat-autocomplete
+                    #autoOpsBZipCity="matAutocomplete"
+                    autoActiveFirstOption
+                    (optionSelected)="onOpsBZipCitySelected(i, $event.option.value)"
+                  >
+                    @for (option of zipOptions; track option) {
+                      <mat-option [value]="option">
+                        {{ option }}
+                      </mat-option>
+                    }
+                  </mat-autocomplete>
+
+                  @if (isInvalidCtrl(illnessCtrl(opsBItems, i, 'docZipCity'))) {
+                    <p class="error">Bitte ausfüllen.</p>
+                  }
                 </div>
+              </div>
             </div>
           </div>
           }

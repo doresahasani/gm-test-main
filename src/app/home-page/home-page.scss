@@ -102,6 +102,7 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
     line-height: 17px;
     color: $text;
     text-align: left;
+    margin-top: 12px;
   }
 
   .p {
@@ -172,8 +173,6 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
   }
 
   .field {
-    display: grid;
-    gap: 8px;
     margin-bottom: 10px;
   }
   
@@ -404,9 +403,6 @@ $font: 'Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
       transform: translateY(1px);
     }
 
-    &--bottom {
-      margin: 14px 0 0 0;
-    }
   }
 
   .pill-btn {
@@ -1062,8 +1058,20 @@ mat-expansion-panel {
   }
 }
 
-.mat-expansion-panel-header-title,
-.mat-expansion-panel-header-description {
-  margin: 12px 0 0 0;
+/* ===== fixing error for data validated===== */
+
+.home {
+
+  .grid-2.dates .field > .error {
+    position: static !important;
+    display: block;
+    margin-top: 4px;
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  .grid-2.dates .field {
+    padding-bottom: 0 !important;
+  }
 
 }

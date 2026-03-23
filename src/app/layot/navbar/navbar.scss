@@ -68,18 +68,60 @@
   position: absolute;
   right: 0;
   top: calc(100% + 10px);
-
-  width: 180px;
-  background: #fff;
-  border-radius: 14px;
-  padding: 8px;
+  width: 190px;
 
   display: none;
-  z-index: 50;
-  border: 1px solid #f3f3f3;
+  flex-direction: column;
+  padding: 6px;
+
+  background: #ffffff;
+  border: 1px solid #eceff3;
+  border-radius: 16px;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.12);
+
+  z-index: 100;
+  overflow: hidden;
+  animation: dropdownFade 0.18s ease;
+
   &.open {
     display: flex;
-    flex-direction: column;
   }
 
+  .nav-btn {
+    width: 100%;
+    border: 0;
+    outline: none;
+    background: transparent;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    padding: 12px 14px;
+    border-radius: 12px;
+
+    font-size: 14px;
+    font-weight: 500;
+    color: #1f2937;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+
+    &:hover {
+      background: #fff4ec;
+      color: #f68229;
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  &__divider {
+    height: 1px;
+    margin: 4px 2px;
+    background: #f1f3f6;
+  }
 }
+
+
+

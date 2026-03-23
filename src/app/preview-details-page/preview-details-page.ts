@@ -26,49 +26,55 @@ export class PreviewDetailsPageComponent implements OnInit {
   form: any = null;
   parsedQuestions: any = null;
   error = '';
+  sections: PreviewSection[] = [];
 
-ngOnInit(): void {
-  const resolvedForm = this.route.snapshot.data['form'];
+  ngOnInit(): void {
+    const resolvedForm = this.route.snapshot.data['form'];
 
-  if (!resolvedForm) {
-    this.error = 'Gabim gjatë marrjes së rekordit.';
-    return;
-  }
-
-  this.form = resolvedForm;
-
-  try {
-    const rawData =
-      this.form?.healthDeclarationJson ??
-      this.form?.HealthDeclarationJson;
-
-    let parsedJson: any = null;
-
-    if (typeof rawData === 'string' && rawData.trim() !== '') {
-      parsedJson = JSON.parse(rawData);
-    } else if (typeof rawData === 'object' && rawData !== null) {
-      parsedJson = rawData;
+    if (!resolvedForm) {
+      this.error = 'Gabim gjatë marrjes së rekordit.';
+      return;
     }
 
-    this.parsedQuestions =
-      parsedJson?.healthDeclarationQuestions ??
-      parsedJson?.HealthDeclarationQuestions ??
-      parsedJson ??
-      null;
+    this.form = resolvedForm;
 
-    if (!this.parsedQuestions) {
-      this.error = 'Nuk u gjetën të dhënat e formularit për këtë rekord.';
+    try {
+      const rawData =
+        this.form?.healthDeclarationJson ??
+        this.form?.HealthDeclarationJson;
+
+      let parsedJson: any = null;
+
+      if (typeof rawData === 'string' && rawData.trim() !== '') {
+        parsedJson = JSON.parse(rawData);
+      } else if (typeof rawData === 'object' && rawData !== null) {
+        parsedJson = rawData;
+      }
+
+      this.parsedQuestions =
+        parsedJson?.healthDeclarationQuestions ??
+        parsedJson?.HealthDeclarationQuestions ??
+        parsedJson ??
+        null;
+
+      if (!this.parsedQuestions) {
+        this.error = 'Nuk u gjetën të dhënat e formularit për këtë rekord.';
+        this.sections = [];
+        return;
+      }
+
+      this.sections = this.buildPreviewSections();
+
+      console.log('FORM:', this.form);
+      console.log('RAW DATA:', rawData);
+      console.log('PARSED JSON:', parsedJson);
+      console.log('PARSED QUESTIONS:', this.parsedQuestions);
+    } catch (e) {
+      console.error('JSON parse error:', e);
+      this.error = 'Gabim gjatë leximit të të dhënave.';
+      this.sections = [];
     }
-
-    console.log('FORM:', this.form);
-    console.log('RAW DATA:', rawData);
-    console.log('PARSED JSON:', parsedJson);
-    console.log('PARSED QUESTIONS:', this.parsedQuestions);
-  } catch (e) {
-    console.error('JSON parse error:', e);
-    this.error = 'Gabim gjatë leximit të të dhënave.';
   }
-}
 
   buildPreviewSections(): PreviewSection[] {
     const q = this.parsedQuestions;

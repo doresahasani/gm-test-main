@@ -12,9 +12,11 @@
       </button>
     </div>
 
-    <div *ngIf="error" class="error-box">
-      {{ error }}
-    </div>
+    @if (error) {
+      <div class="error-box">
+        {{ error }}
+      </div>
+    }
 
     <div class="search-box">
       <span class="search-icon">⌕</span>
@@ -26,61 +28,66 @@
       />
     </div>
 
-    <div *ngIf="filteredForms.length === 0" class="state-box">
-      No records found.
-    </div>
-
-    <div *ngIf="filteredForms.length > 0" class="records-list">
-      <div class="records-head">
-        <div>ID</div>
-        <div>Provider</div>
-        <div>Date</div>
-        <div></div>
+    @if (filteredForms.length === 0) {
+      <div class="state-box">
+        No records found.
       </div>
+    }
 
-      <div
-        class="record-item"
-        *ngFor="let form of filteredForms; trackBy: trackByForm"
-      >
-        <div class="record-summary">
-          <div class="record-id">#{{ form.id }}</div>
-          <div class="record-provider">{{ getProvider(form) }}</div>
-          <div class="record-date">{{ formatDateOnly(form.createdAt) }}</div>
+    @if (filteredForms.length > 0) {
+      <div class="records-list">
+        <div class="records-head">
+          <div>ID</div>
+          <div>Provider</div>
+          <div>Date</div>
+          <div></div>
+        </div>
 
-          <div class="menu-wrap" (click)="onMenuClick($event)">
-            <button
-              type="button"
-              class="menu-btn"
-              (click)="toggleMenu($event, form.id)"
-              title="Open menu"
-            >
-              ⋮
-            </button>
+        @for (form of filteredForms; track trackByForm($index, form)) {
+          <div class="record-item">
+            <div class="record-summary">
+              <div class="record-id">#{{ form.id }}</div>
+              <div class="record-provider">{{ getProvider(form) }}</div>
+              <div class="record-date">{{ formatDateOnly(form.createdAt) }}</div>
 
-            <div *ngIf="openMenuId === form.id" class="action-menu">
-              <button type="button" class="action-item" (click)="viewRecord(form, $event)">
-                <span class="action-icon">👁</span>
-                <span>View</span>
-              </button>
+              <div class="menu-wrap" (click)="onMenuClick($event)">
+                <button
+                  type="button"
+                  class="menu-btn"
+                  (click)="toggleMenu($event, form.id)"
+                  title="Open menu"
+                >
+                  ⋮
+                </button>
 
-              <button type="button" class="action-item" (click)="editRecord(form, $event)">
-                <span class="action-icon">✎</span>
-                <span>Edit</span>
-              </button>
+                @if (openMenuId === form.id) {
+                  <div class="action-menu">
+                    <button type="button" class="action-item" (click)="viewRecord(form, $event)">
+                      <span class="action-icon">👁</span>
+                      <span>View</span>
+                    </button>
 
-              <button
-                type="button"
-                class="action-item action-item--danger"
-                (click)="deleteRecord(form, $event)"
-                [disabled]="deletingId === form.id"
-              >
-                <span class="action-icon">🗑</span>
-                <span>{{ deletingId === form.id ? 'Deleting...' : 'Delete' }}</span>
-              </button>
+                    <button type="button" class="action-item" (click)="editRecord(form, $event)">
+                      <span class="action-icon">✎</span>
+                      <span>Edit</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="action-item action-item--danger"
+                      (click)="deleteRecord(form, $event)"
+                      [disabled]="deletingId === form.id"
+                    >
+                      <span class="action-icon">🗑</span>
+                      <span>{{ deletingId === form.id ? 'Deleting...' : 'Delete' }}</span>
+                    </button>
+                  </div>
+                }
+              </div>
             </div>
           </div>
-        </div>
+        }
       </div>
-    </div>
+    }
   </div>
 </div>
