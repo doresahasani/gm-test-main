@@ -91,3 +91,34 @@
     }
   </div>
 </div>
+@if (showDeleteModal && pendingDeleteForm) {
+  <div class="delete-overlay" (click)="cancelDelete()">
+    <div class="delete-card" (click)="$event.stopPropagation()">
+      <h2 class="h2">Rekord löschen?</h2>
+      <p class="p">
+        Möchten Sie den Datensatz
+        <strong>#{{ pendingDeleteForm.id }}</strong>
+        wirklich löschen?
+      </p>
+
+      <div class="delete-actions">
+        <button
+          type="button"
+          class="delete-cancel-btn"
+          (click)="cancelDelete()"
+        >
+          Abbrechen
+        </button>
+
+        <button
+          type="button"
+          class="delete-confirm-btn"
+          (click)="confirmDelete()"
+          [disabled]="deletingId === pendingDeleteForm.id"
+        >
+          {{ deletingId === pendingDeleteForm.id ? 'Löschen...' : 'Ja, löschen' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

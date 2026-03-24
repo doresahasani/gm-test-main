@@ -85,8 +85,6 @@ export class PreviewDetailsPageComponent implements OnInit {
         title: 'General Information',
         items: this.buildItems([
           ['Record ID', this.form?.id],
-          ['Created At', this.form?.createdAt],
-          ['Updated At', this.form?.updatedAt],
           ['Height (cm)', q.step1?.heightCm],
           ['Weight (kg)', q.step1?.weightKg]
         ])
@@ -262,17 +260,21 @@ export class PreviewDetailsPageComponent implements OnInit {
       .replace(/^./, char => char.toUpperCase());
   }
 
-  formatDateTime(value: string | null | undefined): string {
-    if (!value) return '';
+ formatDateTime(value: string | null | undefined): string {
+  if (!value) return '';
 
     const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return '';
+      if (Number.isNaN(date.getTime())) return '';
 
-    return new Intl.DateTimeFormat('de-DE', {
-      dateStyle: 'medium',
-      timeStyle: 'short'
-    }).format(date);
-  }
+      return new Intl.DateTimeFormat('de-DE', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }).format(date);
+}
 
   trackBySection(index: number, section: PreviewSection): string {
     return section.title;

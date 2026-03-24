@@ -1,8 +1,10 @@
 <form (submit)="$event.preventDefault()" [formGroup]="form" class="card home">
-  <mat-accordion [multi]="false">
+  <mat-accordion [multi]="isEditMode">
     <!-- 1. Grösse und Gewicht -->
-    <mat-expansion-panel  
-      (opened)="goToStep(1); scrollToStepBody(1)" [expanded]="currentStep() === 1" hideToggle>
+    <mat-expansion-panel
+  (opened)="onPanelOpened(1)"
+  [expanded]="isEditMode || currentStep() === 1"
+  hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -53,7 +55,7 @@
         - Falls Sie schwanger sind, geben Sie bitte Ihr Gewicht zu Beginn der Schwangerschaft an.
       </p>
 
-      @if (!isStepCompleted(1)) {
+      @if (!isEditMode && !isStepCompleted(1)) {
         <div class="nav">
           <button (click)="onNext()" class="btn-next" type="button">Next</button>
         </div>
@@ -63,7 +65,10 @@
 
     <!-- 2. Medikamente oder Hilfsmittel -->
     @if (maxStepReached() >= 2) {
-    <mat-expansion-panel  (opened)="goToStep(2); scrollToStepBody(2)" [expanded]="currentStep() === 2" hideToggle>
+   <mat-expansion-panel
+  (opened)="onPanelOpened(2)"
+  [expanded]="isEditMode || currentStep() === 2"
+  hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">2. Medikamente oder Hilfsmittel</h2>
@@ -361,7 +366,7 @@
       </button>
       }
 
-      @if (!isStepCompleted(2)) {
+      @if (!isEditMode && !isStepCompleted(2)) {
         <div class="nav">
           <button (click)="onNext()" class="btn-next" type="button">Next</button>
         </div>
@@ -371,7 +376,10 @@
 
     <!-- 3. Krankheiten oder Beschwerden -->
     @if (maxStepReached() >= 3) {
-    <mat-expansion-panel  (opened)="goToStep(3); scrollToStepBody(3)" [expanded]="currentStep() === 3" hideToggle>
+    <mat-expansion-panel
+  (opened)="onPanelOpened(3)"
+  [expanded]="isEditMode || currentStep() === 3"
+  hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
 
@@ -642,7 +650,7 @@
         + Krankheit erfassen
       </button>
       }
-      @if (!isStepCompleted(3)) {
+      @if (!isEditMode && !isStepCompleted(3)) {
           <div class="nav">
             <button (click)="onNext()" class="btn-next" type="button">Next</button>
           </div>
@@ -652,7 +660,10 @@
 
     <!-- 4. Behandlungen -->
     @if (maxStepReached() >= 4) {
-    <mat-expansion-panel  (opened)="goToStep(4); scrollToStepBody(4)" [expanded]="currentStep() === 4" hideToggle>
+   <mat-expansion-panel
+  (opened)="onPanelOpened(4)"
+  [expanded]="isEditMode || currentStep() === 4"
+  hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1010,7 +1021,7 @@
       </div>
       }
 
-      @if (!isStepCompleted(4)) {
+      @if (!isEditMode && !isStepCompleted(4)) {
           <div class="nav">
             <button (click)="onNext()" class="btn-next" type="button">Next</button>
           </div>
@@ -1019,7 +1030,10 @@
     }
     <!-- 5. Arzt -->
     @if (maxStepReached() >= 5) {
-    <mat-expansion-panel (opened)="goToStep(5); scrollToStepBody(5)" [expanded]="currentStep() === 5" hideToggle>
+    <mat-expansion-panel
+  (opened)="onPanelOpened(5)"
+  [expanded]="isEditMode || currentStep() === 5"
+  hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1121,7 +1135,7 @@
           <p class="error">Bitte ausfüllen!</p>
         }
       </div>
-            @if (!isStepCompleted(5)) {
+            @if (!isEditMode && !isStepCompleted(5)) {
                 <div class="nav">
                   <button (click)="onNext()" class="btn-next" type="button">Next</button>
                 </div>
@@ -1131,7 +1145,10 @@
 
     <!-- ===================== 6. BERICHTE UPLOAD ===================== -->
     @if (maxStepReached() >= 6) {
-    <mat-expansion-panel (opened)="goToStep(6); scrollToStepBody(6)" [expanded]="currentStep() === 6" hideToggle>
+   <mat-expansion-panel
+  (opened)="onPanelOpened(6)"
+  [expanded]="isEditMode || currentStep() === 6"
+  hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1165,7 +1182,7 @@
       <p class="error">Bitte lade eine PDF-Datei hoch.</p>
       }
 
-      @if (!isStepCompleted(6)) {
+      @if (!isEditMode && !isStepCompleted(6)) {
           <div class="nav">
             <button (click)="onNext()" class="btn-next" type="button">Next</button>
           </div>
@@ -1180,7 +1197,10 @@
      
     <!-- 7. Zustand des Zahnbetts -->
     @if (maxStepReached() >= 7) {
-    <mat-expansion-panel (opened)="goToStep(7); scrollToStepBody(7)" [expanded]="currentStep() === 7" hideToggle>
+    <mat-expansion-panel
+  (opened)="onPanelOpened(7)"
+  [expanded]="isEditMode || currentStep() === 7"
+  hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1226,7 +1246,7 @@
       <p class="error">Bitte ausfüllen.</p>
       }
       }
-      @if (!isStepCompleted(7)) {
+      @if (!isEditMode && !isStepCompleted(7)) {
           <div class="nav">
             <button (click)="onNext()" class="btn-next" type="button">Next</button>
           </div>
@@ -1236,7 +1256,10 @@
 
     <!-- 8. Hygiene -->
     @if (maxStepReached() >= 8) {
-    <mat-expansion-panel (opened)="goToStep(8); scrollToStepBody(8)" [expanded]="currentStep() === 8" hideToggle>
+   <mat-expansion-panel
+  (opened)="onPanelOpened(8)"
+  [expanded]="isEditMode || currentStep() === 8"
+  hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">8. Hygiene:</h2>
@@ -1265,7 +1288,7 @@
       <p class="error">Bitte wählen.</p>
       }
 
-      @if (!isStepCompleted(8)) {
+      @if (!isEditMode && !isStepCompleted(8)) {
           <div class="nav">
             <button (click)="onNext()" class="btn-next" type="button">Next</button>
           </div>
@@ -1276,7 +1299,10 @@
 
     <!-- 9. Okklusion -->
     @if (maxStepReached() >= 9) {
-    <mat-expansion-panel (opened)="goToStep(9); scrollToStepBody(9)" [expanded]="currentStep() === 9" hideToggle>
+   <mat-expansion-panel
+  (opened)="onPanelOpened(9)"
+  [expanded]="isEditMode || currentStep() === 9"
+  hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1306,7 +1332,7 @@
       @if (isInvalid('occlusion')) {
       <p class="error">Bitte wählen Sie eine Option.</p>
       }
-      @if (!isStepCompleted(9)) {
+      @if (!isEditMode && !isStepCompleted(9)) {
           <div class="nav">
             <button (click)="onNext()" class="btn-next" type="button">Next</button>
           </div>
@@ -1316,7 +1342,10 @@
 
     <!-- 10. Zustand der Kronen -->
     @if (maxStepReached() >= 10) {
-    <mat-expansion-panel (opened)="goToStep(10); scrollToStepBody(10)" [expanded]="currentStep() === 10" hideToggle>
+    <mat-expansion-panel
+  (opened)="onPanelOpened(10)"
+  [expanded]="isEditMode || currentStep() === 10"
+  hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1366,7 +1395,7 @@
       <p class="error">Bitte ausfüllen.</p>
       }
       }
-      @if (!isStepCompleted(10)) {
+      @if (!isEditMode && !isStepCompleted(10)) {
           <div class="nav">
             <button (click)="onNext()" class="btn-next" type="button">Next</button>
           </div>
@@ -1376,7 +1405,10 @@
 
     <!-- 11. Zustand der Brücken -->
     @if (maxStepReached() >= 11) {
-    <mat-expansion-panel (opened)="goToStep(11); scrollToStepBody(11)" [expanded]="currentStep() === 11" hideToggle>
+    <mat-expansion-panel
+  (opened)="onPanelOpened(11)"
+  [expanded]="isEditMode || currentStep() === 11"
+  hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1426,7 +1458,7 @@
       <p class="error">Bitte ausfüllen.</p>
       }
       }
-      @if (!isStepCompleted(11)) {
+      @if (!isEditMode && !isStepCompleted(11)) {
           <div class="nav">
             <button (click)="onNext()" class="btn-next" type="button">Next</button>
           </div>
@@ -1436,7 +1468,10 @@
 
     <!-- 12. Zustand der Teilprothesen -->
     @if (maxStepReached() >= 12) {
-    <mat-expansion-panel (opened)="goToStep(12); scrollToStepBody(12)" [expanded]="currentStep() === 12" hideToggle>
+    <mat-expansion-panel
+  (opened)="onPanelOpened(12)"
+  [expanded]="isEditMode || currentStep() === 12"
+  hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1489,7 +1524,7 @@
       <p class="error">Bitte ausfüllen.</p>
       }
       }
-      @if (!isStepCompleted(12)) {
+      @if (!isEditMode && !isStepCompleted(12)) {
           <div class="nav">
             <button (click)="onNext()" class="btn-next" type="button">Next</button>
           </div>
@@ -1499,7 +1534,10 @@
 
     <!-- 13. Dentition -->
     @if (maxStepReached() >= 13) {
-    <mat-expansion-panel (opened)="goToStep(13); scrollToStepBody(13)" [expanded]="currentStep() === 13" hideToggle>
+    <mat-expansion-panel
+  (opened)="onPanelOpened(13)"
+  [expanded]="isEditMode || currentStep() === 13"
+  hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1540,7 +1578,7 @@
       <p class="error">Bitte ausfüllen.</p>
       }
       }
-      @if (!isStepCompleted(13)) {
+      @if (!isEditMode && !isStepCompleted(13)) {
           <div class="nav">
             <button (click)="onNext()" class="btn-next" type="button">Next</button>
           </div>
@@ -1550,7 +1588,10 @@
 
     <!-- 14. Kiefer -->
     @if (maxStepReached() >= 14) {
-    <mat-expansion-panel (opened)="goToStep(14); scrollToStepBody(14)" [expanded]="currentStep() === 14" hideToggle>
+    <mat-expansion-panel
+  (opened)="onPanelOpened(14)"
+  [expanded]="isEditMode || currentStep() === 14"
+  hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1590,7 +1631,7 @@
       <p class="error">Bitte ausfüllen.</p>
       }
       }
-     @if (!isStepCompleted(14)) {
+     @if (!isEditMode && !isStepCompleted(14)) {
           <div class="nav">
             <button (click)="onNext()" class="btn-next" type="button">Next</button>
           </div>
@@ -1600,7 +1641,10 @@
 
     <!-- 15. Zukunft -->
     @if (maxStepReached() >= 15) {
-    <mat-expansion-panel (opened)="goToStep(15); scrollToStepBody(15)" [expanded]="currentStep() === 15" hideToggle>
+    <mat-expansion-panel
+  (opened)="onPanelOpened(15)"
+  [expanded]="isEditMode || currentStep() === 15"
+  hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1641,7 +1685,7 @@
       <p class="error">Bitte ausfüllen.</p>
       }
       }
-      @if (!isStepCompleted(15)) {
+      @if (!isEditMode && !isStepCompleted(15)) {
           <div class="nav">
             <button (click)="onNext()" class="btn-next" type="button">Next</button>
           </div>
@@ -1651,7 +1695,10 @@
 
     <!-- 16. Fehlende, nicht ersetzte Zähne -->
     @if (maxStepReached() >= 16) {
-    <mat-expansion-panel (opened)="goToStep(16); scrollToStepBody(16)" [expanded]="currentStep() === 16" hideToggle>
+    <mat-expansion-panel
+  (opened)="onPanelOpened(16)"
+  [expanded]="isEditMode || currentStep() === 16"
+  hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1843,7 +1890,7 @@
 
       </div>
       }
-      @if (!isStepCompleted(16)) {
+      @if (!isEditMode && !isStepCompleted(16)) {
           <div class="nav">
             <button (click)="onNext()" class="btn-next" type="button">Next</button>
           </div>
@@ -1854,7 +1901,10 @@
 
     <!-- 17. Schadhafte Zahnfüllungen -->
     @if (maxStepReached() >= 17) {
-    <mat-expansion-panel (opened)="goToStep(17); scrollToStepBody(17)" [expanded]="currentStep() === 17" hideToggle>
+   <mat-expansion-panel
+  (opened)="onPanelOpened(17)"
+  [expanded]="isEditMode || currentStep() === 17"
+  hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -2051,7 +2101,7 @@
 
       </div>
       }
-      @if (!isStepCompleted(17)) {
+      @if (!isEditMode && !isStepCompleted(17)) {
           <div class="nav">
             <button (click)="onNext()" class="btn-next" type="button">Next</button>
           </div>
@@ -2061,7 +2111,10 @@
 
     <!-- 18. Kariöse Zähne -->
     @if (maxStepReached() >= 18) {
-    <mat-expansion-panel (opened)="goToStep(18); scrollToStepBody(18)" [expanded]="currentStep() === 18" hideToggle>
+    <mat-expansion-panel
+  (opened)="onPanelOpened(18)"
+  [expanded]="isEditMode || currentStep() === 18"
+  hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -2256,7 +2309,7 @@
               <p class="error">Bitte wählen Sie mindestens einen Zahn.</p>
             }
       }
-      @if (!isStepCompleted(18)) {
+      @if (!isEditMode && !isStepCompleted(18)) {
           <div class="nav">
             <button (click)="onNext()" class="btn-next" type="button">Next</button>
           </div>
@@ -2266,7 +2319,10 @@
 
     <!-- 19. Wurzelbehandelte Zähne -->
     @if (maxStepReached() >= 19) {
-    <mat-expansion-panel (opened)="goToStep(19); scrollToStepBody(19)" [expanded]="currentStep() === 19" hideToggle>
+   <mat-expansion-panel
+  (opened)="onPanelOpened(19)"
+  [expanded]="isEditMode || currentStep() === 19"
+  hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -2462,7 +2518,7 @@
           <p class="error">Bitte wählen Sie mindestens einen Zahn.</p>
         }
       }
-     @if (!isStepCompleted(19)) {
+     @if (!isEditMode && !isStepCompleted(19)) {
           <div class="nav">
             <button (click)="onNext()" class="btn-next" type="button">Next</button>
           </div>
@@ -2472,7 +2528,10 @@
 
     <!--20-->
     @if (maxStepReached() >= 20) {
-    <mat-expansion-panel (opened)="goToStep(20); scrollToStepBody(20)" [expanded]="currentStep() === 20" hideToggle>
+    <mat-expansion-panel
+  (opened)="onPanelOpened(20)"
+  [expanded]="isEditMode || currentStep() === 20"
+  hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -2515,7 +2574,7 @@
       <p class="error">Bitte ausfüllen.</p>
       }
       }
-      @if (!isStepCompleted(20)) {
+      @if (!isEditMode && !isStepCompleted(20)) {
           <div class="nav">
             <button (click)="onNext()" class="btn-next" type="button">Next</button>
           </div>
@@ -2526,7 +2585,10 @@
 
     <!-- 21. Datum der letzten Radiographie -->
     @if (maxStepReached() >= 21) {
-    <mat-expansion-panel (opened)="goToStep(21); scrollToStepBody(21)" [expanded]="currentStep() === 21" hideToggle>
+    <mat-expansion-panel
+  (opened)="onPanelOpened(21)"
+  [expanded]="isEditMode || currentStep() === 21"
+  hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -2552,7 +2614,7 @@
       <p class="error">Bitte wählen Sie ein Datum.</p>
       }
 
-      @if (!isStepCompleted(21)) {
+      @if (!isEditMode && !isStepCompleted(21)) {
           <div class="nav">
             <button (click)="onNext()" class="btn-next" type="button">Next</button>
           </div>
@@ -2562,7 +2624,10 @@
 
     <!-- 22. Bemerkungen -->
     @if (maxStepReached() >= 22) {
-    <mat-expansion-panel (opened)="goToStep(22); scrollToStepBody(22)" [expanded]="currentStep() === 22" hideToggle>
+   <mat-expansion-panel
+  (opened)="onPanelOpened(22)"
+  [expanded]="isEditMode || currentStep() === 22"
+  hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -2587,7 +2652,7 @@
 
 
 
-  @if (isFinished()) {
+  @if (isFinished()) {w
  <div (click)="onDankeOk()" class="finish-overlay">
   <div (click)="$event.stopPropagation()" class="finish-card">
     <h2 class="h2">Danke! 🎉</h2>

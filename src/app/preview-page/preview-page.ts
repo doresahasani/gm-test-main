@@ -27,6 +27,9 @@ export class PreviewPageComponent implements OnInit {
   openMenuId: number | null = null;
   deletingId: number | null = null;
 
+  showDeleteModal = false;
+  pendingDeleteForm: any | null = null;
+
   ngOnInit(): void {
     const resolvedForms = this.route.snapshot.data['forms'];
 
@@ -104,9 +107,19 @@ export class PreviewPageComponent implements OnInit {
     event?.stopPropagation();
     this.closeMenu();
 
-    const confirmed = window.confirm(`A dëshiron ta fshish rekordin #${form.id}?`);
-    if (!confirmed) return;
+    this.pendingDeleteForm = form;
+    this.showDeleteModal = true;
+  }
 
+  cancelDelete(): void {
+    this.showDeleteModal = false;
+    this.pendingDeleteForm = null;
+  }
+
+  confirmDelete(): void {
+    if (!this.pendingDeleteForm) return;
+
+    const form = this.pendingDeleteForm;
     this.deletingId = Number(form.id);
     this.error = '';
 
@@ -118,12 +131,16 @@ export class PreviewPageComponent implements OnInit {
         this.filteredForms = this.filteredForms.filter(item => Number(item.id) !== deletedId);
 
         this.deletingId = null;
+        this.showDeleteModal = false;
+        this.pendingDeleteForm = null;
         this.cdr.detectChanges();
       },
       error: (err) => {
         console.error(err);
         this.error = 'Gabim gjatë fshirjes së rekordit.';
         this.deletingId = null;
+        this.showDeleteModal = false;
+        this.pendingDeleteForm = null;
         this.cdr.detectChanges();
       }
     });
@@ -136,13 +153,16 @@ export class PreviewPageComponent implements OnInit {
   formatDateOnly(value: string | null | undefined): string {
     if (!value) return '—';
 
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return '—';
+   const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '';
 
     return new Intl.DateTimeFormat('de-DE', {
       day: '2-digit',
       month: '2-digit',
-      year: 'numeric'
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
     }).format(date);
   }
 

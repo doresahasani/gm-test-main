@@ -157,15 +157,19 @@
   overflow: visible;
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
   transition: 0.2s ease;
-  z-index: 1;
+  z-index: 0;
 }
 
 .record-item:hover {
   transform: translateY(-1px);
   border-color: rgba(246, 130, 41, 0.35);
   box-shadow: 0 14px 28px rgba(246, 130, 41, 0.14);
-  z-index: 5;
+  z-index: 100;
 }
+.record-item:has(.action-menu) {
+  z-index: 100;
+}
+
 
 .record-summary {
   position: relative;
@@ -282,4 +286,73 @@
   align-items: center;
   justify-content: center;
   font-size: 14px;
+}
+.delete-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 9999;
+}
+
+.delete-card {
+  width: 100%;
+  max-width: 380px;
+  background: #fff;
+  border-radius: 24px;
+  padding: 24px 20px;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
+  text-align: center;
+}
+
+.delete-card .h2 {
+  margin: 0 0 10px;
+}
+
+.delete-card .p {
+  margin: 0;
+  color: #475569;
+}
+
+.delete-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 22px;
+}
+
+.delete-cancel-btn,
+.delete-confirm-btn {
+  min-width: 130px;
+  height: 44px;
+  border: none;
+  border-radius: 999px;
+  padding: 0 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.delete-cancel-btn {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.delete-confirm-btn {
+  background: #dc2626;
+  color: #fff;
+}
+
+.delete-cancel-btn:hover,
+.delete-confirm-btn:hover {
+  opacity: 0.95;
+}
+
+.delete-cancel-btn:disabled,
+.delete-confirm-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }

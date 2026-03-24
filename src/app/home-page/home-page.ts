@@ -161,6 +161,8 @@ export class HomeComponent {
 
   isEditMode = false;
   editId: number | null = null;
+
+  updatedRecordId = signal<number | null>(null);
   
 
 onZipCityInput(event: Event): void {
@@ -247,19 +249,31 @@ onOpsBZipCitySelected(index: number, value: string): void {
       { key: 'webkitRelativePath', value: (file as any).webkitRelativePath ?? '' },
     ];
   }
-  private fileToUploadArray(file: File | null) {
+  private fileToUploadArray(file: any) {
   if (!file) return [];
 
-  return [
-    {
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      lastModified: file.lastModified,
-      lastModifiedDate: new Date(file.lastModified).toString(),
-      webkitRelativePath: (file as any).webkitRelativePath ?? '',
-    },
-  ];
+  if (Array.isArray(file)) {
+    return file;
+  }
+
+  if (file instanceof File) {
+    return [
+      {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        lastModified: file.lastModified,
+        lastModifiedDate: new Date(file.lastModified).toString(),
+        webkitRelativePath: (file as any).webkitRelativePath ?? '',
+      },
+    ];
+  }
+
+  if (typeof file === 'object' && file.name) {
+    return [file];
+  }
+
+  return [];
 }
 
 private buildHealthDeclarationPayload() {
@@ -389,19 +403,25 @@ private buildHealthDeclarationPayload() {
 }
 
   private jumpToInvalidStep(step: number) {
-    this.pendingScrollStep = step;
-    this.setStep(step);
+  this.pendingScrollStep = step;
+  this.setStep(step);
+
+  setTimeout(() => {
+    const controls = this.getControlsForStep12(step);
+
+    controls.forEach((c) => this.markEnabledAsTouched(c));
+    controls.forEach((c) => c.updateValueAndValidity({ emitEvent: false }));
+    this.form.updateValueAndValidity({ emitEvent: false });
+
+    this.setActiveFirstInvalid12(step);
+
+    this.scrollToStepBody(step);
 
     setTimeout(() => {
-      const controls = this.getControlsForStep12(step);
-      controls.forEach((c) => this.markEnabledAsTouched(c));
-      controls.forEach((c) => c.updateValueAndValidity({ emitEvent: false }));
-      this.form.updateValueAndValidity({ emitEvent: false });
-
-      this.setActiveFirstInvalid12(step);
       this.scrollToFirstError();
-    }, 0);
-  }
+    }, 150);
+  }, 0);
+}
   completedSteps = signal<Set<number>>(new Set());
 
   isStepCompleted(step: number) {
@@ -414,24 +434,102 @@ private buildHealthDeclarationPayload() {
     this.completedSteps.set(s);
   }
 
-  ngOnInit() {
-    this.footerActions.nextClick$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => this.onNext());
+ngOnInit() {
+  this.footerActions.nextClick$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(() => {
+      console.log('WEITER CLICK FROM FOOTER');
+
+      if (this.isEditMode) {
+        this.onUpdate();
+      } else {
+        this.onNext();
+      }
+    });
+
+  if (this.editFormState.isEditMode()) {
+    this.isEditMode = true;
+    this.editId = this.editFormState.getEditId();
+    this.currentStep.set(1);
+    this.maxStepReached.set(this.TOTAL_STEPS);
   }
+}
+onUpdate() {
+  this.submitted.set(true);
+  this.form.markAllAsTouched();
+  this.form.updateValueAndValidity({ emitEvent: false });
+
+  console.log('UPDATE CLICKED');
+  console.log('FORM VALID:', this.form.valid);
+  console.log('FORM STATUS:', this.form.status);
+  console.log('EDIT ID:', this.editId ?? this.editFormState.getEditId());
+  console.log('RAW VALUE:', this.form.getRawValue());
+  console.log('REPORT FILE RAW:', this.form.getRawValue().reportFile);
+
+  console.log('INVALID CONTROLS:');
+  Object.entries(this.form.controls).forEach(([key, control]) => {
+    if (control.invalid) {
+      console.log('INVALID CONTROL:', key, control.errors, control.value);
+    }
+  });
+
+  if (this.form.invalid) {
+    console.log('FORM INVALID - UPDATE STOPPED');
+
+    const firstInvalid = this.findFirstInvalidStep();
+    console.log('FIRST INVALID STEP:', firstInvalid);
+
+    if (firstInvalid !== null) {
+      this.jumpToInvalidStep(firstInvalid);
+    }
+
+    return;
+  }
+
+  const payload = this.buildHealthDeclarationPayload();
+  const id = this.editId ?? this.editFormState.getEditId();
+
+  if (id == null) {
+    console.error('Missing edit id');
+    return;
+  }
+
+  console.log('UPDATE PAYLOAD:', payload);
+
+  this.medicalFormService.updateMedicalForm(id, payload).subscribe({
+    next: (response) => {
+      console.log('Updated successfully:', response);
+      this.updatedRecordId.set(response?.id ?? id);
+      this.editFormState.clear();
+      this.isFinished.set(true);
+
+      setTimeout(() => {
+        this.router.navigate(['/preview']);
+      }, 3000);
+    },
+    error: (err) => {
+      console.error('Update failed:', err);
+    }
+  });
+}
+
 
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-  onPanelOpened(step: number) {
-    if (this.pendingScrollStep !== step) return;
+ onPanelOpened(step: number) {
+  if (this.isEditMode) return;
 
-    this.pendingScrollStep = null;
-    this.scrollToStepBody(step);
-  }
-  openStep(step: number) {
+  if (this.pendingScrollStep !== step) return;
+
+  this.pendingScrollStep = null;
+  this.scrollToStepBody(step);
+}
+ openStep(step: number) {
+  if (this.isEditMode) return;
+
   this.goToStep(step);
 
   requestAnimationFrame(() => {
@@ -456,11 +554,13 @@ private buildHealthDeclarationPayload() {
   }
 
   goToStep(step: number) {
-    this.setStep(step);
-    if (!this.isStepValid12(step)) {
-      this.unmarkStepCompleted(step);
-    }
+  if (this.isEditMode) return;
+
+  this.setStep(step);
+  if (!this.isStepValid12(step)) {
+    this.unmarkStepCompleted(step);
   }
+}
   private unmarkStepCompleted(step: number) {
     const s = new Set(this.completedSteps());
     s.delete(step);
@@ -888,6 +988,13 @@ constructor() {
   this.disableIllnessDetails();
   this.disableOpsDetails();
   this.disableOpsBItems();
+  
+
+  this.illnessesIll.clearValidators();
+this.illnessesIll.updateValueAndValidity({ emitEvent: false });
+
+this.opsBItems.clearValidators();
+this.opsBItems.updateValueAndValidity({ emitEvent: false });
 
   this.form.controls.teethConditionNote.disable({ emitEvent: false });
   this.form.controls.hygieneNote.disable({ emitEvent: false });
@@ -1006,6 +1113,16 @@ if (editData && editId) {
       null;
 
     if (q) {
+      const existingReport = q.step6?.reportFile;
+        this.hasExistingReportFile = Array.isArray(existingReport) && existingReport.length > 0;
+
+        if (this.hasExistingReportFile) {
+          const existingName = existingReport[0]?.name ?? 'PDF bereits vorhanden';
+          this.selectedReportName.set(existingName);
+          this.form.controls.reportFile.setValue(existingReport);
+          this.form.controls.reportFile.clearValidators();
+          this.form.controls.reportFile.updateValueAndValidity({ emitEvent: false });
+        }
       this.form.patchValue(
         {
           heightCm: q.step1?.heightCm ?? null,
@@ -1028,6 +1145,8 @@ if (editData && editId) {
           doctorStreet: q.step5?.doctorStreet ?? '',
           doctorNumber: q.step5?.doctorNumber ?? '',
           doctorCity: q.step5?.doctorCity ?? '',
+
+          reportFile: existingReport ?? null,
 
           teethCondition: q.step7?.teethCondition ?? null,
           teethConditionNote: q.step7?.teethConditionNote ?? '',
@@ -1192,6 +1311,8 @@ if (editData && editId) {
     if (v === null || v === undefined) return false;
     return String(v).trim().length > 0;
   }
+
+  hasExistingReportFile = false;
 
   autoResize(event: Event) {
     const textarea = event.target as HTMLTextAreaElement;
@@ -2470,6 +2591,7 @@ setFutureTeethDisease(value: boolean) {
       if (this.form.invalid) {
         this.scrollToFirstError();
         return;
+        
       }
 
       const payload = this.buildHealthDeclarationPayload();
