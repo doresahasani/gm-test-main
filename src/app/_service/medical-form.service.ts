@@ -29,4 +29,16 @@ export class MedicalFormService {
   deleteMedicalForm(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
+
+  uploadReportFile(id: number, file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<any>(`${this.apiUrl}/${id}/upload-report`, formData);
+  }
+
+  downloadReportFile(id: number): Observable<Blob> {
+  return this.http.get(`https://localhost:7227/api/HealthDeclaration/${id}/download-report`, {
+    responseType: 'blob'
+  });
+ }
 }

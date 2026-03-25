@@ -241,3 +241,16 @@
 .object-clean-card {
   background: transparent;
 }
+.download-btn {
+  margin-left: 12px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  background: #111827;
+  color: #fff;
+  cursor: pointer;
+}
+
+.download-btn:hover {
+  opacity: 0.9;
+}

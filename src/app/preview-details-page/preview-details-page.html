@@ -51,6 +51,15 @@
                     @if (isSimpleValue(item.value)) {
                       <div class="field-value">
                         {{ formatValue(item.value) }}
+
+                        @if (item.label === 'Report File' && hasReportFile()) {
+                          <button
+                            type="button"
+                            class="download-btn"
+                            (click)="downloadReport()">
+                            Download
+                          </button>
+                        }
                       </div>
                     }
 

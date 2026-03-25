@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MedicalFormService } from '../_service/medical-form.service';
 
 type PreviewItem = {
   label: string;
@@ -22,6 +23,7 @@ type PreviewSection = {
 export class PreviewDetailsPageComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private medicalFormService = inject(MedicalFormService);
 
   form: any = null;
   parsedQuestions: any = null;
@@ -129,7 +131,7 @@ export class PreviewDetailsPageComponent implements OnInit {
       {
         title: 'Documents',
         items: this.buildItems([
-          ['Report File', q.step6?.reportFile]
+          ['Report File', q.step6?.reportFileName]
         ])
       },
       {
@@ -182,6 +184,46 @@ export class PreviewDetailsPageComponent implements OnInit {
     ];
 
     return sections.filter(section => section.items.length > 0);
+  }
+
+downloadReport(): void {
+  const id = this.form?.id;
+  const fileName =
+    this.parsedQuestions?.step6?.reportFileName || `report-${id}.pdf`;
+
+  console.log('FORM:', this.form);
+  console.log('DOWNLOAD ID:', id);
+  console.log('FILE NAME:', fileName);
+  console.log('URL:', `https://localhost:7227/api/HealthDeclaration/${id}/download-report`);
+
+  if (!id) {
+    this.error = 'ID e rekordit mungon.';
+    return;
+  }
+
+  this.medicalFormService.downloadReportFile(id).subscribe({
+    next: (blob: Blob) => {
+      console.log('DOWNLOAD OK', blob);
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    },
+    error: (err) => {
+      console.error('DOWNLOAD ERROR:', err);
+      console.error('STATUS:', err?.status);
+      console.error('ERROR BODY:', err?.error);
+      this.error = `Gabim gjatë shkarkimit të dokumentit. Status: ${err?.status ?? 'unknown'}`;
+    }
+  });
+}
+
+  hasReportFile(): boolean {
+    const fileName = this.parsedQuestions?.step6?.reportFileName;
+    return typeof fileName === 'string' && fileName.trim() !== '';
   }
 
   private buildItems(entries: [string, any][]): PreviewItem[] {
@@ -260,21 +302,21 @@ export class PreviewDetailsPageComponent implements OnInit {
       .replace(/^./, char => char.toUpperCase());
   }
 
- formatDateTime(value: string | null | undefined): string {
-  if (!value) return '';
+  formatDateTime(value: string | null | undefined): string {
+    if (!value) return '';
 
     const date = new Date(value);
-      if (Number.isNaN(date.getTime())) return '';
+    if (Number.isNaN(date.getTime())) return '';
 
-      return new Intl.DateTimeFormat('de-DE', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-      }).format(date);
-}
+    return new Intl.DateTimeFormat('de-DE', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    }).format(date);
+  }
 
   trackBySection(index: number, section: PreviewSection): string {
     return section.title;

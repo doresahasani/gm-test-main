@@ -146,6 +146,7 @@ type ActiveKey =
   styleUrl: './home-page.scss',
 })
 export class HomeComponent {
+  
   private footerActions = inject(FooterActionsService);
   private destroy$ = new Subject<void>();
   isFinished = signal(false);
@@ -316,7 +317,7 @@ private buildHealthDeclarationPayload() {
       },
 
       step6: {
-        reportFile: this.fileToUploadArray(raw.reportFile),
+         reportFileName: this.selectedReportName() || null
       },
 
       step7: {
@@ -401,10 +402,30 @@ private buildHealthDeclarationPayload() {
     },
   };
 }
+private uploadReportIfNeeded(id: number, done: () => void) {
+  const report = this.form.controls.reportFile.value;
+
+  if (!(report instanceof File) || !this.hasNewReportFile) {
+    done();
+    return;
+  }
+
+  this.medicalFormService.uploadReportFile(id, report).subscribe({
+    next: () => {
+      this.hasExistingReportFile = true;
+      this.hasNewReportFile = false;
+      done();
+    },
+    error: (err) => {
+      console.error('Report upload failed:', err);
+    }
+  });
+}
 
   private jumpToInvalidStep(step: number) {
-  this.pendingScrollStep = step;
-  this.setStep(step);
+    this.unmarkStepCompleted(step);  
+    this.pendingScrollStep = step;
+    this.setStep(step);
 
   setTimeout(() => {
     const controls = this.getControlsForStep12(step);
@@ -456,7 +477,13 @@ ngOnInit() {
 }
 onUpdate() {
   this.submitted.set(true);
-  this.form.markAllAsTouched();
+
+  for (let step = 1; step <= this.TOTAL_STEPS; step++) {
+    const controls = this.getControlsForStep12(step);
+    controls.forEach((c) => this.markEnabledAsTouched(c));
+    controls.forEach((c) => c.updateValueAndValidity({ emitEvent: false }));
+  }
+
   this.form.updateValueAndValidity({ emitEvent: false });
 
   console.log('UPDATE CLICKED');
@@ -466,23 +493,12 @@ onUpdate() {
   console.log('RAW VALUE:', this.form.getRawValue());
   console.log('REPORT FILE RAW:', this.form.getRawValue().reportFile);
 
-  console.log('INVALID CONTROLS:');
-  Object.entries(this.form.controls).forEach(([key, control]) => {
-    if (control.invalid) {
-      console.log('INVALID CONTROL:', key, control.errors, control.value);
-    }
-  });
+  const firstInvalid = this.findFirstInvalidStep();
+  console.log('FIRST INVALID STEP:', firstInvalid);
 
-  if (this.form.invalid) {
-    console.log('FORM INVALID - UPDATE STOPPED');
-
-    const firstInvalid = this.findFirstInvalidStep();
-    console.log('FIRST INVALID STEP:', firstInvalid);
-
-    if (firstInvalid !== null) {
-      this.jumpToInvalidStep(firstInvalid);
-    }
-
+  if (firstInvalid !== null) {
+    console.log('FORM LOGICALLY INVALID - UPDATE STOPPED');
+    this.jumpToInvalidStep(firstInvalid);
     return;
   }
 
@@ -499,20 +515,24 @@ onUpdate() {
   this.medicalFormService.updateMedicalForm(id, payload).subscribe({
     next: (response) => {
       console.log('Updated successfully:', response);
-      this.updatedRecordId.set(response?.id ?? id);
-      this.editFormState.clear();
-      this.isFinished.set(true);
 
-      setTimeout(() => {
-        this.router.navigate(['/preview']);
-      }, 3000);
+      const savedId = response?.id ?? id;
+      this.updatedRecordId.set(savedId);
+
+      this.uploadReportIfNeeded(savedId, () => {
+        this.editFormState.clear();
+        this.isFinished.set(true);
+
+        setTimeout(() => {
+          this.router.navigate(['/preview']);
+        }, 3000);
+      });
     },
     error: (err) => {
       console.error('Update failed:', err);
     }
   });
 }
-
 
   ngOnDestroy() {
     this.destroy$.next();
@@ -583,6 +603,7 @@ onUpdate() {
   
 
   if (!this.isStepValid12(step)) {
+    this.unmarkStepCompleted(step); 
     this.setActiveFirstInvalid12(step);
     this.scrollToFirstError();
     return;
@@ -623,13 +644,22 @@ request$.subscribe({
   next: (response) => {
     console.log(this.isEditMode ? 'Updated successfully:' : 'Saved successfully:', response);
 
-    this.editFormState.clear();
+    const savedId = response?.id ?? this.editId;
 
-    this.isFinished.set(true);
+    if (savedId == null) {
+      console.error('Missing saved id after save/update');
+      return;
+    }
 
-    setTimeout(() => {
-      this.router.navigate(['/preview']);
-    }, 3000);
+    this.uploadReportIfNeeded(savedId, () => {
+      this.editFormState.clear();
+      this.updatedRecordId.set(savedId);
+      this.isFinished.set(true);
+
+      setTimeout(() => {
+        this.router.navigate(['/preview']);
+      }, 3000);
+    });
   },
   error: (error) => {
     console.error(this.isEditMode ? 'Update failed:' : 'Save failed:', error);
@@ -697,29 +727,31 @@ request$.subscribe({
  
 
   private getControlsForStep12(step: number): AbstractControl[] {
-    switch (step) {
-      case 1:
-        return [this.form.controls.heightCm, this.form.controls.weightKg];
+  switch (step) {
+    case 1:
+      return [this.form.controls.heightCm, this.form.controls.weightKg];
 
-      case 2:
-         if (this.form.controls.medication.value === false) {
+    case 2:
+      if (this.form.controls.medication.value === false) {
         return [this.form.controls.medication];
       }
-        return [
-          this.form.controls.medication,
-          this.form.controls.medName,
-          this.form.controls.medReason,
-          this.form.controls.illnessesMed,
-        ];
-      case 3:
-         if (this.form.controls.illnessQ.value === false) {
+      return [
+        this.form.controls.medication,
+        this.form.controls.medName,
+        this.form.controls.medReason,
+        this.form.controls.illnessesMed,
+      ];
+
+    case 3:
+      if (this.form.controls.illnessQ.value === false) {
         return [this.form.controls.illnessQ];
       }
-        return [
-          this.form.controls.illnessQ,
-          this.form.controls.illnessesIll
-        ];
-       case 4:
+      return [
+        this.form.controls.illnessQ,
+        this.form.controls.illnessesIll,
+      ];
+
+    case 4:
       if (this.form.controls.opsQ.value === false) {
         return [this.form.controls.opsQ];
       }
@@ -738,138 +770,317 @@ request$.subscribe({
 
       return controls;
 
-      case 5:
-        return [
-          this.form.controls.doctorFirstName,
-          this.form.controls.doctorLastName,
-          this.form.controls.doctorStreet,
-          this.form.controls.doctorNumber,
-          this.form.controls.doctorCity
-        ];
-      case 6:
-        return [
-          this.form.controls.reportFile,
-        ];
-      case 7:
-        return [
-          this.form.controls.teethCondition,
-          this.form.controls.teethConditionNote,
-        ];
-      case 8:
-        return [
-          this.form.controls.hygiene,
-        ];
-      case 9:
-        return [
-          this.form.controls.occlusion,
-        ];
-      case 10:
-        return [
-          this.form.controls.crownsCondition,
-          this.form.controls.crownsNote,
-        ];
-      case 11:
-        return [
-          this.form.controls.bridgesCondition,
-          this.form.controls.bridgesNote,
-        ];
-      case 12:
-        return [
-          this.form.controls.partialDenturesCondition,
-          this.form.controls.partialDenturesNote,
-        ];
-      case 13:
-        return [
-          this.form.controls.dentition,
-          this.form.controls.dentitionNote,
-        ];
-      case 14:
-        return [
-          this.form.controls.jaw,
-          this.form.controls.jawNote,
-        ];
-      case 15:
-        return [
-          this.form.controls.futureTeethDisease,
-          this.form.controls.futureTeethDiseaseNote,
-        ];
-      case 16:
-        return [
-          this.form.controls.missingTeethQ,
-          this.form.controls.missingTeeth,
-          this.form.controls.missingPermanent,
-        ];
-      case 17:
-        return [
-          this.form.controls.fillingsQ,
-          this.form.controls.fillingsTeeth,
-          this.form.controls.fillingsPermanent,
-        ];
-      case 18:
-        return [
-          this.form.controls.cariesQ,
-          this.form.controls.cariesTeeth,
-          this.form.controls.cariesPermanent,
-        ];
-      case 19:
-        return [
-          this.form.controls.rootCanalQ,
-          this.form.controls.rootCanalTeeth,
-          this.form.controls.rootCanalPermanent,
-        ];
-      case 20:
-        return [
-          this.form.controls.dentalTreatQ,
-          this.form.controls.dentalTreatWhich
-        ];
-      case 21:
-        return [
-          this.form.controls.lastRadiographyDate,
-        ];
-      case 22:
-        return [
-          this.form.controls.remarks,
-        ];
+    case 5:
+      return [
+        this.form.controls.doctorFirstName,
+        this.form.controls.doctorLastName,
+        this.form.controls.doctorStreet,
+        this.form.controls.doctorNumber,
+        this.form.controls.doctorCity,
+      ];
 
-      default:
-        return [];
-    }
+    case 6:
+      return [this.form.controls.reportFile];
+
+    case 7:
+      return [
+        this.form.controls.teethCondition,
+        this.form.controls.teethConditionNote,
+      ];
+
+    case 8:
+      return [this.form.controls.hygiene];
+
+    case 9:
+      return [this.form.controls.occlusion];
+
+    case 10:
+      return [
+        this.form.controls.crownsCondition,
+        this.form.controls.crownsNote,
+      ];
+
+    case 11:
+      return [
+        this.form.controls.bridgesCondition,
+        this.form.controls.bridgesNote,
+      ];
+
+    case 12:
+      return [
+        this.form.controls.partialDenturesCondition,
+        this.form.controls.partialDenturesNote,
+      ];
+
+    case 13:
+      return [
+        this.form.controls.dentition,
+        this.form.controls.dentitionNote,
+      ];
+
+    case 14:
+      return [
+        this.form.controls.jaw,
+        this.form.controls.jawNote,
+      ];
+
+    case 15:
+      return [
+        this.form.controls.futureTeethDisease,
+        this.form.controls.futureTeethDiseaseNote,
+      ];
+
+    case 16:
+      if (this.form.controls.missingTeethQ.value === false) {
+        return [this.form.controls.missingTeethQ];
+      }
+      return [
+        this.form.controls.missingTeethQ,
+        this.form.controls.missingTeeth,
+        this.form.controls.missingPermanent,
+      ];
+
+    case 17:
+      if (this.form.controls.fillingsQ.value === false) {
+        return [this.form.controls.fillingsQ];
+      }
+      return [
+        this.form.controls.fillingsQ,
+        this.form.controls.fillingsTeeth,
+        this.form.controls.fillingsPermanent,
+      ];
+
+    case 18:
+      if (this.form.controls.cariesQ.value === false) {
+        return [this.form.controls.cariesQ];
+      }
+      return [
+        this.form.controls.cariesQ,
+        this.form.controls.cariesTeeth,
+        this.form.controls.cariesPermanent,
+      ];
+
+    case 19:
+      if (this.form.controls.rootCanalQ.value === false) {
+        return [this.form.controls.rootCanalQ];
+      }
+      return [
+        this.form.controls.rootCanalQ,
+        this.form.controls.rootCanalTeeth,
+        this.form.controls.rootCanalPermanent,
+      ];
+
+    case 20:
+      if (this.form.controls.dentalTreatQ.value === false) {
+        return [this.form.controls.dentalTreatQ];
+      }
+      return [
+        this.form.controls.dentalTreatQ,
+        this.form.controls.dentalTreatWhich,
+      ];
+
+    case 21:
+      return [this.form.controls.lastRadiographyDate];
+
+    case 22:
+      return [this.form.controls.remarks];
+
+    default:
+      return [];
   }
+}
 
   private isStepValid12(step: number): boolean {
-    return this.getControlsForStep12(step).every((c) => c.disabled || c.valid);
-  }
+  const controls = this.getControlsForStep12(step);
 
-  private setActiveFirstInvalid12(step: number) {
-    const setIfInvalid = (key: ActiveKey, ctrl: AbstractControl) => {
-      if (ctrl.enabled && ctrl.invalid) {
-        this.setActive(key);
-        return true;
-      }
-      return false;
-    };
+  return controls.every((c) => {
+    if (c.disabled) return true;
 
-    if (step === 1) {
-      if (setIfInvalid('heightCm', this.form.controls.heightCm)) return;
-      if (setIfInvalid('weightKg', this.form.controls.weightKg)) return;
-      return;
+    if (c instanceof FormArray) {
+      return c.valid;
     }
 
-    if (step === 2) {
-      if (setIfInvalid('medication', this.form.controls.medication)) return;
-      if (setIfInvalid('medName', this.form.controls.medName)) return;
-      if (setIfInvalid('medReason', this.form.controls.medReason)) return;
+    if (c instanceof FormGroup) {
+      return Object.values(c.controls).every(ctrl => ctrl.valid);
+    }
 
-      const arr = this.illnessesMed;
-      for (let i = 0; i < arr.length; i++) {
-        const g = arr.at(i);
-        if (g.enabled && g.invalid) {
-          this.setActiveToFirstInvalidInArray('med', i, g);
-          return;
-        }
+    return c.valid;
+  });
+}
+
+ private setActiveFirstInvalid12(step: number) {
+  const setIfInvalid = (key: ActiveKey, ctrl: AbstractControl) => {
+    if (ctrl.enabled && ctrl.invalid) {
+      this.setActive(key);
+      return true;
+    }
+    return false;
+  };
+
+  if (step === 1) {
+    if (setIfInvalid('heightCm', this.form.controls.heightCm)) return;
+    if (setIfInvalid('weightKg', this.form.controls.weightKg)) return;
+    return;
+  }
+
+  if (step === 2) {
+    if (setIfInvalid('medication', this.form.controls.medication)) return;
+    if (setIfInvalid('medName', this.form.controls.medName)) return;
+    if (setIfInvalid('medReason', this.form.controls.medReason)) return;
+
+    const arr = this.illnessesMed;
+    for (let i = 0; i < arr.length; i++) {
+      const g = arr.at(i);
+      if (g.enabled && g.invalid) {
+        this.setActiveToFirstInvalidInArray('med', i, g);
+        return;
       }
     }
+    return;
   }
+
+  if (step === 3) {
+    if (setIfInvalid('illnessQ', this.form.controls.illnessQ)) return;
+
+    const arr = this.illnessesIll;
+    for (let i = 0; i < arr.length; i++) {
+      const g = arr.at(i);
+      if (g.enabled && g.invalid) {
+        this.setActiveToFirstInvalidInArray('ill', i, g);
+        return;
+      }
+    }
+    return;
+  }
+
+  if (step === 4) {
+    if (setIfInvalid('opsQ', this.form.controls.opsQ)) return;
+    if (setIfInvalid('opsA', this.form.controls.opsA)) return;
+    if (setIfInvalid('opsB', this.form.controls.opsB)) return;
+    if (setIfInvalid('opsC', this.form.controls.opsC)) return;
+    if (setIfInvalid('opsD', this.form.controls.opsD)) return;
+
+    const arr = this.opsBItems;
+    for (let i = 0; i < arr.length; i++) {
+      const g = arr.at(i);
+      if (g.enabled && g.invalid) {
+        this.setActiveToFirstInvalidInArray('opsB', i, g);
+        return;
+      }
+    }
+    return;
+  }
+
+  if (step === 5) {
+    if (setIfInvalid('doctorFirstName', this.form.controls.doctorFirstName)) return;
+    if (setIfInvalid('doctorLastName', this.form.controls.doctorLastName)) return;
+    if (setIfInvalid('doctorStreet', this.form.controls.doctorStreet)) return;
+    if (setIfInvalid('doctorNumber', this.form.controls.doctorNumber)) return;
+    if (setIfInvalid('doctorCity', this.form.controls.doctorCity)) return;
+    return;
+  }
+
+  if (step === 6) {
+    if (setIfInvalid('reportFile', this.form.controls.reportFile)) return;
+    return;
+  }
+
+  if (step === 7) {
+    if (setIfInvalid('teethCondition', this.form.controls.teethCondition)) return;
+    if (setIfInvalid('teethConditionNote', this.form.controls.teethConditionNote)) return;
+    return;
+  }
+
+  if (step === 8) {
+    if (setIfInvalid('hygiene', this.form.controls.hygiene)) return;
+    return;
+  }
+
+  if (step === 9) {
+    if (setIfInvalid('occlusion', this.form.controls.occlusion)) return;
+    return;
+  }
+
+  if (step === 10) {
+    if (setIfInvalid('crownsCondition', this.form.controls.crownsCondition)) return;
+    if (setIfInvalid('crownsNote', this.form.controls.crownsNote)) return;
+    return;
+  }
+
+  if (step === 11) {
+    if (setIfInvalid('bridgesCondition', this.form.controls.bridgesCondition)) return;
+    if (setIfInvalid('bridgesNote', this.form.controls.bridgesNote)) return;
+    return;
+  }
+
+  if (step === 12) {
+    if (setIfInvalid('partialDenturesCondition', this.form.controls.partialDenturesCondition)) return;
+    if (setIfInvalid('partialDenturesNote', this.form.controls.partialDenturesNote)) return;
+    return;
+  }
+
+  if (step === 13) {
+    if (setIfInvalid('dentition', this.form.controls.dentition)) return;
+    if (setIfInvalid('dentitionNote', this.form.controls.dentitionNote)) return;
+    return;
+  }
+
+  if (step === 14) {
+    if (setIfInvalid('jaw', this.form.controls.jaw)) return;
+    if (setIfInvalid('jawNote', this.form.controls.jawNote)) return;
+    return;
+  }
+
+  if (step === 15) {
+    if (setIfInvalid('futureTeethDisease', this.form.controls.futureTeethDisease)) return;
+    if (setIfInvalid('futureTeethDiseaseNote', this.form.controls.futureTeethDiseaseNote)) return;
+    return;
+  }
+
+  if (step === 16) {
+    if (setIfInvalid('missingTeethQ', this.form.controls.missingTeethQ)) return;
+    if (setIfInvalid('missingTeeth', this.form.controls.missingTeeth)) return;
+    if (setIfInvalid('missingPermanent', this.form.controls.missingPermanent)) return;
+    return;
+  }
+
+  if (step === 17) {
+    if (setIfInvalid('fillingsQ', this.form.controls.fillingsQ)) return;
+    if (setIfInvalid('fillingsTeeth', this.form.controls.fillingsTeeth)) return;
+    if (setIfInvalid('fillingsPermanent', this.form.controls.fillingsPermanent)) return;
+    return;
+  }
+
+  if (step === 18) {
+    if (setIfInvalid('cariesQ', this.form.controls.cariesQ)) return;
+    if (setIfInvalid('cariesTeeth', this.form.controls.cariesTeeth)) return;
+    if (setIfInvalid('cariesPermanent', this.form.controls.cariesPermanent)) return;
+    return;
+  }
+
+  if (step === 19) {
+    if (setIfInvalid('rootCanalQ', this.form.controls.rootCanalQ)) return;
+    if (setIfInvalid('rootCanalTeeth', this.form.controls.rootCanalTeeth)) return;
+    if (setIfInvalid('rootCanalPermanent', this.form.controls.rootCanalPermanent)) return;
+    return;
+  }
+
+  if (step === 20) {
+    if (setIfInvalid('dentalTreatQ', this.form.controls.dentalTreatQ)) return;
+    if (setIfInvalid('dentalTreatWhich', this.form.controls.dentalTreatWhich)) return;
+    return;
+  }
+
+  if (step === 21) {
+    if (setIfInvalid('lastRadiographyDate', this.form.controls.lastRadiographyDate)) return;
+    return;
+  }
+
+  if (step === 22) {
+    if (setIfInvalid('remarks', this.form.controls.remarks)) return;
+    return;
+  }
+}
 
   private fb = inject(FormBuilder);
 
@@ -960,20 +1171,20 @@ request$.subscribe({
     }),
 
     missingTeethQ: this.fb.control<boolean | null>(null, [requiredTrimmed()]),
-    missingTeeth: this.fb.array<FormControl<string>>([]),
-    missingPermanent: this.fb.array<FormControl<string>>([]),
+    missingTeeth: this.fb.array<FormControl<string>>([], { validators: [this.minSelected(1)] }),
+    missingPermanent: this.fb.array<FormControl<string>>([], { validators: [this.minSelected(1)] }),
 
     fillingsQ: this.fb.control<boolean | null>(null, [requiredTrimmed()]),
-    fillingsTeeth: this.fb.array<FormControl<string>>([]),
-    fillingsPermanent: this.fb.array<FormControl<string>>([]),
+    fillingsTeeth: this.fb.array<FormControl<string>>([], { validators: [this.minSelected(1)] }),
+    fillingsPermanent: this.fb.array<FormControl<string>>([], { validators: [this.minSelected(1)] }),
 
     cariesQ: this.fb.control<boolean | null>(null, [requiredTrimmed()]),
-    cariesTeeth: this.fb.array<FormControl<string>>([]),
-    cariesPermanent: this.fb.array<FormControl<string>>([]),
+    cariesTeeth: this.fb.array<FormControl<string>>([], { validators: [this.minSelected(1)] }),
+    cariesPermanent: this.fb.array<FormControl<string>>([], { validators: [this.minSelected(1)] }),
 
     rootCanalQ: this.fb.control<boolean | null>(null, [requiredTrimmed()]),
-    rootCanalTeeth: this.fb.array<FormControl<string>>([]),
-    rootCanalPermanent: this.fb.array<FormControl<string>>([]),
+    rootCanalTeeth: this.fb.array<FormControl<string>>([], { validators: [this.minSelected(1)] }),
+    rootCanalPermanent: this.fb.array<FormControl<string>>([], { validators: [this.minSelected(1)] }),
 
     dentalTreatQ: this.fb.control<boolean | null>(null, [requiredTrimmed()]),
     dentalTreatWhich: this.fb.control<string>({ value: '', disabled: true }, { nonNullable: true, validators: [requiredTrimmed()]  }),
@@ -1113,16 +1324,17 @@ if (editData && editId) {
       null;
 
     if (q) {
-      const existingReport = q.step6?.reportFile;
-        this.hasExistingReportFile = Array.isArray(existingReport) && existingReport.length > 0;
+     const existingReportName = q.step6?.reportFileName ?? null;
 
-        if (this.hasExistingReportFile) {
-          const existingName = existingReport[0]?.name ?? 'PDF bereits vorhanden';
-          this.selectedReportName.set(existingName);
-          this.form.controls.reportFile.setValue(existingReport);
-          this.form.controls.reportFile.clearValidators();
-          this.form.controls.reportFile.updateValueAndValidity({ emitEvent: false });
-        }
+    this.hasExistingReportFile = !!existingReportName;
+
+    if (this.hasExistingReportFile) {
+      this.selectedReportName.set(existingReportName ?? 'PDF bereits vorhanden');
+      this.form.controls.reportFile.setValue(null);
+      this.form.controls.reportFile.clearValidators();
+      this.form.controls.reportFile.updateValueAndValidity({ emitEvent: false });
+    }
+        
       this.form.patchValue(
         {
           heightCm: q.step1?.heightCm ?? null,
@@ -1146,7 +1358,7 @@ if (editData && editId) {
           doctorNumber: q.step5?.doctorNumber ?? '',
           doctorCity: q.step5?.doctorCity ?? '',
 
-          reportFile: existingReport ?? null,
+          reportFile:null,
 
           teethCondition: q.step7?.teethCondition ?? null,
           teethConditionNote: q.step7?.teethConditionNote ?? '',
@@ -1314,6 +1526,8 @@ if (editData && editId) {
 
   hasExistingReportFile = false;
 
+  hasNewReportFile = false;
+
   autoResize(event: Event) {
     const textarea = event.target as HTMLTextAreaElement;
     textarea.style.height = 'auto';
@@ -1401,11 +1615,18 @@ if (editData && editId) {
     }
 
     if (ctrl instanceof FormArray) {
+      ctrl.markAsTouched();
       ctrl.controls.forEach((c) => this.markEnabledAsTouched(c));
       ctrl.updateValueAndValidity({ emitEvent: false });
       return;
     }
   }
+  private minSelected(min: number): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const arr = control as FormArray;
+    return arr.length >= min ? null : { required: true };
+  };
+}
 
   private clearState(ctrl: AbstractControl) {
     if (ctrl instanceof FormControl) {
@@ -1446,11 +1667,11 @@ if (editData && editId) {
           operated: this.fb.control<boolean | null>(null, { validators: [requiredTrimmed()] }),
           treatmentDone: this.fb.control<boolean | null>(null, { validators: [requiredTrimmed()] }),
 
-          docFirstName: this.fb.control('', { nonNullable: true }),
-          docLastName: this.fb.control('', { nonNullable: true }),
-          docStreet: this.fb.control('', { nonNullable: true }),
-          docNr: this.fb.control('', { nonNullable: true }),
-          docZipCity: this.fb.control('', { nonNullable: true }),
+          docFirstName: this.fb.control('', { nonNullable: true, validators: [requiredTrimmed()] }),
+          docLastName: this.fb.control('', { nonNullable: true, validators: [requiredTrimmed()] }),
+          docStreet: this.fb.control('', { nonNullable: true, validators: [requiredTrimmed()] }),
+          docNr: this.fb.control('', { nonNullable: true, validators: [requiredTrimmed()] }),
+          docZipCity: this.fb.control('', { nonNullable: true, validators: [requiredTrimmed()] }),
         },
         {
           validators: [this.endDateNotBeforeStartDate()]
@@ -2505,18 +2726,23 @@ setFutureTeethDisease(value: boolean) {
 
     if (!file) return;
 
-    if (!this.isPdfFile(file)) {
-      input.value = '';
+    if (file.type !== 'application/pdf') {
       this.form.controls.reportFile.setValue(null);
+      this.form.controls.reportFile.markAsTouched();
+      this.form.controls.reportFile.updateValueAndValidity({ emitEvent: false });
       this.selectedReportName.set('');
+      this.hasNewReportFile = false;
       return;
     }
 
     this.form.controls.reportFile.setValue(file);
-    this.selectedReportName.set(file.name);
+    this.form.controls.reportFile.markAsDirty();
+    this.form.controls.reportFile.markAsTouched();
+    this.form.controls.reportFile.updateValueAndValidity({ emitEvent: false });
 
-    this.form.controls.reportFile.markAsPristine();
-    this.form.controls.reportFile.markAsUntouched();
+    this.selectedReportName.set(file.name);
+    this.hasNewReportFile = true;
+    this.hasExistingReportFile = false;
   }
 
   onReportDragOver(e: DragEvent) {
@@ -2529,21 +2755,30 @@ setFutureTeethDisease(value: boolean) {
     this.isReportDragOver.set(false);
   }
 
-  onReportDrop(e: DragEvent) {
-    e.preventDefault();
-    this.isReportDragOver.set(false);
+ onReportDrop(event: DragEvent): void {
+  event.preventDefault();
+  this.isReportDragOver.set(false);
 
-    const file = e.dataTransfer?.files?.[0] ?? null;
-    if (!file) return;
-    if (!this.isPdfFile(file)) return;
+  const file = event.dataTransfer?.files?.[0]?? null;
+  if (!file) return;
 
-    this.form.controls.reportFile.setValue(file);
-    this.selectedReportName.set(file.name);
-
-    this.form.controls.reportFile.markAsPristine();
-    this.form.controls.reportFile.markAsUntouched();
+  if (file.type !== 'application/pdf') {
+    this.form.controls.reportFile.setValue(null);
+    this.form.controls.reportFile.markAsTouched();
+    this.form.controls.reportFile.updateValueAndValidity({ emitEvent: false });
+    this.selectedReportName.set('');
+    this.hasNewReportFile = false;
+    return;
   }
 
+    this.form.controls.reportFile.setValue(file);
+    this.form.controls.reportFile.markAsDirty();
+    this.form.controls.reportFile.markAsTouched();
+    this.form.controls.reportFile.updateValueAndValidity({ emitEvent: false });
+
+    this.selectedReportName.set(file.name);
+    this.hasNewReportFile = true;
+  }
   //arrays per backend
   private buildAnswersArray(raw: any): Array<{ code: string; value: any }> {
     const answers: Array<{ code: string; value: any }> = [];
@@ -2607,15 +2842,30 @@ setFutureTeethDisease(value: boolean) {
     ? this.medicalFormService.updateMedicalForm(this.editId, payload)
     : this.medicalFormService.addMedicalForm(payload);
 
-request$.subscribe({
-  next: (response) => {
-    this.editFormState.clear();
-    this.router.navigate(['/preview']);
-  },
-  error: (error) => {
-    console.error(error);
-  }
-});
+    request$.subscribe({
+      next: (response) => {
+        console.log(this.isEditMode ? 'Updated successfully:' : 'Saved successfully:', response);
+
+        const savedId = response?.id ?? this.editId;
+
+        if (savedId == null) {
+          console.error('Missing saved id for report upload');
+          return;
+        }
+
+        this.uploadReportIfNeeded(savedId, () => {
+          this.editFormState.clear();
+          this.isFinished.set(true);
+
+          setTimeout(() => {
+            this.router.navigate(['/preview']);
+          }, 3000);
+        });
+      },
+      error: (error) => {
+        console.error(this.isEditMode ? 'Update failed:' : 'Save failed:', error);
+      }
+    });
   }
   scrollToFirstError() {
     setTimeout(() => {
