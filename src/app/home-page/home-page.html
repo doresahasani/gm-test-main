@@ -2,9 +2,7 @@
   <mat-accordion [multi]="isEditMode">
     <!-- 1. Grösse und Gewicht -->
     <mat-expansion-panel
-  (opened)="onPanelOpened(1)"
-  [expanded]="isEditMode || currentStep() === 1"
-  hideToggle>
+      (opened)="onPanelOpened(1)" [expanded]="isEditMode || currentStep() === 1" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -66,9 +64,7 @@
     <!-- 2. Medikamente oder Hilfsmittel -->
     @if (maxStepReached() >= 2) {
    <mat-expansion-panel
-  (opened)="onPanelOpened(2)"
-  [expanded]="isEditMode || currentStep() === 2"
-  hideToggle>
+    (opened)="onPanelOpened(2)"[expanded]="isEditMode || currentStep() === 2" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">2. Medikamente oder Hilfsmittel</h2>
@@ -376,10 +372,7 @@
 
     <!-- 3. Krankheiten oder Beschwerden -->
     @if (maxStepReached() >= 3) {
-    <mat-expansion-panel
-  (opened)="onPanelOpened(3)"
-  [expanded]="isEditMode || currentStep() === 3"
-  hideToggle>
+    <mat-expansion-panel (opened)="onPanelOpened(3)" [expanded]="isEditMode || currentStep() === 3" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
 
@@ -660,10 +653,7 @@
 
     <!-- 4. Behandlungen -->
     @if (maxStepReached() >= 4) {
-   <mat-expansion-panel
-  (opened)="onPanelOpened(4)"
-  [expanded]="isEditMode || currentStep() === 4"
-  hideToggle>
+   <mat-expansion-panel (opened)="onPanelOpened(4)" [expanded]="isEditMode || currentStep() === 4" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1030,10 +1020,7 @@
     }
     <!-- 5. Arzt -->
     @if (maxStepReached() >= 5) {
-    <mat-expansion-panel
-  (opened)="onPanelOpened(5)"
-  [expanded]="isEditMode || currentStep() === 5"
-  hideToggle>
+    <mat-expansion-panel (opened)="onPanelOpened(5)" [expanded]="isEditMode || currentStep() === 5" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1145,10 +1132,7 @@
 
     <!-- ===================== 6. BERICHTE UPLOAD ===================== -->
     @if (maxStepReached() >= 6) {
-   <mat-expansion-panel
-  (opened)="onPanelOpened(6)"
-  [expanded]="isEditMode || currentStep() === 6"
-  hideToggle>
+    <mat-expansion-panel (opened)="onPanelOpened(6)" [expanded]="isEditMode || currentStep() === 6" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1197,10 +1181,7 @@
      
     <!-- 7. Zustand des Zahnbetts -->
     @if (maxStepReached() >= 7) {
-    <mat-expansion-panel
-  (opened)="onPanelOpened(7)"
-  [expanded]="isEditMode || currentStep() === 7"
-  hideToggle>
+    <mat-expansion-panel (opened)="onPanelOpened(7)" [expanded]="isEditMode || currentStep() === 7" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1256,10 +1237,7 @@
 
     <!-- 8. Hygiene -->
     @if (maxStepReached() >= 8) {
-   <mat-expansion-panel
-  (opened)="onPanelOpened(8)"
-  [expanded]="isEditMode || currentStep() === 8"
-  hideToggle>
+   <mat-expansion-panel (opened)="onPanelOpened(8)" [expanded]="isEditMode || currentStep() === 8" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">8. Hygiene:</h2>
@@ -1299,10 +1277,7 @@
 
     <!-- 9. Okklusion -->
     @if (maxStepReached() >= 9) {
-   <mat-expansion-panel
-  (opened)="onPanelOpened(9)"
-  [expanded]="isEditMode || currentStep() === 9"
-  hideToggle>
+   <mat-expansion-panel (opened)="onPanelOpened(9)" [expanded]="isEditMode || currentStep() === 9" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1342,10 +1317,7 @@
 
     <!-- 10. Zustand der Kronen -->
     @if (maxStepReached() >= 10) {
-    <mat-expansion-panel
-  (opened)="onPanelOpened(10)"
-  [expanded]="isEditMode || currentStep() === 10"
-  hideToggle>
+    <mat-expansion-panel (opened)="onPanelOpened(10)" [expanded]="isEditMode || currentStep() === 10" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1405,10 +1377,7 @@
 
     <!-- 11. Zustand der Brücken -->
     @if (maxStepReached() >= 11) {
-    <mat-expansion-panel
-  (opened)="onPanelOpened(11)"
-  [expanded]="isEditMode || currentStep() === 11"
-  hideToggle>
+    <mat-expansion-panel (opened)="onPanelOpened(11)" [expanded]="isEditMode || currentStep() === 11" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1468,10 +1437,7 @@
 
     <!-- 12. Zustand der Teilprothesen -->
     @if (maxStepReached() >= 12) {
-    <mat-expansion-panel
-  (opened)="onPanelOpened(12)"
-  [expanded]="isEditMode || currentStep() === 12"
-  hideToggle>
+    <mat-expansion-panel (opened)="onPanelOpened(12)" [expanded]="isEditMode || currentStep() === 12" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1534,10 +1500,7 @@
 
     <!-- 13. Dentition -->
     @if (maxStepReached() >= 13) {
-    <mat-expansion-panel
-  (opened)="onPanelOpened(13)"
-  [expanded]="isEditMode || currentStep() === 13"
-  hideToggle>
+    <mat-expansion-panel (opened)="onPanelOpened(13)" [expanded]="isEditMode || currentStep() === 13" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1588,10 +1551,7 @@
 
     <!-- 14. Kiefer -->
     @if (maxStepReached() >= 14) {
-    <mat-expansion-panel
-  (opened)="onPanelOpened(14)"
-  [expanded]="isEditMode || currentStep() === 14"
-  hideToggle>
+    <mat-expansion-panel (opened)="onPanelOpened(14)" [expanded]="isEditMode || currentStep() === 14" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1641,10 +1601,7 @@
 
     <!-- 15. Zukunft -->
     @if (maxStepReached() >= 15) {
-    <mat-expansion-panel
-  (opened)="onPanelOpened(15)"
-  [expanded]="isEditMode || currentStep() === 15"
-  hideToggle>
+    <mat-expansion-panel (opened)="onPanelOpened(15)" [expanded]="isEditMode || currentStep() === 15" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1695,10 +1652,7 @@
 
     <!-- 16. Fehlende, nicht ersetzte Zähne -->
     @if (maxStepReached() >= 16) {
-    <mat-expansion-panel
-  (opened)="onPanelOpened(16)"
-  [expanded]="isEditMode || currentStep() === 16"
-  hideToggle>
+    <mat-expansion-panel (opened)="onPanelOpened(16)" [expanded]="isEditMode || currentStep() === 16" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -1901,10 +1855,7 @@
 
     <!-- 17. Schadhafte Zahnfüllungen -->
     @if (maxStepReached() >= 17) {
-   <mat-expansion-panel
-  (opened)="onPanelOpened(17)"
-  [expanded]="isEditMode || currentStep() === 17"
-  hideToggle>
+   <mat-expansion-panel (opened)="onPanelOpened(17)" [expanded]="isEditMode || currentStep() === 17" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -2111,10 +2062,7 @@
 
     <!-- 18. Kariöse Zähne -->
     @if (maxStepReached() >= 18) {
-    <mat-expansion-panel
-  (opened)="onPanelOpened(18)"
-  [expanded]="isEditMode || currentStep() === 18"
-  hideToggle>
+    <mat-expansion-panel (opened)="onPanelOpened(18)" [expanded]="isEditMode || currentStep() === 18" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -2319,10 +2267,7 @@
 
     <!-- 19. Wurzelbehandelte Zähne -->
     @if (maxStepReached() >= 19) {
-   <mat-expansion-panel
-  (opened)="onPanelOpened(19)"
-  [expanded]="isEditMode || currentStep() === 19"
-  hideToggle>
+   <mat-expansion-panel (opened)="onPanelOpened(19)" [expanded]="isEditMode || currentStep() === 19" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -2528,10 +2473,7 @@
 
     <!--20-->
     @if (maxStepReached() >= 20) {
-    <mat-expansion-panel
-  (opened)="onPanelOpened(20)"
-  [expanded]="isEditMode || currentStep() === 20"
-  hideToggle>
+    <mat-expansion-panel (opened)="onPanelOpened(20)" [expanded]="isEditMode || currentStep() === 20" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -2585,10 +2527,7 @@
 
     <!-- 21. Datum der letzten Radiographie -->
     @if (maxStepReached() >= 21) {
-    <mat-expansion-panel
-  (opened)="onPanelOpened(21)"
-  [expanded]="isEditMode || currentStep() === 21"
-  hideToggle>
+    <mat-expansion-panel (opened)="onPanelOpened(21)" [expanded]="isEditMode || currentStep() === 21" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -2624,10 +2563,7 @@
 
     <!-- 22. Bemerkungen -->
     @if (maxStepReached() >= 22) {
-   <mat-expansion-panel
-  (opened)="onPanelOpened(22)"
-  [expanded]="isEditMode || currentStep() === 22"
-  hideToggle>
+   <mat-expansion-panel (opened)="onPanelOpened(22)" [expanded]="isEditMode || currentStep() === 22" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>
           <h2 class="h2">
@@ -2653,14 +2589,14 @@
 
 
   @if (isFinished()) {
- <div (click)="onDankeOk()" class="finish-overlay">
-  <div (click)="$event.stopPropagation()" class="finish-card">
-    <h2 class="h2">Danke! 🎉</h2>
-    <p class="p">Der Fragebogen wurde erfolgreich ausgefüllt.</p>
-    <button (click)="onDankeOk()" class="finish-btn" type="button">
-      OK
-    </button>
+  <div (click)="onDankeOk()" class="finish-overlay">
+    <div (click)="$event.stopPropagation()" class="finish-card">
+      <h2 class="h2">Danke! 🎉</h2>
+      <p class="p">Der Fragebogen wurde erfolgreich ausgefüllt.</p>
+      <button (click)="onDankeOk()" class="finish-btn" type="button">
+        OK
+      </button>
+      </div>
     </div>
-  </div>
-  }
+    }
 </form>
